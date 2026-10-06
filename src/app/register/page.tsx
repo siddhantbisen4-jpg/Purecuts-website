@@ -3,13 +3,12 @@
 import React, { FormEvent, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+
 import {
   ArrowLeft,
   ArrowRight,
   Building2,
   Check,
-  Eye,
-  EyeOff,
   LockKeyhole,
   Mail,
   MapPin,
@@ -20,50 +19,36 @@ import {
 
 import logo from "../../image/purecuts_logo_no_bg-cropped.png";
 
-type AccountType =
-  | "salon_owner"
-  | "local_customer";
+type AccountType = "salon_owner" | "local_customer";
 
 export default function RegisterPage() {
   const router = useRouter();
 
-  const [accountType, setAccountType] =
-    useState<AccountType | null>(null);
+  const [accountType, setAccountType] = useState<AccountType | null>(null);
 
-  const [showPassword, setShowPassword] =
-    useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState(false);
-
-  const [isSubmitting, setIsSubmitting] =
-    useState(false);
+  // OTP state
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
 
   const [error, setError] = useState("");
-
   const [success, setSuccess] = useState("");
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
-    password: "",
-    confirmPassword: "",
-
     salonName: "",
     gstNumber: "",
     udyamNumber: "",
-
     address: "",
     city: "",
     state: "",
     pincode: "",
   });
 
-  const updateField = (
-    field: keyof typeof form,
-    value: string
-  ) => {
+  const updateField = (field: keyof typeof form, value: string) => {
     setForm((current) => ({
       ...current,
       [field]: value,
@@ -72,18 +57,43 @@ export default function RegisterPage() {
     setError("");
   };
 
-  const handleRegister = async (
-    event: FormEvent<HTMLFormElement>
-  ) => {
+  // --------------------------------------------------
+  // SEND OTP
+  // --------------------------------------------------
+
+  const handleSendOtp = () => {
+    setError("");
+    setSuccess("");
+
+    const phone = form.phone.replace(/\D/g, "");
+
+    if (!/^\d{10}$/.test(phone)) {
+      setError(
+        "Please enter a valid 10-digit phone number before sending OTP.",
+      );
+      return;
+    }
+
+    // For now this only displays the OTP input.
+    // Real SMS OTP API will be connected later.
+    setOtpSent(true);
+    setOtp("");
+
+    setSuccess("OTP input is ready. SMS OTP service will be connected next.");
+  };
+
+  // --------------------------------------------------
+  // REGISTER
+  // --------------------------------------------------
+
+  const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     setError("");
     setSuccess("");
 
     if (!accountType) {
-      setError(
-        "Please select Salon Owner or Local Customer."
-      );
+      setError("Please select Salon Owner or Local Customer.");
       return;
     }
 
@@ -93,46 +103,17 @@ export default function RegisterPage() {
     }
 
     if (!/^\S+@\S+\.\S+$/.test(form.email)) {
-      setError(
-        "Please enter a valid email address."
-      );
+      setError("Please enter a valid email address.");
       return;
     }
 
-    if (
-      !/^\d{10}$/.test(
-        form.phone.replace(/\D/g, "")
-      )
-    ) {
-      setError(
-        "Please enter a valid 10-digit phone number."
-      );
+    if (!/^\d{10}$/.test(form.phone.replace(/\D/g, ""))) {
+      setError("Please enter a valid 10-digit phone number.");
       return;
     }
 
-    if (form.password.length < 6) {
-      setError(
-        "Password must be at least 6 characters."
-      );
-      return;
-    }
-
-    if (
-      form.password !== form.confirmPassword
-    ) {
-      setError(
-        "Password and confirm password do not match."
-      );
-      return;
-    }
-
-    if (
-      accountType === "salon_owner" &&
-      !form.salonName.trim()
-    ) {
-      setError(
-        "Please enter your salon or business name."
-      );
+    if (accountType === "salon_owner" && !form.salonName.trim()) {
+      setError("Please enter your salon or business name.");
       return;
     }
 
@@ -152,36 +133,28 @@ export default function RegisterPage() {
     }
 
     if (!/^\d{6}$/.test(form.pincode)) {
-      setError(
-        "Please enter a valid six-digit pincode."
-      );
+      setError("Please enter a valid six-digit pincode.");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(
-        "/api/auth/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...form,
-            accountType,
-          }),
-        }
-      );
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...form,
+          accountType,
+        }),
+      });
 
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(
-          data.error ||
-            "Unable to create your account."
-        );
+        throw new Error(data.error || "Unable to create your account.");
       }
 
       const user = data.user;
@@ -199,28 +172,17 @@ export default function RegisterPage() {
         city: user.city,
         state: user.state,
         pincode: user.pincode,
-        salonMember:
-          user.accountType === "salon_owner",
+        salonMember: user.accountType === "salon_owner",
         signedInAt: new Date().toISOString(),
       };
 
-      localStorage.setItem(
-        "purecuts_user",
-        JSON.stringify(session)
-      );
+      localStorage.setItem("purecuts_user", JSON.stringify(session));
 
-      localStorage.setItem(
-        "purecuts_pincode",
-        user.pincode
-      );
+      localStorage.setItem("purecuts_pincode", user.pincode);
 
-      window.dispatchEvent(
-        new CustomEvent("purecuts-auth-changed")
-      );
+      window.dispatchEvent(new CustomEvent("purecuts-auth-changed"));
 
-      setSuccess(
-        "Your PureCuts account has been created successfully."
-      );
+      setSuccess("Your PureCuts account has been created successfully.");
 
       setTimeout(() => {
         router.push("/account");
@@ -229,7 +191,7 @@ export default function RegisterPage() {
       setError(
         error instanceof Error
           ? error.message
-          : "Unable to create your account."
+          : "Unable to create your account.",
       );
     } finally {
       setIsSubmitting(false);
@@ -244,7 +206,6 @@ export default function RegisterPage() {
     return (
       <main className="min-h-screen bg-[#F8F7FC] px-4 py-10 flex items-center justify-center">
         <div className="w-full max-w-4xl">
-
           <button
             type="button"
             onClick={() => router.push("/login")}
@@ -255,7 +216,6 @@ export default function RegisterPage() {
           </button>
 
           <div className="bg-white rounded-3xl border border-[#E9E4F7] shadow-[0_20px_70px_rgba(70,45,130,0.10)] p-6 sm:p-10">
-
             <div className="text-center mb-10">
               <Image
                 src={logo}
@@ -275,20 +235,17 @@ export default function RegisterPage() {
               </h1>
 
               <p className="mt-3 text-sm text-slate-500">
-                Select the option that best describes
-                how you shop with PureCuts.
+                Select the option that best describes how you shop with
+                PureCuts.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
               {/* Salon Owner */}
 
               <button
                 type="button"
-                onClick={() =>
-                  setAccountType("salon_owner")
-                }
+                onClick={() => setAccountType("salon_owner")}
                 className="group text-left rounded-3xl border-2 border-slate-200 p-6 transition hover:border-[#795BCB] hover:bg-[#F8F6FE] hover:shadow-lg"
               >
                 <div className="w-14 h-14 rounded-2xl bg-[#F0ECFA] flex items-center justify-center mb-5">
@@ -300,9 +257,8 @@ export default function RegisterPage() {
                 </h2>
 
                 <p className="mt-2 text-sm leading-6 text-slate-500">
-                  For salon owners and professional
-                  businesses purchasing salon products,
-                  equipment and supplies.
+                  For salon owners and professional businesses purchasing salon
+                  products, equipment and supplies.
                 </p>
 
                 <div className="mt-5 space-y-2 text-sm text-slate-600">
@@ -332,9 +288,7 @@ export default function RegisterPage() {
 
               <button
                 type="button"
-                onClick={() =>
-                  setAccountType("local_customer")
-                }
+                onClick={() => setAccountType("local_customer")}
                 className="group text-left rounded-3xl border-2 border-slate-200 p-6 transition hover:border-[#795BCB] hover:bg-[#F8F6FE] hover:shadow-lg"
               >
                 <div className="w-14 h-14 rounded-2xl bg-[#F0ECFA] flex items-center justify-center mb-5">
@@ -346,8 +300,8 @@ export default function RegisterPage() {
                 </h2>
 
                 <p className="mt-2 text-sm leading-6 text-slate-500">
-                  For customers purchasing PureCuts
-                  products for personal or local use.
+                  For customers purchasing PureCuts products for personal or
+                  local use.
                 </p>
 
                 <div className="mt-5 space-y-2 text-sm text-slate-600">
@@ -372,7 +326,6 @@ export default function RegisterPage() {
                   <ArrowRight className="w-4 h-4 transition group-hover:translate-x-1" />
                 </div>
               </button>
-
             </div>
           </div>
         </div>
@@ -386,9 +339,7 @@ export default function RegisterPage() {
 
   return (
     <main className="min-h-screen bg-[#F8F7FC] px-4 py-8">
-
       <div className="max-w-3xl mx-auto">
-
         <button
           type="button"
           onClick={() => setAccountType(null)}
@@ -399,11 +350,9 @@ export default function RegisterPage() {
         </button>
 
         <div className="bg-white rounded-3xl border border-[#E9E4F7] shadow-[0_20px_70px_rgba(70,45,130,0.10)] overflow-hidden">
-
           {/* Header */}
 
           <div className="bg-[#795BCB] px-6 sm:px-10 py-8 text-white">
-
             <Image
               src={logo}
               alt="PureCuts"
@@ -414,7 +363,6 @@ export default function RegisterPage() {
             />
 
             <div className="flex items-center gap-3">
-
               <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center">
                 {accountType === "salon_owner" ? (
                   <Building2 className="w-6 h-6" />
@@ -424,9 +372,7 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <p className="text-sm text-white/70">
-                  Creating account as
-                </p>
+                <p className="text-sm text-white/70">Creating account as</p>
 
                 <h1 className="text-2xl font-black">
                   {accountType === "salon_owner"
@@ -434,15 +380,10 @@ export default function RegisterPage() {
                     : "Local Customer"}
                 </h1>
               </div>
-
             </div>
           </div>
 
-          <form
-            onSubmit={handleRegister}
-            className="p-6 sm:p-10 space-y-7"
-          >
-
+          <form onSubmit={handleRegister} className="p-6 sm:p-10 space-y-7">
             {/* Error */}
 
             {error && (
@@ -450,6 +391,8 @@ export default function RegisterPage() {
                 {error}
               </div>
             )}
+
+            {/* Success */}
 
             {success && (
               <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
@@ -460,56 +403,96 @@ export default function RegisterPage() {
             {/* Personal Details */}
 
             <section>
-
               <div className="flex items-center gap-2 mb-5">
                 <UserRound className="w-5 h-5 text-[#795BCB]" />
 
-                <h2 className="font-black text-slate-900">
-                  Personal Details
-                </h2>
+                <h2 className="font-black text-slate-900">Personal Details</h2>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
-
                 <Input
                   label="Full Name"
                   value={form.name}
-                  onChange={(value) =>
-                    updateField("name", value)
-                  }
+                  onChange={(value) => updateField("name", value)}
                   placeholder="Enter your full name"
                   icon={<UserRound />}
                   required
                 />
 
-                <Input
-                  label="Phone Number"
-                  value={form.phone}
-                  onChange={(value) =>
-                    updateField(
-                      "phone",
-                      value
-                        .replace(/\D/g, "")
-                        .slice(0, 10)
-                    )
-                  }
-                  placeholder="10-digit mobile number"
-                  icon={<Phone />}
-                  required
-                />
+                {/* Phone + Send OTP */}
+
+                <div className="sm:col-span-2">
+                  <label className="block">
+                    <span className="block text-sm font-semibold text-slate-700 mb-2">
+                      Phone Number
+                      <span className="text-red-500 ml-1">*</span>
+                    </span>
+
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <div className="relative flex-1">
+                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+
+                        <input
+                          type="tel"
+                          value={form.phone}
+                          onChange={(event) => {
+                            const phone = event.target.value
+                              .replace(/\D/g, "")
+                              .slice(0, 10);
+
+                            updateField("phone", phone);
+
+                            // Reset OTP if phone number changes
+                            if (otpSent) {
+                              setOtpSent(false);
+                              setOtp("");
+                            }
+                          }}
+                          placeholder="10-digit mobile number"
+                          required
+                          className="w-full rounded-xl border border-slate-200 bg-white py-3.5 pl-11 pr-4 text-sm text-slate-900 outline-none transition focus:border-[#795BCB] focus:ring-4 focus:ring-[#795BCB]/10"
+                        />
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleSendOtp}
+                        disabled={form.phone.length !== 10}
+                        className="sm:w-auto w-full rounded-xl bg-[#795BCB] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#6246B0] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                      >
+                        {otpSent ? "OTP Sent" : "Send OTP"}
+                      </button>
+                    </div>
+                  </label>
+
+                  {/* OTP Input */}
+
+                  {otpSent && (
+                    <div className="mt-4">
+                      <Input
+                        label="Enter OTP"
+                        type="text"
+                        value={otp}
+                        onChange={(value) =>
+                          setOtp(value.replace(/\D/g, "").slice(0, 6))
+                        }
+                        placeholder="Enter 6-digit OTP"
+                        icon={<LockKeyhole />}
+                        required
+                      />
+                    </div>
+                  )}
+                </div>
 
                 <Input
-                  label="Email Address"
+                  label="Email Address(optional)"
                   type="email"
                   value={form.email}
-                  onChange={(value) =>
-                    updateField("email", value)
-                  }
+                  onChange={(value) => updateField("email", value)}
                   placeholder="you@example.com"
                   icon={<Mail />}
                   required
                 />
-
               </div>
             </section>
 
@@ -517,7 +500,6 @@ export default function RegisterPage() {
 
             {accountType === "salon_owner" && (
               <section className="rounded-2xl bg-[#F8F6FE] border border-[#E4DCF7] p-5">
-
                 <div className="flex items-center gap-2 mb-5">
                   <BriefcaseBusiness className="w-5 h-5 text-[#795BCB]" />
 
@@ -527,62 +509,59 @@ export default function RegisterPage() {
                     </h2>
 
                     <p className="text-xs text-slate-500 mt-1">
-                      Add your business details for professional
-                      salon ordering.
+                      Add your business details for professional salon ordering.
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-
                   <Input
                     label="Salon / Business Name"
                     value={form.salonName}
-                    onChange={(value) =>
-                      updateField(
-                        "salonName",
-                        value
-                      )
-                    }
+                    onChange={(value) => updateField("salonName", value)}
                     placeholder="e.g. Aura Unisex Hair Studio"
                     icon={<Building2 />}
                     required
                   />
 
                   <div className="grid sm:grid-cols-2 gap-4">
+                    {/* GSTIN */}
+                    <div className="relative">
+                      <div className="w-full sm:max-w-[300px]">
+                        <Input
+                          label="GSTIN Number"
+                          value={form.gstNumber}
+                          onChange={(value) => updateField("gstNumber", value)}
+                          placeholder="Enter GSTIN"
+                        />
+                      </div>
 
-                    <Input
-                      label="GSTIN"
-                      value={form.gstNumber}
-                      onChange={(value) =>
-                        updateField(
-                          "gstNumber",
-                          value.toUpperCase()
-                        )
-                      }
-                      placeholder="27AAAAA0000A1Z5"
-                    />
+                      {/* OR */}
+                      <div className="absolute right-[-38px] top-1/2 z-10 hidden sm:flex items-center justify-center">
+                        <span className=" px-6 text-xs font-bold text-black">
+                          OR
+                        </span>
+                      </div>
+                    </div>
 
-                    <Input
-                      label="UDYAM Number"
-                      value={form.udyamNumber}
-                      onChange={(value) =>
-                        updateField(
-                          "udyamNumber",
-                          value.toUpperCase()
-                        )
-                      }
-                      placeholder="UDYAM-MH-00-0000000"
-                    />
-
+                    {/* UDYAM */}
+                    <div className="sm:pl-2">
+                      <div className="w-full sm:max-w-[300px]">
+                        <Input
+                          label="UDYAM Number"
+                          value={form.udyamNumber}
+                          onChange={(value) =>
+                            updateField("udyamNumber", value)
+                          }
+                          placeholder="Enter UDYAM Number"
+                        />
+                      </div>
+                    </div>
                   </div>
-
                   <p className="text-xs text-slate-500">
-                    You can provide GSTIN or UDYAM details.
-                    They can also be added later to your
-                    salon profile.
+                    You can provide GSTIN or UDYAM details. They can also be
+                    added later to your salon profile.
                   </p>
-
                 </div>
               </section>
             )}
@@ -590,36 +569,27 @@ export default function RegisterPage() {
             {/* Address */}
 
             <section>
-
               <div className="flex items-center gap-2 mb-5">
                 <MapPin className="w-5 h-5 text-[#795BCB]" />
 
-                <h2 className="font-black text-slate-900">
-                  Delivery Address
-                </h2>
+                <h2 className="font-black text-slate-900">Delivery Address</h2>
               </div>
 
               <div className="space-y-4">
-
                 <Input
                   label="Street Address / Landmark"
                   value={form.address}
-                  onChange={(value) =>
-                    updateField("address", value)
-                  }
+                  onChange={(value) => updateField("address", value)}
                   placeholder="House, street, area or landmark"
                   icon={<MapPin />}
                   required
                 />
 
                 <div className="grid sm:grid-cols-3 gap-4">
-
                   <Input
                     label="City"
                     value={form.city}
-                    onChange={(value) =>
-                      updateField("city", value)
-                    }
+                    onChange={(value) => updateField("city", value)}
                     placeholder="Pune"
                     required
                   />
@@ -627,9 +597,7 @@ export default function RegisterPage() {
                   <Input
                     label="State"
                     value={form.state}
-                    onChange={(value) =>
-                      updateField("state", value)
-                    }
+                    onChange={(value) => updateField("state", value)}
                     placeholder="Maharashtra"
                     required
                   />
@@ -640,72 +608,14 @@ export default function RegisterPage() {
                     onChange={(value) =>
                       updateField(
                         "pincode",
-                        value
-                          .replace(/\D/g, "")
-                          .slice(0, 6)
+                        value.replace(/\D/g, "").slice(0, 6),
                       )
                     }
                     placeholder="411001"
                     required
                   />
-
                 </div>
               </div>
-            </section>
-
-            {/* Password */}
-
-            <section>
-
-              <div className="flex items-center gap-2 mb-5">
-                <LockKeyhole className="w-5 h-5 text-[#795BCB]" />
-
-                <h2 className="font-black text-slate-900">
-                  Create Password
-                </h2>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-4">
-
-                <PasswordInput
-                  label="Password"
-                  value={form.password}
-                  show={showPassword}
-                  onToggle={() =>
-                    setShowPassword(
-                      (current) => !current
-                    )
-                  }
-                  onChange={(value) =>
-                    updateField(
-                      "password",
-                      value
-                    )
-                  }
-                />
-
-                <PasswordInput
-                  label="Confirm Password"
-                  value={form.confirmPassword}
-                  show={showConfirmPassword}
-                  onToggle={() =>
-                    setShowConfirmPassword(
-                      (current) => !current
-                    )
-                  }
-                  onChange={(value) =>
-                    updateField(
-                      "confirmPassword",
-                      value
-                    )
-                  }
-                />
-
-              </div>
-
-              <p className="mt-2 text-xs text-slate-400">
-                Password must contain at least 6 characters.
-              </p>
             </section>
 
             {/* Submit */}
@@ -738,7 +648,6 @@ export default function RegisterPage() {
                 Sign In
               </button>
             </p>
-
           </form>
         </div>
       </div>
@@ -771,97 +680,29 @@ function Input({
     <label className="block">
       <span className="block text-sm font-semibold text-slate-700 mb-2">
         {label}
-        {required && (
-          <span className="text-red-500 ml-1">
-            *
-          </span>
-        )}
+
+        {required && <span className="text-red-500 ml-1">*</span>}
       </span>
 
       <div className="relative">
-
         {icon && (
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-            {React.cloneElement(
-              icon as React.ReactElement,
-              {
-                className: "w-4 h-4",
-              }
-            )}
+            {React.cloneElement(icon as React.ReactElement, {
+              className: "w-4 h-4",
+            })}
           </span>
         )}
 
         <input
           type={type}
           value={value}
-          onChange={(event) =>
-            onChange(event.target.value)
-          }
+          onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
           required={required}
           className={`w-full rounded-xl border border-slate-200 bg-white py-3.5 ${
             icon ? "pl-11" : "px-4"
           } pr-4 text-sm text-slate-900 outline-none transition focus:border-[#795BCB] focus:ring-4 focus:ring-[#795BCB]/10`}
         />
-
-      </div>
-    </label>
-  );
-}
-
-// ==================================================
-// PASSWORD INPUT
-// ==================================================
-
-function PasswordInput({
-  label,
-  value,
-  show,
-  onToggle,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  show: boolean;
-  onToggle: () => void;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <label className="block">
-
-      <span className="block text-sm font-semibold text-slate-700 mb-2">
-        {label}
-        <span className="text-red-500 ml-1">
-          *
-        </span>
-      </span>
-
-      <div className="relative">
-
-        <LockKeyhole className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-
-        <input
-          type={show ? "text" : "password"}
-          value={value}
-          onChange={(event) =>
-            onChange(event.target.value)
-          }
-          placeholder="Minimum 6 characters"
-          className="w-full rounded-xl border border-slate-200 bg-white py-3.5 pl-11 pr-12 text-sm text-slate-900 outline-none transition focus:border-[#795BCB] focus:ring-4 focus:ring-[#795BCB]/10"
-        />
-
-        <button
-          type="button"
-          onClick={onToggle}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#795BCB]"
-        >
-          {show ? (
-            <EyeOff className="w-4 h-4" />
-          ) : (
-            <Eye className="w-4 h-4" />
-          )}
-        </button>
-
       </div>
     </label>
   );

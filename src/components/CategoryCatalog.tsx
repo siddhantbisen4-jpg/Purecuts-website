@@ -17,11 +17,7 @@ import {
 } from "lucide-react";
 
 import Link from "next/link";
-import {
-  useRouter,
-  useSearchParams,
-  usePathname,
-} from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 /* =========================================================
    TYPES
@@ -368,10 +364,7 @@ const SUBCATEGORIES: Record<string, SubcategoryItem[]> = {
    CHILD SUBCATEGORY DATA
 ========================================================= */
 
-const SUBSUBCATEGORIES: Record<
-  string,
-  SubcategoryItem[]
-> = {
+const SUBSUBCATEGORIES: Record<string, SubcategoryItem[]> = {
   /* Hair Color */
 
   "hair-color": [
@@ -449,58 +442,43 @@ export function CategoryCatalog({
      READ CURRENT URL VALUES
   ======================================================= */
 
-  const urlSubcategory =
-    searchParams.get("subcategory") || "all";
+  const urlSubcategory = searchParams.get("subcategory") || "all";
 
-  const urlSubSubcategory =
-    searchParams.get("subsubcategory") || "all";
+  const urlSubSubcategory = searchParams.get("subsubcategory") || "all";
 
   /* =======================================================
      STATE
   ======================================================= */
 
-  const [selectedBrand, setSelectedBrand] =
-    useState<string>(initialBrand);
+  const [selectedBrand, setSelectedBrand] = useState<string>(initialBrand);
 
-  const [selectedSort, setSelectedSort] =
-    useState<string>(initialSort);
+  const [selectedSort, setSelectedSort] = useState<string>(initialSort);
 
-  const [selectedSubcategory, setSelectedSubcategory] =
-    useState<string>(
-      urlSubcategory !== "all"
-        ? urlSubcategory
-        : initialSubcategory || "all",
-    );
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>(
+    urlSubcategory !== "all" ? urlSubcategory : initialSubcategory || "all",
+  );
 
   const [selectedSubSubcategory, setSelectedSubSubcategory] =
     useState<string>(urlSubSubcategory);
 
-  const [gridCols, setGridCols] =
-    useState<3 | 4>(4);
+  const [gridCols, setGridCols] = useState<3 | 4>(4);
 
-  const [inStockOnly, setInStockOnly] =
-    useState<boolean>(false);
+  const [inStockOnly, setInStockOnly] = useState<boolean>(false);
 
-  const [salonProOnly, setSalonProOnly] =
-    useState<boolean>(false);
+  const [salonProOnly, setSalonProOnly] = useState<boolean>(false);
 
-  const [priceRange, setPriceRange] =
-    useState<number>(15000);
+  const [priceRange, setPriceRange] = useState<number>(15000);
 
-  const [searchQuery, setSearchQuery] =
-    useState<string>(initialSearch);
+  const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
 
-  const [isMobileFilterOpen, setIsMobileFilterOpen] =
-    useState<boolean>(false);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState<boolean>(false);
 
   /* =======================================================
      POPUP
   ======================================================= */
 
-  const [
-    isSubSubcategoryPopupOpen,
-    setIsSubSubcategoryPopupOpen,
-  ] = useState<boolean>(false);
+  const [isSubSubcategoryPopupOpen, setIsSubSubcategoryPopupOpen] =
+    useState<boolean>(false);
 
   const [popupSubcategory, setPopupSubcategory] =
     useState<SubcategoryItem | null>(null);
@@ -509,8 +487,7 @@ export function CategoryCatalog({
      AVAILABLE SUBCATEGORIES
   ======================================================= */
 
-  const availableSubcategories =
-    SUBCATEGORIES[currentCategorySlug] || [];
+  const availableSubcategories = SUBCATEGORIES[currentCategorySlug] || [];
 
   const subcatNavRef = useRef<HTMLDivElement>(null);
   const subcatScrollRef = useRef<HTMLDivElement>(null);
@@ -527,7 +504,7 @@ export function CategoryCatalog({
         const h = subcatNavRef.current.offsetHeight;
         document.documentElement.style.setProperty(
           "--subcat-nav-height",
-          `${h}px`
+          `${h}px`,
         );
       }
     };
@@ -552,7 +529,10 @@ export function CategoryCatalog({
   const scrollSubcat = (direction: "left" | "right") => {
     if (subcatScrollRef.current) {
       const scrollAmount = direction === "left" ? -260 : 260;
-      subcatScrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      subcatScrollRef.current.scrollBy({
+        left: scrollAmount,
+        behavior: "smooth",
+      });
     }
   };
 
@@ -576,23 +556,14 @@ export function CategoryCatalog({
   ======================================================= */
 
   useEffect(() => {
-    const currentSubcategory =
-      searchParams.get("subcategory") || "all";
+    const currentSubcategory = searchParams.get("subcategory") || "all";
 
-    const currentSubSubcategory =
-      searchParams.get("subsubcategory") || "all";
+    const currentSubSubcategory = searchParams.get("subsubcategory") || "all";
 
-    setSelectedSubcategory(
-      currentSubcategory,
-    );
+    setSelectedSubcategory(currentSubcategory);
 
-    setSelectedSubSubcategory(
-      currentSubSubcategory,
-    );
-  }, [
-    searchParams,
-    pathname,
-  ]);
+    setSelectedSubSubcategory(currentSubSubcategory);
+  }, [searchParams, pathname]);
 
   /* =======================================================
      UPDATE URL
@@ -612,45 +583,26 @@ export function CategoryCatalog({
     subcategory: string,
     subsubcategory: string = "all",
   ) => {
-    const params = new URLSearchParams(
-      searchParams.toString(),
-    );
+    const params = new URLSearchParams(searchParams.toString());
 
-    if (
-      !subcategory ||
-      subcategory === "all"
-    ) {
+    if (!subcategory || subcategory === "all") {
       params.delete("subcategory");
       params.delete("subsubcategory");
     } else {
-      params.set(
-        "subcategory",
-        subcategory,
-      );
+      params.set("subcategory", subcategory);
 
-      if (
-        subsubcategory &&
-        subsubcategory !== "all"
-      ) {
-        params.set(
-          "subsubcategory",
-          subsubcategory,
-        );
+      if (subsubcategory && subsubcategory !== "all") {
+        params.set("subsubcategory", subsubcategory);
       } else {
-        params.delete(
-          "subsubcategory",
-        );
+        params.delete("subsubcategory");
       }
     }
 
-    const queryString =
-      params.toString();
+    const queryString = params.toString();
 
     const targetUrl =
       `/category/${currentCategorySlug}` +
-      (queryString
-        ? `?${queryString}`
-        : "");
+      (queryString ? `?${queryString}` : "");
 
     router.push(targetUrl, {
       scroll: false,
@@ -661,13 +613,8 @@ export function CategoryCatalog({
      SELECT SUBCATEGORY
   ======================================================= */
 
-  const handleSubcategoryClick = (
-    subcategory: SubcategoryItem,
-  ) => {
-    const children =
-      SUBSUBCATEGORIES[
-      subcategory.slug
-      ] || [];
+  const handleSubcategoryClick = (subcategory: SubcategoryItem) => {
+    const children = SUBSUBCATEGORIES[subcategory.slug] || [];
 
     /* -----------------------------------------------
        If this subcategory has children,
@@ -675,13 +622,9 @@ export function CategoryCatalog({
     ------------------------------------------------ */
 
     if (children.length > 0) {
-      setPopupSubcategory(
-        subcategory,
-      );
+      setPopupSubcategory(subcategory);
 
-      setIsSubSubcategoryPopupOpen(
-        true,
-      );
+      setIsSubSubcategoryPopupOpen(true);
 
       return;
     }
@@ -690,112 +633,67 @@ export function CategoryCatalog({
        Normal subcategory
     ------------------------------------------------ */
 
-    setSelectedSubcategory(
-      subcategory.slug,
-    );
+    setSelectedSubcategory(subcategory.slug);
 
-    setSelectedSubSubcategory(
-      "all",
-    );
+    setSelectedSubSubcategory("all");
 
-    updateCategoryParams(
-      subcategory.slug,
-      "all",
-    );
+    updateCategoryParams(subcategory.slug, "all");
   };
 
   /* =======================================================
      SELECT CHILD SUBCATEGORY
   ======================================================= */
 
-  const handleSubSubcategorySelect = (
-    childSlug: string,
-  ) => {
+  const handleSubSubcategorySelect = (childSlug: string) => {
     if (!popupSubcategory) {
       return;
     }
 
-    const parentSlug =
-      popupSubcategory.slug;
+    const parentSlug = popupSubcategory.slug;
 
-    setSelectedSubcategory(
-      parentSlug,
-    );
+    setSelectedSubcategory(parentSlug);
 
-    setSelectedSubSubcategory(
-      childSlug,
-    );
+    setSelectedSubSubcategory(childSlug);
 
-    setIsSubSubcategoryPopupOpen(
-      false,
-    );
+    setIsSubSubcategoryPopupOpen(false);
 
     setPopupSubcategory(null);
 
-    updateCategoryParams(
-      parentSlug,
-      childSlug,
-    );
+    updateCategoryParams(parentSlug, childSlug);
   };
 
   /* =======================================================
      SELECT ALL PARENT PRODUCTS
   ======================================================= */
 
-  const handleAllSubcategorySelect =
-    () => {
-      setSelectedSubcategory(
-        "all",
-      );
+  const handleAllSubcategorySelect = () => {
+    setSelectedSubcategory("all");
 
-      setSelectedSubSubcategory(
-        "all",
-      );
+    setSelectedSubSubcategory("all");
 
-      updateCategoryParams(
-        "all",
-        "all",
-      );
-    };
+    updateCategoryParams("all", "all");
+  };
 
   /* =======================================================
      SIDEBAR CHILD SELECTION
   ======================================================= */
 
-  const handleSidebarChildChange = (
-    childSlug: string,
-  ) => {
-    if (
-      selectedSubcategory ===
-      "all"
-    ) {
+  const handleSidebarChildChange = (childSlug: string) => {
+    if (selectedSubcategory === "all") {
       return;
     }
 
-    if (
-      childSlug ===
-      "all"
-    ) {
-      setSelectedSubSubcategory(
-        "all",
-      );
+    if (childSlug === "all") {
+      setSelectedSubSubcategory("all");
 
-      updateCategoryParams(
-        selectedSubcategory,
-        "all",
-      );
+      updateCategoryParams(selectedSubcategory, "all");
 
       return;
     }
 
-    setSelectedSubSubcategory(
-      childSlug,
-    );
+    setSelectedSubSubcategory(childSlug);
 
-    updateCategoryParams(
-      selectedSubcategory,
-      childSlug,
-    );
+    updateCategoryParams(selectedSubcategory, childSlug);
   };
 
   /* =======================================================
@@ -808,10 +706,8 @@ export function CategoryCatalog({
         /* Category */
 
         if (
-          currentCategorySlug !==
-          "all" &&
-          product.categorySlug !==
-          currentCategorySlug
+          currentCategorySlug !== "all" &&
+          product.categorySlug !== currentCategorySlug
         ) {
           return false;
         }
@@ -821,10 +717,8 @@ export function CategoryCatalog({
         --------------------------------------------- */
 
         if (
-          selectedSubcategory !==
-          "all" &&
-          product.subcategorySlug !==
-          selectedSubcategory
+          selectedSubcategory !== "all" &&
+          product.subcategorySlug !== selectedSubcategory
         ) {
           return false;
         }
@@ -833,18 +727,14 @@ export function CategoryCatalog({
            Child subcategory
         --------------------------------------------- */
 
-        if (
-          selectedSubSubcategory !==
-          "all"
-        ) {
-          const productAny =
-            product as Product & {
-              subSubcategorySlug?: string;
-              subSubCategorySlug?: string;
-              subSubCategory?: string;
-              subsubcategorySlug?: string;
-              subsubcategory?: string;
-            };
+        if (selectedSubSubcategory !== "all") {
+          const productAny = product as Product & {
+            subSubcategorySlug?: string;
+            subSubCategorySlug?: string;
+            subSubCategory?: string;
+            subsubcategorySlug?: string;
+            subsubcategory?: string;
+          };
 
           const productChildSlug =
             productAny.subSubcategorySlug ||
@@ -858,11 +748,7 @@ export function CategoryCatalog({
            * If product has a child slug,
            * it must match the selected child.
            */
-          if (
-            productChildSlug &&
-            productChildSlug !==
-            selectedSubSubcategory
-          ) {
+          if (productChildSlug && productChildSlug !== selectedSubSubcategory) {
             return false;
           }
 
@@ -879,40 +765,22 @@ export function CategoryCatalog({
 
         if (
           selectedBrand &&
-          selectedBrand !==
-          "all" &&
-          product.brand
-            .toLowerCase() !==
-          selectedBrand.toLowerCase()
+          selectedBrand !== "all" &&
+          product.brand.toLowerCase() !== selectedBrand.toLowerCase()
         ) {
           return false;
         }
 
         /* Search */
 
-        if (
-          searchQuery.trim()
-        ) {
-          const q =
-            searchQuery
-              .toLowerCase()
-              .trim();
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase().trim();
 
           const matches =
-            product.name
-              .toLowerCase()
-              .includes(q) ||
-            product.brand
-              .toLowerCase()
-              .includes(q) ||
-            product.category
-              .toLowerCase()
-              .includes(q) ||
-            Boolean(
-              product.description
-                ?.toLowerCase()
-                .includes(q),
-            );
+            product.name.toLowerCase().includes(q) ||
+            product.brand.toLowerCase().includes(q) ||
+            product.category.toLowerCase().includes(q) ||
+            Boolean(product.description?.toLowerCase().includes(q));
 
           if (!matches) {
             return false;
@@ -921,79 +789,40 @@ export function CategoryCatalog({
 
         /* Price */
 
-        if (
-          product.price >
-          priceRange
-        ) {
+        if (product.price > priceRange) {
           return false;
         }
 
         /* Stock */
 
-        if (
-          inStockOnly &&
-          !product.inStock
-        ) {
+        if (inStockOnly && !product.inStock) {
           return false;
         }
 
         /* Salon Pro */
 
-        if (
-          salonProOnly &&
-          !product.isSalonPro
-        ) {
+        if (salonProOnly && !product.isSalonPro) {
           return false;
         }
 
         return true;
       })
       .sort((a, b) => {
-        if (
-          selectedSort ===
-          "price-asc"
-        ) {
-          return (
-            a.price - b.price
-          );
+        if (selectedSort === "price-asc") {
+          return a.price - b.price;
         }
 
-        if (
-          selectedSort ===
-          "price-desc"
-        ) {
-          return (
-            b.price - a.price
-          );
+        if (selectedSort === "price-desc") {
+          return b.price - a.price;
         }
 
-        if (
-          selectedSort ===
-          "rating"
-        ) {
-          return (
-            Number(
-              b.rating || 0,
-            ) -
-            Number(
-              a.rating || 0,
-            )
-          );
+        if (selectedSort === "rating") {
+          return Number(b.rating || 0) - Number(a.rating || 0);
         }
 
-        if (
-          selectedSort ===
-          "discount"
-        ) {
+        if (selectedSort === "discount") {
           return (
-            Number(
-              b.discountPercent ||
-              0,
-            ) -
-            Number(
-              a.discountPercent ||
-              0,
-            )
+            Number(b.discountPercent || 0) - Number(a.discountPercent || 0)
           );
         }
 
@@ -1016,37 +845,26 @@ export function CategoryCatalog({
      CURRENT CATEGORY
   ======================================================= */
 
-  const currentCategory =
-    categories.find(
-      (category) =>
-        category.slug ===
-        currentCategorySlug,
-    );
+  const currentCategory = categories.find(
+    (category) => category.slug === currentCategorySlug,
+  );
 
   const categoryTitle =
-    currentCategorySlug ===
-      "all"
+    currentCategorySlug === "all"
       ? "All Salon Products"
-      : currentCategory?.name ||
-      "Products";
+      : currentCategory?.name || "Products";
 
   /* =======================================================
      LABELS
   ======================================================= */
 
   const selectedSubcategoryLabel =
-    availableSubcategories.find(
-      (item) =>
-        item.slug ===
-        selectedSubcategory,
-    )?.label || "";
+    availableSubcategories.find((item) => item.slug === selectedSubcategory)
+      ?.label || "";
 
   const selectedSubSubcategoryLabel =
-    activeSubSubcategories.find(
-      (item) =>
-        item.slug ===
-        selectedSubSubcategory,
-    )?.label || "";
+    activeSubSubcategories.find((item) => item.slug === selectedSubSubcategory)
+      ?.label || "";
 
   /* =======================================================
      CLEAR FILTERS
@@ -1054,43 +872,27 @@ export function CategoryCatalog({
 
   const clearAllFilters = () => {
     setSelectedBrand("");
-    setSelectedSubcategory(
-      "all",
-    );
-    setSelectedSubSubcategory(
-      "all",
-    );
+    setSelectedSubcategory("all");
+    setSelectedSubSubcategory("all");
     setSearchQuery("");
     setInStockOnly(false);
     setSalonProOnly(false);
     setPriceRange(15000);
-    setSelectedSort(
-      "featured",
-    );
+    setSelectedSort("featured");
 
-    const params =
-      new URLSearchParams(
-        searchParams.toString(),
-      );
+    const params = new URLSearchParams(searchParams.toString());
 
-    params.delete(
-      "subcategory",
-    );
-    params.delete(
-      "subsubcategory",
-    );
+    params.delete("subcategory");
+    params.delete("subsubcategory");
     params.delete("brand");
     params.delete("q");
     params.delete("sort");
 
-    const queryString =
-      params.toString();
+    const queryString = params.toString();
 
     router.push(
       `/category/${currentCategorySlug}` +
-      (queryString
-        ? `?${queryString}`
-        : ""),
+        (queryString ? `?${queryString}` : ""),
       {
         scroll: false,
       },
@@ -1102,17 +904,14 @@ export function CategoryCatalog({
   ======================================================= */
 
   const hasActiveFilters =
-    selectedSubcategory !==
-    "all" ||
-    selectedSubSubcategory !==
-    "all" ||
+    selectedSubcategory !== "all" ||
+    selectedSubSubcategory !== "all" ||
     Boolean(selectedBrand) ||
     Boolean(searchQuery) ||
     inStockOnly ||
     salonProOnly ||
     priceRange < 15000 ||
-    selectedSort !==
-    "featured";
+    selectedSort !== "featured";
 
   /* =======================================================
      RENDER
@@ -1120,17 +919,13 @@ export function CategoryCatalog({
 
   return (
     <div className="w-full">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
-
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 pt-4 sm:pt-6">
         {/* =================================================
           BREADCRUMBS
       ================================================= */}
 
-        <nav className="flex items-center gap-2 text-xs text-slate-500 mb-4">
-          <Link
-            href="/"
-            className="hover:text-[#795BCB] font-medium"
-          >
+        <nav className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-slate-500 mb-3 sm:mb-4 overflow-x-auto whitespace-nowrap">
+          <Link href="/" className="hover:text-[#795BCB] font-medium">
             Home
           </Link>
 
@@ -1143,86 +938,65 @@ export function CategoryCatalog({
             Catalog
           </Link>
 
-          {currentCategorySlug !==
-            "all" && (
-              <>
-                <span>/</span>
+          {currentCategorySlug !== "all" && (
+            <>
+              <span>/</span>
 
-                <span className="text-slate-800 font-bold">
-                  {categoryTitle}
-                </span>
-              </>
-            )}
+              <span className="text-slate-800 font-bold">{categoryTitle}</span>
+            </>
+          )}
         </nav>
 
         {/* =================================================
           CATEGORY HEADER
       ================================================= */}
 
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 mb-6 shadow-xs">
-
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-slate-200 mb-4 sm:mb-6 shadow-xs">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
             <div className="min-w-0 flex-1">
-
               <div className="flex items-center gap-2 mb-1.5">
-
-                <span className="text-[10px] font-black uppercase tracking-wider text-white bg-[#795BCB] px-2.5 py-0.5 rounded-full">
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white bg-[#795BCB] px-2 sm:px-2.5 py-0.5 rounded-full whitespace-nowrap">
                   PureCuts Catalog
                 </span>
 
-                <span className="text-xs text-slate-500 font-semibold">
-                  {
-                    filteredProducts.length
-                  }{" "}
-                  items available
+                <span className="text-[10px] sm:text-xs text-slate-500 font-semibold whitespace-nowrap">
+                  {filteredProducts.length} items available
                 </span>
-
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
                 {categoryTitle}
               </h1>
 
               {currentCategory?.description && (
-                <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-3xl">
-                  {
-                    currentCategory.description
-                  }
+                <p className="text-[11px] sm:text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed">
+                  {currentCategory.description}
                 </p>
               )}
             </div>
 
             {/* SEARCH */}
 
-            <div className="relative max-w-xs w-full shrink-0">
-
+            <div className="relative max-w-xs md:max-w-xs w-full shrink-0">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
 
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) =>
-                  setSearchQuery(
-                    e.target.value,
-                  )
-                }
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={`Filter in ${categoryTitle}...`}
-                className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#795BCB]"
+                className="w-full pl-9 pr-9 py-2.5 sm:py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#795BCB]"
               />
 
               {searchQuery && (
                 <button
                   type="button"
-                  onClick={() =>
-                    setSearchQuery("")
-                  }
+                  onClick={() => setSearchQuery("")}
                   className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
               )}
-
             </div>
           </div>
         </div>
@@ -1234,13 +1008,15 @@ export function CategoryCatalog({
         Sticks directly below the category navbar when scrolling.
     ================================================= */}
 
-      {availableSubcategories.length > 0 && (
-        <div
-          ref={subcatNavRef}
-          className="sticky z-30 w-full bg-white/95 backdrop-blur-md border-y border-slate-200/90 shadow-xs mb-6 transition-all"
-          style={{ top: "var(--header-height, 113px)" }}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 relative">
+     {availableSubcategories.length > 0 && (
+  <div
+    ref={subcatNavRef}
+    className="sticky z-[90] w-full bg-white/95 backdrop-blur-md border-y border-slate-200/90 shadow-sm mb-4 sm:mb-6"
+    style={{
+      top: "var(--header-height, 0px)",
+    }}
+  >
+          <div className="max-w-7xl mx-auto px-2 sm:px-6 relative">
             {/* Scroll Left Button (desktop) */}
             <button
               type="button"
@@ -1253,16 +1029,17 @@ export function CategoryCatalog({
 
             <div
               ref={subcatScrollRef}
-              className="flex items-center gap-2 overflow-x-auto py-2.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth px-1"
+              className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-2 sm:py-2.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth px-1"
             >
               {/* All */}
               <button
                 type="button"
                 onClick={handleAllSubcategorySelect}
-                className={`shrink-0 whitespace-nowrap px-5 py-2 rounded-full border text-xs font-bold transition-all ${selectedSubcategory === "all"
+                className={`shrink-0 whitespace-nowrap px-3.5 sm:px-5 py-2 sm:py-2 rounded-full border text-[11px] sm:text-xs font-bold transition-all ${
+                  selectedSubcategory === "all"
                     ? "bg-[#795BCB] text-white border-[#795BCB] shadow-xs"
                     : "bg-white text-slate-700 border-slate-200 hover:border-[#795BCB] hover:text-[#795BCB] hover:bg-purple-50"
-                  }`}
+                }`}
               >
                 <span
                   className={
@@ -1277,11 +1054,10 @@ export function CategoryCatalog({
 
               {/* Subcategories */}
               {availableSubcategories.map((subcategory) => {
-                const isSelected =
-                  selectedSubcategory === subcategory.slug;
+                const isSelected = selectedSubcategory === subcategory.slug;
 
                 const hasChildren = Boolean(
-                  SUBSUBCATEGORIES[subcategory.slug]?.length
+                  SUBSUBCATEGORIES[subcategory.slug]?.length,
                 );
 
                 return (
@@ -1289,27 +1065,23 @@ export function CategoryCatalog({
                     key={subcategory.slug}
                     type="button"
                     onClick={() => handleSubcategoryClick(subcategory)}
-                    className={`shrink-0 whitespace-nowrap px-4 py-2 rounded-full border text-xs font-semibold transition-all flex items-center gap-1.5 ${isSelected
+                    className={`shrink-0 whitespace-nowrap px-3 sm:px-4 py-2 rounded-full border text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                      isSelected
                         ? "bg-[#795BCB] text-white border-[#795BCB] shadow-xs"
                         : "bg-white text-slate-700 border-slate-200 hover:border-[#795BCB] hover:text-[#795BCB] hover:bg-purple-50"
-                      }`}
+                    }`}
                   >
                     <span
-                      className={
-                        isSelected
-                          ? "text-white"
-                          : "text-slate-700"
-                      }
+                      className={isSelected ? "text-white" : "text-slate-700"}
                     >
                       {subcategory.label}
                     </span>
 
                     {hasChildren && (
                       <ChevronRight
-                        className={`w-3.5 h-3.5 ${isSelected
-                            ? "text-white"
-                            : "text-slate-400"
-                          }`}
+                        className={`w-3.5 h-3.5 ${
+                          isSelected ? "text-white" : "text-slate-400"
+                        }`}
                       />
                     )}
                   </button>
@@ -1334,9 +1106,8 @@ export function CategoryCatalog({
         MAIN LAYOUT
     ================================================= */}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 pb-5 sm:pb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
           {/* =================================================
             SIDEBAR
         ================================================= */}
@@ -1347,166 +1118,119 @@ export function CategoryCatalog({
               top: "calc(var(--header-height, 113px) + var(--subcat-nav-height, 0px) + 16px)",
             }}
           >
-
             {/* FILTER HEADER */}
 
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-
               <div className="flex items-center gap-2 font-bold text-sm text-slate-900">
-
                 <SlidersHorizontal className="w-4 h-4 text-[#795BCB]" />
 
                 <span>
-                  {activeSubSubcategories.length >
-                    0
+                  {activeSubSubcategories.length > 0
                     ? "Subcategory Filter"
                     : "Filters"}
                 </span>
-
               </div>
 
               {hasActiveFilters && (
                 <button
                   type="button"
-                  onClick={
-                    clearAllFilters
-                  }
+                  onClick={clearAllFilters}
                   className="text-xs font-semibold text-rose-600 hover:underline"
                 >
                   Clear all
                 </button>
               )}
-
             </div>
 
             {/* =================================================
               SELECTED SUBCATEGORY CHILD FILTER
           ================================================= */}
 
-            {activeSubSubcategories.length >
-              0 ? (
+            {activeSubSubcategories.length > 0 ? (
               <div>
-
                 <div className="mb-3">
-
                   <p className="text-[10px] uppercase tracking-wider font-black text-[#795BCB]">
-                    {
-                      selectedSubcategoryLabel
-                    }
+                    {selectedSubcategoryLabel}
                   </p>
 
                   <h3 className="text-sm font-bold text-slate-900 mt-0.5">
                     Choose an option
                   </h3>
-
                 </div>
 
                 <div className="space-y-1">
-
                   {/* ALL PARENT */}
 
                   <label
-                    className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition ${selectedSubSubcategory ===
-                      "all"
-                      ? "bg-[rgba(121,91,203,0.10)] text-[#795BCB]"
-                      : "hover:bg-slate-50 text-slate-700"
-                      }`}
+                    className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition ${
+                      selectedSubSubcategory === "all"
+                        ? "bg-[rgba(121,91,203,0.10)] text-[#795BCB]"
+                        : "hover:bg-slate-50 text-slate-700"
+                    }`}
                   >
-
                     <input
                       type="checkbox"
-                      checked={
-                        selectedSubSubcategory ===
-                        "all"
-                      }
-                      onChange={() =>
-                        handleSidebarChildChange(
-                          "all",
-                        )
-                      }
+                      checked={selectedSubSubcategory === "all"}
+                      onChange={() => handleSidebarChildChange("all")}
                       className="w-4 h-4 rounded border-slate-300 text-[#795BCB] focus:ring-[#795BCB]"
                     />
 
                     <span className="text-xs font-semibold flex-1">
-                      All{" "}
-                      {
-                        selectedSubcategoryLabel
-                      }
+                      All {selectedSubcategoryLabel}
                     </span>
 
-                    {selectedSubSubcategory ===
-                      "all" && (
-                        <Check className="w-4 h-4 text-[#795BCB]" />
-                      )}
-
+                    {selectedSubSubcategory === "all" && (
+                      <Check className="w-4 h-4 text-[#795BCB]" />
+                    )}
                   </label>
 
                   {/* CHILDREN */}
 
-                  {activeSubSubcategories.map(
-                    (child) => {
-                      const checked =
-                        selectedSubSubcategory ===
-                        child.slug;
+                  {activeSubSubcategories.map((child) => {
+                    const checked = selectedSubSubcategory === child.slug;
 
-                      return (
-                        <label
-                          key={
-                            child.slug
-                          }
-                          className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition ${checked
+                    return (
+                      <label
+                        key={child.slug}
+                        className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition ${
+                          checked
                             ? "bg-[rgba(121,91,203,0.10)] text-[#795BCB]"
                             : "hover:bg-slate-50 text-slate-700"
-                            }`}
-                        >
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() =>
+                            handleSidebarChildChange(
+                              checked ? "all" : child.slug,
+                            )
+                          }
+                          className="w-4 h-4 rounded border-slate-300 text-[#795BCB] focus:ring-[#795BCB]"
+                        />
 
-                          <input
-                            type="checkbox"
-                            checked={
-                              checked
-                            }
-                            onChange={() =>
-                              handleSidebarChildChange(
-                                checked
-                                  ? "all"
-                                  : child.slug,
-                              )
-                            }
-                            className="w-4 h-4 rounded border-slate-300 text-[#795BCB] focus:ring-[#795BCB]"
-                          />
+                        <span className="text-xs font-medium flex-1">
+                          {child.label}
+                        </span>
 
-                          <span className="text-xs font-medium flex-1">
-                            {
-                              child.label
-                            }
-                          </span>
-
-                          {checked && (
-                            <Check className="w-4 h-4 text-[#795BCB]" />
-                          )}
-
-                        </label>
-                      );
-                    },
-                  )}
-
+                        {checked && (
+                          <Check className="w-4 h-4 text-[#795BCB]" />
+                        )}
+                      </label>
+                    );
+                  })}
                 </div>
 
                 {/* BACK */}
 
                 <button
                   type="button"
-                  onClick={
-                    handleAllSubcategorySelect
-                  }
+                  onClick={handleAllSubcategorySelect}
                   className="mt-4 w-full flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-slate-500 hover:text-[#795BCB] border border-slate-200 rounded-xl hover:border-[#795BCB] transition"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
-
-                  All{" "}
-                  {categoryTitle}
+                  All {categoryTitle}
                 </button>
-
               </div>
             ) : (
               <>
@@ -1515,32 +1239,24 @@ export function CategoryCatalog({
               ================================================= */}
 
                 <div>
-
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2.5">
                     Categories
                   </span>
 
                   <ul className="space-y-1.5 text-xs">
-
                     <li>
                       <Link
                         href="/category/all"
-                        className={`flex items-center justify-between p-2 rounded-xl transition ${currentCategorySlug ===
-                          "all"
-                          ? "bg-[rgba(121,91,203,0.10)] text-[#795BCB] font-bold border border-[rgba(121,91,203,0.35)]"
-                          : "text-slate-700 hover:bg-[rgba(121,91,203,0.06)]"
-                          }`}
+                        className={`flex items-center justify-between p-2 rounded-xl transition ${
+                          currentCategorySlug === "all"
+                            ? "bg-[rgba(121,91,203,0.10)] text-[#795BCB] font-bold border border-[rgba(121,91,203,0.35)]"
+                            : "text-slate-700 hover:bg-[rgba(121,91,203,0.06)]"
+                        }`}
                       >
-                        <span>
-                          All Categories
-                        </span>
+                        <span>All Categories</span>
 
                         <span className="text-[11px] text-slate-400 font-normal">
-                          (
-                          {
-                            initialProducts.length
-                          }
-                          )
+                          ({initialProducts.length})
                         </span>
                       </Link>
                     </li>
@@ -1548,168 +1264,104 @@ export function CategoryCatalog({
                     {categories
                       .filter(
                         (cat) =>
-                          cat.slug !==
-                          "hair-color" &&
-                          cat.slug !==
-                          "salon-combos",
+                          cat.slug !== "hair-color" &&
+                          cat.slug !== "salon-combos",
                       )
-                      .sort(
-                        (a, b) => {
-                          const order = [
-                            "haircare",
-                            "skincare",
-                            "machineries",
-                            "accessories",
-                            "furniture",
-                            "disposable",
-                          ];
+                      .sort((a, b) => {
+                        const order = [
+                          "haircare",
+                          "skincare",
+                          "machineries",
+                          "accessories",
+                          "furniture",
+                          "disposable",
+                        ];
 
-                          const aIndex =
-                            order.indexOf(
-                              a.slug,
-                            );
+                        const aIndex = order.indexOf(a.slug);
 
-                          const bIndex =
-                            order.indexOf(
-                              b.slug,
-                            );
+                        const bIndex = order.indexOf(b.slug);
 
-                          return (
-                            (aIndex ===
-                              -1
-                              ? 999
-                              : aIndex) -
-                            (bIndex ===
-                              -1
-                              ? 999
-                              : bIndex)
-                          );
-                        },
-                      )
-                      .map(
-                        (cat) => (
-                          <li
-                            key={
-                              cat.slug
-                            }
-                          >
-                            <Link
-                              href={`/category/${cat.slug}`}
-                              className={`flex items-center justify-between p-2 rounded-xl transition ${currentCategorySlug ===
-                                cat.slug
+                        return (
+                          (aIndex === -1 ? 999 : aIndex) -
+                          (bIndex === -1 ? 999 : bIndex)
+                        );
+                      })
+                      .map((cat) => (
+                        <li key={cat.slug}>
+                          <Link
+                            href={`/category/${cat.slug}`}
+                            className={`flex items-center justify-between p-2 rounded-xl transition ${
+                              currentCategorySlug === cat.slug
                                 ? "bg-[rgba(121,91,203,0.10)] text-[#795BCB] font-bold border border-[rgba(121,91,203,0.35)]"
                                 : "text-slate-700 hover:bg-[rgba(121,91,203,0.06)]"
-                                }`}
-                            >
-                              <span>
-                                {
-                                  cat.name
-                                }
-                              </span>
+                            }`}
+                          >
+                            <span>{cat.name}</span>
 
-                              <span className="text-[11px] text-slate-400 font-normal">
-                                (
-                                {
-                                  cat.productCount ||
-                                  0
-                                }
-                                )
-                              </span>
-                            </Link>
-                          </li>
-                        ),
-                      )}
-
+                            <span className="text-[11px] text-slate-400 font-normal">
+                              ({cat.productCount || 0})
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
                   </ul>
-
                 </div>
 
                 {/* BRANDS */}
 
                 <div className="pt-2 border-t border-slate-100">
-
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2.5">
                     Brand
                   </span>
 
                   <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1 text-xs">
-
                     <button
                       type="button"
-                      onClick={() =>
-                        setSelectedBrand(
-                          "",
-                        )
-                      }
-                      className={`w-full text-left p-1.5 rounded-lg transition flex items-center justify-between ${!selectedBrand
-                        ? "bg-amber-50 text-amber-900 font-bold"
-                        : "text-slate-600 hover:bg-slate-50"
-                        }`}
+                      onClick={() => setSelectedBrand("")}
+                      className={`w-full text-left p-1.5 rounded-lg transition flex items-center justify-between ${
+                        !selectedBrand
+                          ? "bg-amber-50 text-amber-900 font-bold"
+                          : "text-slate-600 hover:bg-slate-50"
+                      }`}
                     >
-                      <span>
-                        All Brands
-                      </span>
+                      <span>All Brands</span>
                     </button>
 
-                    {brands.map(
-                      (brand) => (
-                        <button
-                          key={
-                            brand.name
-                          }
-                          type="button"
-                          onClick={() =>
-                            setSelectedBrand(
-                              selectedBrand ===
-                                brand.name
-                                ? ""
-                                : brand.name,
-                            )
-                          }
-                          className={`w-full text-left p-1.5 rounded-lg transition flex items-center justify-between ${selectedBrand.toLowerCase() ===
-                            brand.name.toLowerCase()
+                    {brands.map((brand) => (
+                      <button
+                        key={brand.name}
+                        type="button"
+                        onClick={() =>
+                          setSelectedBrand(
+                            selectedBrand === brand.name ? "" : brand.name,
+                          )
+                        }
+                        className={`w-full text-left p-1.5 rounded-lg transition flex items-center justify-between ${
+                          selectedBrand.toLowerCase() ===
+                          brand.name.toLowerCase()
                             ? "bg-amber-50 text-amber-900 font-bold border border-amber-200"
                             : "text-slate-600 hover:bg-slate-50"
-                            }`}
-                        >
-                          <span>
-                            {
-                              brand.name
-                            }
-                          </span>
+                        }`}
+                      >
+                        <span>{brand.name}</span>
 
-                          <span className="text-[10px] text-slate-400">
-                            (
-                            {
-                              brand.count
-                            }
-                            )
-                          </span>
-                        </button>
-                      ),
-                    )}
-
+                        <span className="text-[10px] text-slate-400">
+                          ({brand.count})
+                        </span>
+                      </button>
+                    ))}
                   </div>
-
                 </div>
 
                 {/* PRICE */}
 
                 <div className="pt-2 border-t border-slate-100">
-
                   <div className="flex justify-between items-center text-xs font-bold text-slate-700 mb-2">
-
-                    <span>
-                      Max Price
-                    </span>
+                    <span>Max Price</span>
 
                     <span className="text-[#795BCB]">
-                      ₹
-                      {priceRange.toLocaleString(
-                        "en-IN",
-                      )}
+                      ₹{priceRange.toLocaleString("en-IN")}
                     </span>
-
                   </div>
 
                   <input
@@ -1717,175 +1369,102 @@ export function CategoryCatalog({
                     min="100"
                     max="20000"
                     step="100"
-                    value={
-                      priceRange
-                    }
-                    onChange={(e) =>
-                      setPriceRange(
-                        Number(
-                          e.target.value,
-                        ),
-                      )
-                    }
+                    value={priceRange}
+                    onChange={(e) => setPriceRange(Number(e.target.value))}
                     className="w-full accent-[#795BCB] cursor-pointer"
                   />
 
                   <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                    <span>₹100</span>
 
-                    <span>
-                      ₹100
-                    </span>
-
-                    <span>
-                      ₹20,000+
-                    </span>
-
+                    <span>₹20,000+</span>
                   </div>
-
                 </div>
 
                 {/* TOGGLES */}
 
                 <div className="pt-2 border-t border-slate-100 space-y-2.5 text-xs">
-
                   <label className="flex items-center gap-2 cursor-pointer font-medium text-slate-700">
-
                     <input
                       type="checkbox"
-                      checked={
-                        inStockOnly
-                      }
-                      onChange={(e) =>
-                        setInStockOnly(
-                          e.target
-                            .checked,
-                        )
-                      }
+                      checked={inStockOnly}
+                      onChange={(e) => setInStockOnly(e.target.checked)}
                       className="w-4 h-4 rounded text-[#795BCB] focus:ring-[#795BCB]"
                     />
 
-                    <span>
-                      In Stock Only
-                    </span>
-
+                    <span>In Stock Only</span>
                   </label>
 
                   <label className="flex items-center gap-2 cursor-pointer font-medium text-slate-700">
-
                     <input
                       type="checkbox"
-                      checked={
-                        salonProOnly
-                      }
-                      onChange={(e) =>
-                        setSalonProOnly(
-                          e.target
-                            .checked,
-                        )
-                      }
+                      checked={salonProOnly}
+                      onChange={(e) => setSalonProOnly(e.target.checked)}
                       className="w-4 h-4 rounded text-[#795BCB] focus:ring-[#795BCB]"
                     />
 
-                    <span>
-                      Salon Professional
-                      Only
-                    </span>
-
+                    <span>Salon Professional Only</span>
                   </label>
-
                 </div>
               </>
             )}
-
           </aside>
 
           {/* =================================================
             PRODUCT AREA
         ================================================= */}
 
-          <div className="lg:col-span-9 space-y-4">
-
+          <div className="lg:col-span-9 space-y-3 sm:space-y-4 min-w-0">
             {/* TOP CONTROL */}
 
-            <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-end gap-3 shadow-xs">
-
+            <div className="bg-white p-2.5 sm:p-4 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-end gap-2 sm:gap-3 shadow-xs">
               {/* MOBILE FILTER */}
 
               <button
                 type="button"
-                onClick={() =>
-                  setIsMobileFilterOpen(
-                    true,
-                  )
-                }
-                className="lg:hidden px-3.5 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-xs"
+                onClick={() => setIsMobileFilterOpen(true)}
+                className="lg:hidden flex-1 sm:flex-none px-3 py-2.5 sm:py-2 bg-slate-900 text-white rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-2 shadow-xs"
               >
                 <Filter className="w-3.5 h-3.5" />
 
-                <span>
-                  Filters (
-                  {hasActiveFilters
-                    ? "Active"
-                    : "All"}
-                  )
-                </span>
+                <span>Filters ({hasActiveFilters ? "Active" : "All"})</span>
               </button>
 
               {/* SORT */}
 
-              <div className="flex items-center gap-2 text-xs text-slate-600">
-
+              <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-slate-600">
                 <span className="font-semibold whitespace-nowrap">
                   Sort by:
                 </span>
 
                 <select
-                  value={
-                    selectedSort
-                  }
-                  onChange={(e) =>
-                    setSelectedSort(
-                      e.target.value,
-                    )
-                  }
-                  className="bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#795BCB] focus:border-[#795BCB] cursor-pointer min-w-[145px]"
+                  value={selectedSort}
+                  onChange={(e) => setSelectedSort(e.target.value)}
+                  className="bg-white border border-slate-300 rounded-xl px-2.5 sm:px-3 py-2 text-[11px] sm:text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#795BCB] focus:border-[#795BCB] cursor-pointer min-w-[125px] sm:min-w-[145px]"
                 >
-                  <option value="featured">
-                    Featured
-                  </option>
+                  <option value="featured">Featured</option>
 
-                  <option value="price-asc">
-                    Price: Low to High
-                  </option>
+                  <option value="price-asc">Price: Low to High</option>
 
-                  <option value="price-desc">
-                    Price: High to Low
-                  </option>
+                  <option value="price-desc">Price: High to Low</option>
 
-                  <option value="rating">
-                    Top Customer Rated
-                  </option>
+                  <option value="rating">Top Customer Rated</option>
 
-                  <option value="discount">
-                    Biggest Discount
-                  </option>
+                  <option value="discount">Biggest Discount</option>
                 </select>
-
               </div>
 
               {/* GRID */}
 
               <div className="hidden sm:flex items-center border border-slate-200 rounded-xl p-0.5 bg-slate-50">
-
                 <button
                   type="button"
-                  onClick={() =>
-                    setGridCols(3)
-                  }
-                  className={`p-1.5 rounded-lg transition ${gridCols === 3
-                    ? "bg-white text-slate-900 shadow-xs"
-                    : "text-slate-400 hover:text-slate-700"
-                    }`}
+                  onClick={() => setGridCols(3)}
+                  className={`p-1.5 rounded-lg transition ${
+                    gridCols === 3
+                      ? "bg-white text-slate-900 shadow-xs"
+                      : "text-slate-400 hover:text-slate-700"
+                  }`}
                   aria-label="3 Columns"
                 >
                   <Grid3X3 className="w-4 h-4" />
@@ -1893,190 +1472,134 @@ export function CategoryCatalog({
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setGridCols(4)
-                  }
-                  className={`p-1.5 rounded-lg transition ${gridCols === 4
-                    ? "bg-white text-slate-900 shadow-xs"
-                    : "text-slate-400 hover:text-slate-700"
-                    }`}
+                  onClick={() => setGridCols(4)}
+                  className={`p-1.5 rounded-lg transition ${
+                    gridCols === 4
+                      ? "bg-white text-slate-900 shadow-xs"
+                      : "text-slate-400 hover:text-slate-700"
+                  }`}
                   aria-label="4 Columns"
                 >
                   <LayoutGrid className="w-4 h-4" />
                 </button>
-
               </div>
-
             </div>
 
             {/* =================================================
               ACTIVE FILTER PILLS
           ================================================= */}
 
-            {(selectedSubcategory !==
-              "all" ||
-              selectedSubSubcategory !==
-              "all" ||
+            {(selectedSubcategory !== "all" ||
+              selectedSubSubcategory !== "all" ||
               selectedBrand ||
               inStockOnly ||
               salonProOnly ||
               searchQuery) && (
-                <div className="flex flex-wrap items-center gap-1.5 text-xs">
+              <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                {/* PARENT */}
 
-                  {/* PARENT */}
+                {selectedSubcategory !== "all" && (
+                  <span className="bg-purple-100 text-purple-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    {selectedSubcategoryLabel}
 
-                  {selectedSubcategory !==
-                    "all" && (
-                      <span className="bg-purple-100 text-purple-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={handleAllSubcategorySelect}
+                      className="hover:text-rose-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                )}
 
-                        {
-                          selectedSubcategoryLabel
-                        }
+                {/* CHILD */}
 
-                        <button
-                          type="button"
-                          onClick={
-                            handleAllSubcategorySelect
-                          }
-                          className="hover:text-rose-600"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
+                {selectedSubSubcategory !== "all" && (
+                  <span className="bg-purple-100 text-purple-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    {selectedSubSubcategoryLabel || selectedSubSubcategory}
 
-                      </span>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedSubSubcategory("all");
 
-                  {/* CHILD */}
+                        updateCategoryParams(selectedSubcategory, "all");
+                      }}
+                      className="hover:text-rose-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                )}
 
-                  {selectedSubSubcategory !==
-                    "all" && (
-                      <span className="bg-purple-100 text-purple-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                {/* BRAND */}
 
-                        {
-                          selectedSubSubcategoryLabel ||
-                          selectedSubSubcategory
-                        }
+                {selectedBrand && (
+                  <span className="bg-amber-100 text-amber-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    Brand: {selectedBrand}
+                    <button
+                      type="button"
+                      onClick={() => setSelectedBrand("")}
+                      className="hover:text-rose-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                )}
 
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedSubSubcategory(
-                              "all",
-                            );
+                {/* STOCK */}
 
-                            updateCategoryParams(
-                              selectedSubcategory,
-                              "all",
-                            );
-                          }}
-                          className="hover:text-rose-600"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
+                {inStockOnly && (
+                  <span className="bg-emerald-100 text-emerald-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    In Stock Only
+                    <button
+                      type="button"
+                      onClick={() => setInStockOnly(false)}
+                      className="hover:text-rose-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                )}
 
-                      </span>
-                    )}
+                {/* SALON PRO */}
 
-                  {/* BRAND */}
+                {salonProOnly && (
+                  <span className="bg-purple-100 text-purple-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    Salon Pro
+                    <button
+                      type="button"
+                      onClick={() => setSalonProOnly(false)}
+                      className="hover:text-rose-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                )}
 
-                  {selectedBrand && (
-                    <span className="bg-amber-100 text-amber-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                {/* SEARCH */}
 
-                      Brand:{" "}
-                      {selectedBrand}
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setSelectedBrand(
-                            "",
-                          )
-                        }
-                        className="hover:text-rose-600"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-
-                    </span>
-                  )}
-
-                  {/* STOCK */}
-
-                  {inStockOnly && (
-                    <span className="bg-emerald-100 text-emerald-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
-
-                      In Stock Only
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setInStockOnly(
-                            false,
-                          )
-                        }
-                        className="hover:text-rose-600"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-
-                    </span>
-                  )}
-
-                  {/* SALON PRO */}
-
-                  {salonProOnly && (
-                    <span className="bg-purple-100 text-purple-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
-
-                      Salon Pro
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setSalonProOnly(
-                            false,
-                          )
-                        }
-                        className="hover:text-rose-600"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-
-                    </span>
-                  )}
-
-                  {/* SEARCH */}
-
-                  {searchQuery && (
-                    <span className="bg-blue-100 text-blue-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
-
-                      "{searchQuery}"
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setSearchQuery(
-                            "",
-                          )
-                        }
-                        className="hover:text-rose-600"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-
-                    </span>
-                  )}
-
-                </div>
-              )}
+                {searchQuery && (
+                  <span className="bg-blue-100 text-blue-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    "{searchQuery}"
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery("")}
+                      className="hover:text-rose-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* =================================================
               PRODUCTS
           ================================================= */}
 
-            {filteredProducts.length ===
-              0 ? (
-              <div className="bg-white rounded-3xl p-12 text-center border border-slate-200">
-
+            {filteredProducts.length === 0 ? (
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center border border-slate-200">
                 <div className="w-16 h-16 bg-white text-[#795BCB] rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Search className="w-8 h-8" />
                 </div>
@@ -2086,47 +1609,31 @@ export function CategoryCatalog({
                 </h3>
 
                 <p className="text-xs text-slate-500 max-w-sm mx-auto mb-6">
-                  Try adjusting your
-                  search, selected
-                  brand, price filter,
-                  or subcategory.
+                  Try adjusting your search, selected brand, price filter, or
+                  subcategory.
                 </p>
 
                 <button
                   type="button"
-                  onClick={
-                    clearAllFilters
-                  }
+                  onClick={clearAllFilters}
                   className="px-6 py-2.5 bg-slate-900 hover:bg-black text-white text-xs font-bold rounded-xl transition"
                 >
                   Reset All Filters
                 </button>
-
               </div>
             ) : (
               <div
-                className={`grid gap-4 sm:gap-5 ${gridCols === 3
-                  ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-3"
-                  : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                  }`}
+                className={`grid gap-3 sm:gap-5 ${
+                  gridCols === 3
+                    ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-3"
+                    : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                }`}
               >
-
-                {filteredProducts.map(
-                  (product) => (
-                    <ProductCard
-                      key={
-                        product.id
-                      }
-                      product={
-                        product
-                      }
-                    />
-                  ),
-                )}
-
+                {filteredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
               </div>
             )}
-
           </div>
         </div>
       </div>
@@ -2135,150 +1642,95 @@ export function CategoryCatalog({
           SUB-SUBCATEGORY POPUP
       ===================================================== */}
 
-      {isSubSubcategoryPopupOpen &&
-        popupSubcategory && (
+      {isSubSubcategoryPopupOpen && popupSubcategory && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+          onClick={() => setIsSubSubcategoryPopupOpen(false)}
+        >
+          <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" />
+
           <div
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-            onClick={() =>
-              setIsSubSubcategoryPopupOpen(
-                false,
-              )
-            }
+            className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden"
+            onClick={(event) => event.stopPropagation()}
           >
+            {/* POPUP HEADER */}
 
-            <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" />
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+              <div>
+                <p className="text-[10px] uppercase tracking-wider font-black text-[#795BCB]">
+                  Select from
+                </p>
 
-            <div
-              className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden"
-              onClick={(event) =>
-                event.stopPropagation()
-              }
-            >
-
-              {/* POPUP HEADER */}
-
-              <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-
-                <div>
-
-                  <p className="text-[10px] uppercase tracking-wider font-black text-[#795BCB]">
-                    Select from
-                  </p>
-
-                  <h3 className="text-lg font-black text-slate-900">
-                    {
-                      popupSubcategory.label
-                    }
-                  </h3>
-
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsSubSubcategoryPopupOpen(
-                      false,
-                    );
-                    setPopupSubcategory(
-                      null,
-                    );
-                  }}
-                  className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-
+                <h3 className="text-lg font-black text-slate-900">
+                  {popupSubcategory.label}
+                </h3>
               </div>
 
-              {/* POPUP OPTIONS */}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSubSubcategoryPopupOpen(false);
+                  setPopupSubcategory(null);
+                }}
+                className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
 
-              <div className="p-4 max-h-[65vh] overflow-y-auto">
+            {/* POPUP OPTIONS */}
 
-                {/* ALL PARENT */}
+            <div className="p-4 max-h-[65vh] overflow-y-auto">
+              {/* ALL PARENT */}
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleSubSubcategorySelect(
-                      "all",
-                    )
-                  }
-                  className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl border mb-2 transition ${selectedSubcategory ===
-                    popupSubcategory.slug &&
-                    selectedSubSubcategory ===
-                    "all"
+              <button
+                type="button"
+                onClick={() => handleSubSubcategorySelect("all")}
+                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl border mb-2 transition ${
+                  selectedSubcategory === popupSubcategory.slug &&
+                  selectedSubSubcategory === "all"
                     ? "border-[#795BCB] bg-purple-50 text-[#795BCB]"
                     : "border-slate-200 hover:border-[#795BCB] hover:bg-purple-50"
+                }`}
+              >
+                <span className="text-sm font-semibold">
+                  All {popupSubcategory.label}
+                </span>
+
+                {selectedSubcategory === popupSubcategory.slug &&
+                  selectedSubSubcategory === "all" && (
+                    <Check className="w-4 h-4 text-[#795BCB]" />
+                  )}
+              </button>
+
+              {/* CHILD OPTIONS */}
+
+              {(SUBSUBCATEGORIES[popupSubcategory.slug] || []).map((child) => {
+                const isSelected =
+                  selectedSubcategory === popupSubcategory.slug &&
+                  selectedSubSubcategory === child.slug;
+
+                return (
+                  <button
+                    key={child.slug}
+                    type="button"
+                    onClick={() => handleSubSubcategorySelect(child.slug)}
+                    className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl border mb-2 transition text-left ${
+                      isSelected
+                        ? "border-[#795BCB] bg-purple-50 text-[#795BCB]"
+                        : "border-slate-200 hover:border-[#795BCB] hover:bg-purple-50 text-slate-700"
                     }`}
-                >
+                  >
+                    <span className="text-sm font-semibold">{child.label}</span>
 
-                  <span className="text-sm font-semibold">
-                    All{" "}
-                    {
-                      popupSubcategory.label
-                    }
-                  </span>
-
-                  {selectedSubcategory ===
-                    popupSubcategory.slug &&
-                    selectedSubSubcategory ===
-                    "all" && (
-                      <Check className="w-4 h-4 text-[#795BCB]" />
-                    )}
-
-                </button>
-
-                {/* CHILD OPTIONS */}
-
-                {(
-                  SUBSUBCATEGORIES[
-                  popupSubcategory
-                    .slug
-                  ] || []
-                ).map(
-                  (child) => {
-                    const isSelected =
-                      selectedSubcategory ===
-                      popupSubcategory.slug &&
-                      selectedSubSubcategory ===
-                      child.slug;
-
-                    return (
-                      <button
-                        key={
-                          child.slug
-                        }
-                        type="button"
-                        onClick={() =>
-                          handleSubSubcategorySelect(
-                            child.slug,
-                          )
-                        }
-                        className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl border mb-2 transition text-left ${isSelected
-                          ? "border-[#795BCB] bg-purple-50 text-[#795BCB]"
-                          : "border-slate-200 hover:border-[#795BCB] hover:bg-purple-50 text-slate-700"
-                          }`}
-                      >
-
-                        <span className="text-sm font-semibold">
-                          {
-                            child.label
-                          }
-                        </span>
-
-                        {isSelected && (
-                          <Check className="w-4 h-4 text-[#795BCB]" />
-                        )}
-
-                      </button>
-                    );
-                  },
-                )}
-
-              </div>
+                    {isSelected && <Check className="w-4 h-4 text-[#795BCB]" />}
+                  </button>
+                );
+              })}
             </div>
           </div>
-        )}
+        </div>
+      )}
 
       {/* =====================================================
           MOBILE FILTER
@@ -2286,273 +1738,171 @@ export function CategoryCatalog({
 
       {isMobileFilterOpen && (
         <div className="fixed inset-0 z-50 lg:hidden flex">
-
           <div
             className="fixed inset-0 bg-black/60 backdrop-blur-xs"
-            onClick={() =>
-              setIsMobileFilterOpen(
-                false,
-              )
-            }
+            onClick={() => setIsMobileFilterOpen(false)}
           />
 
-          <div className="relative ml-auto w-full max-w-xs bg-white h-full p-6 shadow-2xl flex flex-col justify-between overflow-y-auto">
-
+          <div className="relative ml-auto w-full max-w-sm bg-white h-full p-4 sm:p-6 shadow-2xl flex flex-col justify-between overflow-y-auto">
             <div>
-
               {/* HEADER */}
 
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
-
+              <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100 mb-4">
                 <span className="font-bold text-slate-900 text-sm">
                   Filter Products
                 </span>
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setIsMobileFilterOpen(
-                      false,
-                    )
-                  }
-                  className="p-1.5 text-slate-400 hover:text-slate-700"
+                  onClick={() => setIsMobileFilterOpen(false)}
+                  className="p-2 -mr-1 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100"
                 >
                   <X className="w-5 h-5" />
                 </button>
-
               </div>
 
               {/* MOBILE SUBCATEGORY */}
 
               <div className="mb-6">
-
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
                   Subcategory
                 </span>
 
                 <div className="space-y-1.5">
-
                   <button
                     type="button"
-                    onClick={
-                      handleAllSubcategorySelect
-                    }
-                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium ${selectedSubcategory ===
-                      "all"
-                      ? "bg-purple-100 text-[#795BCB] font-bold"
-                      : "text-slate-700"
-                      }`}
+                    onClick={handleAllSubcategorySelect}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium ${
+                      selectedSubcategory === "all"
+                        ? "bg-purple-100 text-[#795BCB] font-bold"
+                        : "text-slate-700"
+                    }`}
                   >
-                    All{" "}
-                    {categoryTitle}
+                    All {categoryTitle}
                   </button>
 
-                  {availableSubcategories.map(
-                    (subcategory) => (
-                      <button
-                        key={
-                          subcategory.slug
-                        }
-                        type="button"
-                        onClick={() =>
-                          handleSubcategoryClick(
-                            subcategory,
-                          )
-                        }
-                        className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between ${selectedSubcategory ===
-                          subcategory.slug
+                  {availableSubcategories.map((subcategory) => (
+                    <button
+                      key={subcategory.slug}
+                      type="button"
+                      onClick={() => handleSubcategoryClick(subcategory)}
+                      className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between ${
+                        selectedSubcategory === subcategory.slug
                           ? "bg-purple-100 text-[#795BCB] font-bold"
                           : "text-slate-700"
-                          }`}
-                      >
+                      }`}
+                    >
+                      <span>{subcategory.label}</span>
 
-                        <span>
-                          {
-                            subcategory.label
-                          }
-                        </span>
-
-                        {SUBSUBCATEGORIES[
-                          subcategory
-                            .slug
-                        ]?.length ? (
-                          <ChevronRight className="w-3.5 h-3.5" />
-                        ) : null}
-
-                      </button>
-                    ),
-                  )}
-
+                      {SUBSUBCATEGORIES[subcategory.slug]?.length ? (
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      ) : null}
+                    </button>
+                  ))}
                 </div>
-
               </div>
 
               {/* MOBILE CHILD FILTER */}
 
-              {activeSubSubcategories.length >
-                0 && (
-                  <div className="mb-6">
+              {activeSubSubcategories.length > 0 && (
+                <div className="mb-6">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
+                    {selectedSubcategoryLabel}
+                  </span>
 
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
-                      {
-                        selectedSubcategoryLabel
-                      }
-                    </span>
+                  <div className="space-y-1.5">
+                    <label className="flex items-center gap-2 p-2 rounded-lg">
+                      <input
+                        type="checkbox"
+                        checked={selectedSubSubcategory === "all"}
+                        onChange={() => handleSidebarChildChange("all")}
+                        className="w-4 h-4 rounded text-[#795BCB]"
+                      />
 
-                    <div className="space-y-1.5">
+                      <span className="text-xs font-medium">
+                        All {selectedSubcategoryLabel}
+                      </span>
+                    </label>
 
-                      <label className="flex items-center gap-2 p-2 rounded-lg">
-
+                    {activeSubSubcategories.map((child) => (
+                      <label
+                        key={child.slug}
+                        className="flex items-center gap-2 p-2 rounded-lg"
+                      >
                         <input
                           type="checkbox"
-                          checked={
-                            selectedSubSubcategory ===
-                            "all"
-                          }
+                          checked={selectedSubSubcategory === child.slug}
                           onChange={() =>
                             handleSidebarChildChange(
-                              "all",
+                              selectedSubSubcategory === child.slug
+                                ? "all"
+                                : child.slug,
                             )
                           }
                           className="w-4 h-4 rounded text-[#795BCB]"
                         />
 
                         <span className="text-xs font-medium">
-                          All{" "}
-                          {
-                            selectedSubcategoryLabel
-                          }
+                          {child.label}
                         </span>
-
                       </label>
-
-                      {activeSubSubcategories.map(
-                        (child) => (
-                          <label
-                            key={
-                              child.slug
-                            }
-                            className="flex items-center gap-2 p-2 rounded-lg"
-                          >
-
-                            <input
-                              type="checkbox"
-                              checked={
-                                selectedSubSubcategory ===
-                                child.slug
-                              }
-                              onChange={() =>
-                                handleSidebarChildChange(
-                                  selectedSubSubcategory ===
-                                    child.slug
-                                    ? "all"
-                                    : child.slug,
-                                )
-                              }
-                              className="w-4 h-4 rounded text-[#795BCB]"
-                            />
-
-                            <span className="text-xs font-medium">
-                              {
-                                child.label
-                              }
-                            </span>
-
-                          </label>
-                        ),
-                      )}
-
-                    </div>
-
+                    ))}
                   </div>
-                )}
+                </div>
+              )}
 
               {/* BRAND */}
 
               <div className="mb-6">
-
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
                   Select Brand
                 </span>
 
                 <div className="space-y-1.5 max-h-44 overflow-y-auto">
-
                   <button
                     type="button"
-                    onClick={() =>
-                      setSelectedBrand(
-                        "",
-                      )
-                    }
-                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium ${!selectedBrand
-                      ? "bg-amber-100 text-amber-900 font-bold"
-                      : "text-slate-700"
-                      }`}
+                    onClick={() => setSelectedBrand("")}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium ${
+                      !selectedBrand
+                        ? "bg-amber-100 text-amber-900 font-bold"
+                        : "text-slate-700"
+                    }`}
                   >
                     All Brands
                   </button>
 
-                  {brands.map(
-                    (brand) => (
-                      <button
-                        key={
-                          brand.name
-                        }
-                        type="button"
-                        onClick={() =>
-                          setSelectedBrand(
-                            selectedBrand ===
-                              brand.name
-                              ? ""
-                              : brand.name,
-                          )
-                        }
-                        className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex justify-between ${selectedBrand ===
-                          brand.name
+                  {brands.map((brand) => (
+                    <button
+                      key={brand.name}
+                      type="button"
+                      onClick={() =>
+                        setSelectedBrand(
+                          selectedBrand === brand.name ? "" : brand.name,
+                        )
+                      }
+                      className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex justify-between ${
+                        selectedBrand === brand.name
                           ? "bg-amber-100 text-amber-900 font-bold"
                           : "text-slate-700"
-                          }`}
-                      >
+                      }`}
+                    >
+                      <span>{brand.name}</span>
 
-                        <span>
-                          {
-                            brand.name
-                          }
-                        </span>
-
-                        <span className="text-slate-400">
-                          (
-                          {
-                            brand.count
-                          }
-                          )
-                        </span>
-
-                      </button>
-                    ),
-                  )}
-
+                      <span className="text-slate-400">({brand.count})</span>
+                    </button>
+                  ))}
                 </div>
-
               </div>
 
               {/* PRICE */}
 
               <div className="mb-6">
-
                 <div className="flex justify-between text-xs font-bold text-slate-700 mb-1">
-
-                  <span>
-                    Max Price
-                  </span>
+                  <span>Max Price</span>
 
                   <span className="text-[#795BCB]">
-                    ₹
-                    {priceRange.toLocaleString(
-                      "en-IN",
-                    )}
+                    ₹{priceRange.toLocaleString("en-IN")}
                   </span>
-
                 </div>
 
                 <input
@@ -2560,109 +1910,61 @@ export function CategoryCatalog({
                   min="100"
                   max="20000"
                   step="100"
-                  value={
-                    priceRange
-                  }
-                  onChange={(e) =>
-                    setPriceRange(
-                      Number(
-                        e.target.value,
-                      ),
-                    )
-                  }
+                  value={priceRange}
+                  onChange={(e) => setPriceRange(Number(e.target.value))}
                   className="w-full accent-[#795BCB]"
                 />
-
               </div>
 
               {/* TOGGLES */}
 
               <div className="space-y-2 text-xs font-medium text-slate-700">
-
                 <label className="flex items-center gap-2">
-
                   <input
                     type="checkbox"
-                    checked={
-                      inStockOnly
-                    }
-                    onChange={(e) =>
-                      setInStockOnly(
-                        e.target
-                          .checked,
-                      )
-                    }
+                    checked={inStockOnly}
+                    onChange={(e) => setInStockOnly(e.target.checked)}
                     className="w-4 h-4 rounded text-[#795BCB]"
                   />
 
-                  <span>
-                    In Stock Only
-                  </span>
-
+                  <span>In Stock Only</span>
                 </label>
 
                 <label className="flex items-center gap-2">
-
                   <input
                     type="checkbox"
-                    checked={
-                      salonProOnly
-                    }
-                    onChange={(e) =>
-                      setSalonProOnly(
-                        e.target
-                          .checked,
-                      )
-                    }
+                    checked={salonProOnly}
+                    onChange={(e) => setSalonProOnly(e.target.checked)}
                     className="w-4 h-4 rounded text-[#795BCB]"
                   />
 
-                  <span>
-                    Salon Pro Only
-                  </span>
-
+                  <span>Salon Pro Only</span>
                 </label>
-
               </div>
-
             </div>
 
             {/* MOBILE ACTIONS */}
 
-            <div className="pt-4 border-t border-slate-100 space-y-2">
-
+            <div className="pt-3 sm:pt-4 border-t border-slate-100 space-y-2">
               <button
                 type="button"
-                onClick={() =>
-                  setIsMobileFilterOpen(
-                    false,
-                  )
-                }
+                onClick={() => setIsMobileFilterOpen(false)}
                 className="w-full py-3 bg-[#795BCB] hover:bg-[#6246B0] text-white font-bold rounded-xl text-xs transition"
               >
-                Apply Filters (
-                {
-                  filteredProducts.length
-                }{" "}
-                Results)
+                Apply Filters ({filteredProducts.length} Results)
               </button>
 
               <button
                 type="button"
-                onClick={
-                  clearAllFilters
-                }
+                onClick={clearAllFilters}
                 className="w-full py-2 bg-slate-100 text-slate-700 font-semibold rounded-xl text-xs transition"
               >
                 Reset All
               </button>
-
             </div>
-
           </div>
         </div>
       )}
-
     </div>
   );
 }

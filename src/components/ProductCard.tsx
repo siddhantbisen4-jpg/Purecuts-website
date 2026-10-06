@@ -3,7 +3,15 @@ import { getProductPrice } from "@/lib/pricing";
 import React from "react";
 import { Product } from "@/lib/types";
 import { useStore } from "@/context/StoreContext";
-import { Star, Heart, Eye, ShoppingBag, Plus, Minus, Check } from "lucide-react";
+import {
+  Star,
+  Heart,
+  Eye,
+  ShoppingBag,
+  Plus,
+  Minus,
+  Check,
+} from "lucide-react";
 import Link from "next/link";
 
 interface ProductCardProps {
@@ -21,10 +29,7 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
     openQuickView,
     customerRegion,
   } = useStore();
-  const displayPrice = getProductPrice(
-    product.price,
-    customerRegion
-  );
+  const displayPrice = getProductPrice(product.price, customerRegion);
 
   const inWish = isInWishlist(product.id);
   const cartItem = cart.find((item) => item.productId === product.id);
@@ -52,22 +57,27 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
             e.stopPropagation();
             toggleWishlist(product.id);
           }}
-          className={`absolute top-2 right-2 sm:top-2.5 sm:right-2.5 z-10 p-1.5 sm:p-2 rounded-full backdrop-blur-xs transition shadow-xs ${inWish
-            ? "bg-rose-50 text-rose-600 ring-1 ring-rose-200"
-            : "bg-white/90 text-slate-400 hover:text-rose-600 hover:bg-white"
-            }`}
+          className={`absolute top-2 right-2 sm:top-2.5 sm:right-2.5 z-10 p-1.5 sm:p-2 rounded-full backdrop-blur-xs transition shadow-xs ${
+            inWish
+              ? "bg-rose-50 text-rose-600 ring-1 ring-rose-200"
+              : "bg-white/90 text-slate-400 hover:text-rose-600 hover:bg-white"
+          }`}
           aria-label={inWish ? "Remove from wishlist" : "Add to wishlist"}
         >
-          <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${inWish ? "fill-rose-500 text-rose-500" : ""}`} />
+          <Heart
+            className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${inWish ? "fill-rose-500 text-rose-500" : ""}`}
+          />
         </button>
 
         {/* Product Image */}
-        <Link href={`/product/${product.slug}`} className="w-full h-full flex items-center justify-center">
+        <Link
+          href={`/product/${product.slug}`}
+          className="w-full h-full flex items-center justify-center"
+        >
           <img
             src={product.image}
             alt={product.name}
-            className="max-h-[135px] sm:max-h-[190px] w-auto object-contain transition-transform duration-500 group-hover:scale-108"
-            loading="lazy"
+            className="max-h-[125px] sm:max-h-[190px] lg:max-h-[210px] w-auto max-w-[85%] object-contain transition-transform duration-500 group-hover:scale-105"
           />
         </Link>
 
@@ -85,33 +95,35 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
       </div>
 
       {/* Content Area */}
-      <div className="p-2.5 sm:p-4 flex flex-col flex-1">
+      <div className="p-2 sm:p-4 flex flex-col flex-1">
         {/* Brand & Rating Row */}
-        <div className="flex items-center justify-between mb-1 text-xs">
-          <span className="font-bold text-[9px] uppercase tracking-wider text-slate-800 bg-slate-100 px-1.5 sm:px-2 py-0.5 rounded truncate max-w-[90px] sm:max-w-none">
+        <div className="flex items-center justify-between gap-1 mb-1 text-xs min-w-0">
+          <span className="font-bold text-[8px] sm:text-[9px] uppercase tracking-wider text-slate-800 bg-slate-100 px-1.5 sm:px-2 py-0.5 rounded truncate max-w-[75px] sm:max-w-[120px] lg:max-w-none">
             {product.brand}
           </span>
           <div className="flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-slate-700 bg-slate-100 px-1 sm:px-1.5 py-0.5 rounded shrink-0">
             <span>{product.rating || "4.8"}</span>
             <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-            <span className="text-slate-400 text-[9px] sm:text-[10px]">({product.reviewCount || 18})</span>
+            <span className="text-slate-400 text-[9px] sm:text-[10px]">
+              ({product.reviewCount || 18})
+            </span>
           </div>
         </div>
 
         {/* Title */}
         <Link
           href={`/product/${product.slug}`}
-          className="text-xs sm:text-sm font-semibold text-slate-800 hover:text-amber-600 transition line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] mt-1 mb-2 leading-snug flex-1"
+          className="text-[11px] sm:text-sm font-semibold text-slate-800 hover:text-amber-600 transition line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] mt-1 mb-2 leading-snug flex-1"
           title={product.name}
         >
           {product.name}
         </Link>
 
         {/* Price & Action Row */}
-        <div className="mt-auto pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5 sm:gap-2">
+        <div className="mt-auto pt-2 border-t border-slate-100 flex items-end justify-between gap-1.5 sm:gap-2 min-w-0">
           <div className="min-w-0">
             <div className="flex items-baseline gap-1 sm:gap-1.5 flex-wrap">
-              <span className="text-sm sm:text-lg font-extrabold text-slate-950">
+              <span className="text-[13px] sm:text-lg lg:text-xl font-extrabold text-slate-950">
                 ₹{displayPrice.toLocaleString("en-IN")}
               </span>
 
@@ -150,8 +162,7 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
             <button
               type="button"
               onClick={() => addToCart(product, 1)}
-              className="px-2.5 sm:px-3 py-1.5 bg-slate-900 hover:bg-[#795BCB] hover:text-white text-white text-xs font-bold rounded-xl transition duration-200 flex items-center gap-1 sm:gap-1.5 shadow-xs shrink-0"
-              aria-label="Add to cart"
+              className="px-2 sm:px-3 py-1.5 bg-slate-900 hover:bg-[#795BCB] hover:text-white text-white text-[11px] sm:text-xs font-bold rounded-xl transition duration-200 flex items-center gap-1 sm:gap-1.5 shadow-xs shrink-0"
             >
               <ShoppingBag className="w-3.5 h-3.5" />
               <span>Add</span>

@@ -1,7 +1,10 @@
-import "dotenv/config";
-import { seedDatabase } from "./seed";
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local" });
 
 async function main() {
+  const { seedDatabase } = await import("./seed");
+
   console.log("Starting seed runner...");
   await seedDatabase();
   console.log("Finished seed runner!");
