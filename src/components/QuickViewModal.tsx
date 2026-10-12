@@ -6,25 +6,25 @@ import { X, Star, ShoppingBag, Heart, Check, Truck, ShieldCheck, Zap, ArrowRight
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {getProductPrice} from "@/lib/pricing";
+import { getProductPrice } from "@/lib/pricing";
 export function QuickViewModal() {
   const {
-  quickViewProduct,
-  closeQuickView,
-  addToCart,
-  isInWishlist,
-  toggleWishlist,
-  openCart,
-  customerRegion,
-} = useStore();
+    quickViewProduct,
+    closeQuickView,
+    addToCart,
+    isInWishlist,
+    toggleWishlist,
+    openCart,
+    customerRegion,
+  } = useStore();
   const [qty, setQty] = useState(1);
   const router = useRouter();
 
   if (!quickViewProduct) return null;
   const displayPrice = getProductPrice(
-  quickViewProduct.price,
-  customerRegion
-);
+    quickViewProduct.price,
+    customerRegion
+  );
   const inWish = isInWishlist(quickViewProduct.id);
 
   const handleAddToCart = () => {
@@ -71,9 +71,8 @@ export function QuickViewModal() {
               </span>
               <button
                 onClick={() => toggleWishlist(quickViewProduct.id)}
-                className={`p-2 rounded-full border transition ${
-                  inWish ? "text-rose-500 border-rose-200 bg-rose-50" : "text-slate-400 border-slate-200 hover:text-rose-500"
-                }`}
+                className={`p-2 rounded-full border transition ${inWish ? "text-rose-500 border-rose-200 bg-rose-50" : "text-slate-400 border-slate-200 hover:text-rose-500"
+                  }`}
               >
                 <Heart className={`w-4 h-4 ${inWish ? "fill-rose-500" : ""}`} />
               </button>
@@ -83,7 +82,7 @@ export function QuickViewModal() {
               {quickViewProduct.name}
             </h3>
 
-            {/* Rating */}
+            {/* Rating 
             <div className="flex items-center gap-2 mb-3">
               <div className="flex items-center bg-emerald-600 text-white text-xs font-bold px-2 py-0.5 rounded-md">
                 <span>{quickViewProduct.rating || "4.8"}</span>
@@ -95,29 +94,29 @@ export function QuickViewModal() {
               <span className="text-xs text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md font-semibold">
                 In Stock
               </span>
+            </div>*/}
+
+            {/* Pricing */}
+            {/* Pricing */}
+            {/* Pricing */}
+            <div className="flex items-baseline gap-3 mb-4">
+              <span className="text-2xl font-extrabold text-slate-900">
+                ₹{displayPrice.toLocaleString("en-IN")}
+              </span>
+
+              {quickViewProduct.originalPrice > displayPrice && (
+                <span className="text-sm text-slate-400 line-through">
+                  ₹{quickViewProduct.originalPrice.toLocaleString("en-IN")}
+                </span>
+              )}
+
+              {quickViewProduct.originalPrice > displayPrice && (
+                <span className="text-xs text-rose-600 font-bold bg-rose-50 px-2 py-0.5 rounded-md">
+                  Save ₹
+                  {(quickViewProduct.originalPrice - displayPrice).toLocaleString("en-IN")}
+                </span>
+              )}
             </div>
-
-            {/* Pricing */}
-            {/* Pricing */}
-{/* Pricing */}
-<div className="flex items-baseline gap-3 mb-4">
-  <span className="text-2xl font-extrabold text-slate-900">
-    ₹{displayPrice.toLocaleString("en-IN")}
-  </span>
-
-  {quickViewProduct.originalPrice > displayPrice && (
-    <span className="text-sm text-slate-400 line-through">
-      ₹{quickViewProduct.originalPrice.toLocaleString("en-IN")}
-    </span>
-  )}
-
-  {quickViewProduct.originalPrice > displayPrice && (
-    <span className="text-xs text-rose-600 font-bold bg-rose-50 px-2 py-0.5 rounded-md">
-      Save ₹
-      {(quickViewProduct.originalPrice - displayPrice).toLocaleString("en-IN")}
-    </span>
-  )}
-</div>
 
             {/* Highlights */}
             {quickViewProduct.highlights && quickViewProduct.highlights.length > 0 && (
@@ -165,17 +164,17 @@ export function QuickViewModal() {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl transition text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-xs"
+                  className="w-full py-2.5 bg-[#7950F2] hover:bg-[#7950F2] text-white font-bold rounded-xl transition text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-xs"
                 >
-                  <ShoppingBag className="w-4 h-4" /> Add to Cart
+                  <ShoppingBag className="w-4 h-4 text-white" /> Add to Cart
                 </button>
-                <button
+                {/*<button
                   type="button"
                   onClick={handleBuyNow}
                   className="w-full py-2.5 bg-slate-900 hover:bg-black text-white font-bold rounded-xl transition text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-xs"
                 >
                   <Zap className="w-4 h-4 text-amber-400" /> Buy Now
-                </button>
+                </button>*/}
               </div>
 
               <div className="pt-2 flex items-center justify-between text-xs">

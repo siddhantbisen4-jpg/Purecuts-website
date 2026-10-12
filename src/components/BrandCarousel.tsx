@@ -23,12 +23,12 @@ export function BrandCarousel() {
       <div className="bg-slate-50 rounded-2xl sm:rounded-3xl p-3.5 sm:p-8 border border-slate-200">
         <div className="flex items-center justify-between mb-5 sm:mb-6 pb-3 border-b border-slate-200">
           <div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-white bg-[#795BCB] px-2.5 py-0.5 rounded-full">
+            {/*<span className="text-[10px] font-black uppercase tracking-wider text-white bg-[#795BCB] px-2.5 py-0.5 rounded-full">
               Official Distributors
-            </span>
+            </span>*/}
             <h2 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2 mt-1">
               <Award className="w-5 h-5 text-[#795BCB]" />
-              Shop by Top Salon Brands
+              Shop by Top Brands
             </h2>
           </div>
           <Link

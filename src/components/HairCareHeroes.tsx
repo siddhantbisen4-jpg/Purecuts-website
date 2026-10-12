@@ -18,14 +18,14 @@ export function HairCareHeroes({ products }: HairCareHeroesProps) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 sm:mb-6 pb-3 sm:pb-4 border-b border-slate-200">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-black uppercase tracking-wider text-white bg-[#795BCB] px-2.5 py-0.5 rounded-full">
+              {/*<span className="text-[10px] font-black uppercase tracking-wider text-white bg-[#795BCB] px-2.5 py-0.5 rounded-full">
                 Salon Professional Choice
               </span>
-              <span className="text-xs text-slate-500 font-medium">Matrix • L'Oréal • Schwarzkopf</span>
+              <span className="text-xs text-slate-500 font-medium">Matrix • L'Oréal • Schwarzkopf</span>*/}
             </div>
             <h2 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-[#795BCB]" />
-              Hair Care Heroes
+              Hair Care Products
             </h2>
           </div>
 

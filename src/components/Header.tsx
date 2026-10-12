@@ -18,6 +18,8 @@ import {
   Menu,
   X,
 } from "lucide-react";
+
+import { NAV_CATEGORIES } from "./navCategories";
 import { LocationModal } from "./LocationModal";
 import logo from "../image/purecuts_logo_no_bg-cropped.png";
 import Image from "next/image";
@@ -31,16 +33,16 @@ const POPULAR_SEARCH_TAGS = [
   "Neck Strips",
   "Facial Kit",
 ];
-const NAV_CATEGORIES = [
+{/*export const NAV_CATEGORIES = [
   { name: "Haircare", slug: "haircare", badge: "Hot" },
   { name: "Skincare & Bodycare", slug: "skincare" },
   { name: "Machineries & Tools", slug: "machineries", badge: "Up to 50% Off" },
   { name: "Salon Accessories", slug: "accessories" },
   { name: "Salon Furniture", slug: "furniture" },
   { name: "Salon Disposables", slug: "disposable", badge: "Wholesale" },
-  { name: "Hair Color & Developers", slug: "hair-color" },
-  { name: "Deals Zone", slug: "deals", isDeal: true },
-];
+
+
+];*/}
 export function Header() {
   const router = useRouter();
   const pathname = usePathname();
@@ -98,26 +100,26 @@ export function Header() {
       return pathname === `/category/${slug}`;
     };
   /* ========================================================= CLOSE DROPDOWNS ========================================================= */ useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      const target = event.target as Node;
-      if (searchRef.current && !searchRef.current.contains(target)) {
-        setIsSearchOpen(false);
+      function handleClickOutside(event: MouseEvent) {
+        const target = event.target as Node;
+        if (searchRef.current && !searchRef.current.contains(target)) {
+          setIsSearchOpen(false);
+        }
+        if (accountRef.current && !accountRef.current.contains(target)) {
+          setIsAccountOpen(false);
+        }
       }
-      if (accountRef.current && !accountRef.current.contains(target)) {
-        setIsAccountOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, []);
   /* ========================================================= FIRST VISIT LOCATION POPUP ========================================================= */ useEffect(() => {
-    const savedPin = localStorage.getItem("purecuts_pincode");
-    if (!savedPin) {
-      setIsLocationModalOpen(true);
-    }
-  }, []);
+      const savedPin = localStorage.getItem("purecuts_pincode");
+      if (!savedPin) {
+        setIsLocationModalOpen(true);
+      }
+    }, []);
   /* ========================================================= SEARCH ========================================================= */ const handleSearch =
     (e?: React.FormEvent, customQuery?: string) => {
       if (e) {
@@ -138,12 +140,12 @@ export function Header() {
     };
   return (
     <>
-     
-     <header
-  ref={headerRef}
-  className="fixed top-0 left-0 right-0 z-[100] w-full bg-white border-b border-[#e5e5e5]"
->
-        
+
+      <header
+        ref={headerRef}
+        className="fixed top-0 left-0 right-0 z-[100] w-full bg-white border-b border-[#e5e5e5]"
+      >
+
         {/* ===================================================== DESKTOP HEADER IMPORTANT: Existing desktop design is preserved. Visible from lg and above. ===================================================== */}
         <div className="hidden lg:block">
           {" "}
@@ -177,10 +179,12 @@ export function Header() {
                   <span className="text-xs font-bold text-white flex items-center gap-1">
                     {" "}
                     {pincode || "Set pincode"}{" "}
-                    <span className="text-white font-normal truncate max-w-[110px]">
-                      {" "}
-                      ({deliveryCity.split(",")[0]}){" "}
-                    </span>{" "}
+                    {pincode && deliveryCity && (
+                      <span className="text-white font-normal truncate max-w-[110px]">
+                        {" "}
+                        ({deliveryCity.split(",")[0]}){" "}
+                      </span>
+                    )}{" "}
                     <ChevronDown className="w-3 h-3 text-white" />{" "}
                   </span>{" "}
                 </div>{" "}
@@ -188,14 +192,17 @@ export function Header() {
               {/* Search */}{" "}
               <div ref={searchRef} className="flex-1 max-w-2xl relative">
                 {" "}
+
                 <form
+                  id="header-search"
                   onSubmit={handleSearch}
-                  className="flex-1 max-w-2xl mx-auto"
+                  className="flex-1 max-w-2xl mx-auto scroll-mt-24"
                 >
+
                   {" "}
                   <div className="flex h-11 border border-[#dddddd] rounded-sm overflow-hidden bg-white">
                     {" "}
-                    <select
+                    {/* <select
                       value={selectedCat}
                       onChange={(e) => setSelectedCat(e.target.value)}
                       className="px-3 text-sm text-white border-r border-[#dddddd] bg-[#795BCB] outline-none"
@@ -207,7 +214,7 @@ export function Header() {
                       <option value="machineries"> Machineries </option>{" "}
                       <option value="accessories"> Accessories </option>{" "}
                       <option value="furniture"> Furniture </option>{" "}
-                    </select>{" "}
+                    </select>{" "}*/}
                     <input
                       type="text"
                       value={searchQuery}
@@ -380,18 +387,7 @@ export function Header() {
                         <Heart className="w-4 h-4 text-slate-400" /> Saved
                         Wishlist ({wishlistCount}){" "}
                       </Link>{" "}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsAccountOpen(false);
-                          openB2BModal();
-                        }}
-                        className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#795BCB] hover:bg-[#795BCB]/10 rounded-lg transition"
-                      >
-                        {" "}
-                        <Building2 className="w-4 h-4 text-[#795BCB]" /> Salon
-                        Bulk GST Account{" "}
-                      </button>{" "}
+
                     </div>
                   )}{" "}
                 </div>{" "}
@@ -429,14 +425,17 @@ export function Header() {
             </div>{" "}
           </div>{" "}
           {/* Desktop Category Navigation */}{" "}
-          <div className="bg-slate-50 border-t border-slate-200/80 px-4">
-            {" "}
-            <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto no-scrollbar py-2 text-xs font-semibold text-black">
-              {" "}
-              <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-                {" "}
+
+
+          {/* Desktop Category Navigation */}
+          <div className="bg-slate-50 border-t border-slate-200/80 px-4 mt-4">
+            <div className="h-2 bg-white" />
+
+            <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto no-scrollbar py-0 text-xs font-semibold text-black">
+              <div className="flex items-center gap-1 sm:gap-9 shrink-0">
                 {NAV_CATEGORIES.map((cat) => {
                   const active = isCategoryActive(cat.slug, cat.isDeal);
+
                   return (
                     <Link
                       key={cat.slug}
@@ -445,39 +444,40 @@ export function Header() {
                           ? "/category/all?deal=true"
                           : `/category/${cat.slug}`
                       }
-                      className={` px-3 py-1.5 rounded-lg whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 ${active ? "!bg-[#795BCB] !text-white shadow-sm" : "text-slate-700 hover:bg-[#795BCB]/10 hover:text-[#795BCB]"} `}
+                      className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 ${active
+                        ? "!bg-[#795BCB] !text-white shadow-sm"
+                        : "text-slate-700 hover:bg-[#795BCB]/10 hover:text-[#795BCB]"
+                        }`}
                     >
-                      {" "}
                       {cat.isDeal && (
                         <Flame
-                          className={` w-3.5 h-3.5 ${active ? "!text-white !fill-white" : "text-[#795BCB]"} `}
+                          className={`w-3.5 h-3.5 ${active ? "!text-white !fill-white" : "text-[#795BCB]"
+                            }`}
                         />
-                      )}{" "}
-                      <span
-                        className={active ? "!text-white" : "text-slate-700"}
-                      >
-                        {" "}
-                        {cat.name}{" "}
-                      </span>{" "}
+                      )}
+
+                      <span className={active ? "!text-white" : "text-slate-700"}>
+                        {cat.name}
+                      </span>
+
                       {cat.badge && (
                         <span
-                          className={` text-[9px] font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${active ? "!bg-white !text-[#795BCB]" : "bg-[#795BCB] text-white"} `}
+                          className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${active
+                            ? "!bg-white !text-[#795BCB]"
+                            : "bg-[#795BCB] text-white"
+                            }`}
                         >
-                          {" "}
-                          {cat.badge}{" "}
+                          {cat.badge}
                         </span>
-                      )}{" "}
+                      )}
                     </Link>
                   );
-                })}{" "}
-              </div>{" "}
-              <div className="hidden 2xl:flex items-center gap-2 text-slate-500 text-[11px] shrink-0 ml-4 pl-4 border-l border-slate-200">
-                {" "}
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />{" "}
-                <span> Doorstep Delivery across India </span>{" "}
-              </div>{" "}
-            </div>{" "}
-          </div>{" "}
+                })}
+              </div>
+            </div>
+          </div>
+
+
         </div>{" "}
         {/* ===================================================== MOBILE HEADER Professional mobile layout. Visible below lg. ===================================================== */}{" "}
         <div className="lg:hidden bg-white">

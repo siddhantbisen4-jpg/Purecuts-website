@@ -53,6 +53,11 @@ export function ProductDetailView({
 
   const [selectedImage, setSelectedImage] = useState(product.image);
   const [qty, setQty] = useState(1);
+  const [appliedQty, setAppliedQty] = useState(1);
+
+  const totalPrice = product.price * appliedQty;
+  const totalOriginalPrice = product.originalPrice * appliedQty;
+  const totalSavings = (product.originalPrice - product.price) * appliedQty;
   const [activeTab, setActiveTab] = useState<"desc" | "usage" | "specs" | "reviews">("desc");
   const [checkPin, setCheckPin] = useState(pincode);
   const [pinResult, setPinResult] = useState<string | null>(
@@ -74,6 +79,7 @@ export function ProductDetailView({
     : [product.image];
 
   const handleAddToCart = () => {
+    setAppliedQty(qty);
     addToCart(product, qty);
   };
 
@@ -172,9 +178,8 @@ export function ProductDetailView({
               )}
               <button
                 onClick={() => toggleWishlist(product.id)}
-                className={`absolute top-4 right-4 z-10 p-2.5 rounded-full backdrop-blur-xs transition shadow-xs ${
-                  inWish ? "bg-rose-50 text-rose-600 ring-1 ring-rose-300" : "bg-white/90 text-slate-400 hover:text-rose-600"
-                }`}
+                className={`absolute top-4 right-4 z-10 p-2.5 rounded-full backdrop-blur-xs transition shadow-xs ${inWish ? "bg-rose-50 text-rose-600 ring-1 ring-rose-300" : "bg-white/90 text-slate-400 hover:text-rose-600"
+                  }`}
                 aria-label="Wishlist"
               >
                 <Heart className={`w-5 h-5 ${inWish ? "fill-rose-600" : ""}`} />
@@ -195,9 +200,8 @@ export function ProductDetailView({
                     key={idx}
                     type="button"
                     onClick={() => setSelectedImage(img)}
-                    className={`w-16 h-16 rounded-xl border-2 p-1 bg-slate-50 shrink-0 overflow-hidden transition ${
-                      selectedImage === img ? "border-amber-500 ring-2 ring-amber-500/20" : "border-slate-200 hover:border-slate-300"
-                    }`}
+                    className={`w-16 h-16 rounded-xl border-2 p-1 bg-slate-50 shrink-0 overflow-hidden transition ${selectedImage === img ? "border-amber-500 ring-2 ring-amber-500/20" : "border-slate-200 hover:border-slate-300"
+                      }`}
                   >
                     <img src={img} alt="" className="w-full h-full object-contain" />
                   </button>
@@ -235,9 +239,7 @@ export function ProductDetailView({
               >
                 Brand: {product.brand}
               </Link>
-              <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md flex items-center gap-1">
-                <Check className="w-3.5 h-3.5" /> In Stock — Ships from Pune Hub
-              </span>
+
             </div>
 
             {/* Title */}
@@ -245,7 +247,7 @@ export function ProductDetailView({
               {product.name}
             </h1>
 
-            {/* Rating & Review Counter */}
+            {/* Rating & Review Counter 
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1 bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 rounded-md">
                 <span>{product.rating || "4.8"}</span>
@@ -258,29 +260,40 @@ export function ProductDetailView({
               <span className="text-xs text-slate-500 font-medium">
                 SKU: PC-{product.id}089
               </span>
-            </div>
+            </div>*/}
+
+            {/* Price Block */}
 
             {/* Price Block */}
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-              <div className="flex items-baseline gap-3">
+              <div className="flex flex-wrap items-baseline gap-3">
                 <span className="text-3xl sm:text-4xl font-black text-slate-950">
-                  ₹{product.price.toLocaleString("en-IN")}
+                  ₹{totalPrice.toLocaleString("en-IN")}
                 </span>
+
                 {product.originalPrice > product.price && (
                   <span className="text-base sm:text-lg text-slate-400 line-through font-semibold">
-                    ₹{product.originalPrice.toLocaleString("en-IN")}
+                    ₹{totalOriginalPrice.toLocaleString("en-IN")}
                   </span>
                 )}
-                {product.discountPercent && product.discountPercent > 0 && (
-                  <span className="text-xs font-extrabold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-md border border-rose-200">
-                    Save ₹{(product.originalPrice - product.price).toLocaleString("en-IN")} ({product.discountPercent}% OFF)
-                  </span>
-                )}
+
+                {product.discountPercent > 0 &&
+                  product.originalPrice > product.price && (
+                    <span className="text-xs font-extrabold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-md border border-rose-200">
+                      Save ₹{totalSavings.toLocaleString("en-IN")} ({product.discountPercent}% OFF)
+                    </span>
+                  )}
               </div>
+
+              <p className="text-xs font-semibold text-slate-700">
+                Quantity: {qty}
+              </p>
+
               <p className="text-[11px] text-slate-500">
                 Inclusive of all taxes. 100% genuine product. GST input credit invoice available.
               </p>
             </div>
+
 
             {/* Bulk Salon Volume Discount Table */}
             <div className="bg-[#795BCB]-50/70 border border-[#795BCB] rounded-2xl p-3.5">
@@ -288,12 +301,12 @@ export function ProductDetailView({
                 <span className="text-xs font-bold text-amber-950 flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-[#795BCB]" /> Salon Bulk Volume Pricing
                 </span>
-                <button
+                {/*<button
                   onClick={openB2BModal}
                   className="text-xs text-[#795BCB] font-semibold hover:underline"
                 >
                   Need Wholesale Carton?
-                </button>
+                </button>*/}
               </div>
               <div className="grid grid-cols-3 gap-2 text-center text-xs">
                 <div className="bg-white p-2 rounded-xl border border-[#795BCB]">
@@ -364,19 +377,19 @@ export function ProductDetailView({
                   onClick={handleAddToCart}
                   className="py-3.5 px-6 bg-[#795BCB] hover:bg-[#795BCB] text-white font-black text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20"
                 >
-                  <ShoppingBag className="w-4 h-4" /> Add to Salon Bag
+                  <ShoppingBag className="w-4 h-4" /> Add to Cart
                 </button>
-                <button
+                {/*<button
                   type="button"
                   onClick={handleBuyNow}
                   className="py-3.5 px-6 bg-black hover:bg-black text-white font-black text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-slate-950/20"
                 >
                   <Zap className="w-4 h-4 text-amber-400" /> Buy Now (Instant Checkout)
-                </button>
+                </button>*/}
               </div>
             </div>
 
-            {/* Delivery Pincode Checker */}
+            {/* Delivery Pincode Checker 
             <div className="pt-4 border-t border-slate-100 space-y-2">
               <span className="text-xs font-bold text-slate-700 block">
                 Check Delivery & COD Availability
@@ -406,9 +419,9 @@ export function ProductDetailView({
                   {pinResult}
                 </p>
               )}
-            </div>
+            </div>*/}
 
-            {/* Guarantees Badges */}
+            {/* Guarantees Badges 
             <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 text-[11px] text-slate-600">
               <div className="flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -422,7 +435,7 @@ export function ProductDetailView({
                 <FileCheck className="w-4 h-4 text-blue-600 shrink-0" />
                 <span>GST Tax Invoice</span>
               </div>
-            </div>
+            </div>*/}
           </div>
         </div>
       </div>
@@ -432,33 +445,29 @@ export function ProductDetailView({
         <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto">
           <button
             onClick={() => setActiveTab("desc")}
-            className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap ${
-              activeTab === "desc" ? "bg-[#795BCB] text-white shadow-xs" : "text-slate-600 hover:text-slate-900"
-            }`}
+            className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap ${activeTab === "desc" ? "bg-[#795BCB] text-white shadow-xs" : "text-slate-600 hover:text-slate-900"
+              }`}
           >
             Product Overview
           </button>
           <button
             onClick={() => setActiveTab("usage")}
-            className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap ${
-              activeTab === "usage" ? "bg-[#795BCB] text-white shadow-xs" : "text-slate-600 hover:text-slate-900"
-            }`}
+            className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap ${activeTab === "usage" ? "bg-[#795BCB] text-white shadow-xs" : "text-slate-600 hover:text-slate-900"
+              }`}
           >
             How to Use / Salon Protocol
           </button>
           <button
             onClick={() => setActiveTab("specs")}
-            className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap ${
-              activeTab === "specs" ? "bg-[#795BCB] text-white shadow-xs" : "text-slate-600 hover:text-slate-900"
-            }`}
+            className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap ${activeTab === "specs" ? "bg-[#795BCB] text-white shadow-xs" : "text-slate-600 hover:text-slate-900"
+              }`}
           >
             Specifications
           </button>
           <button
             onClick={() => setActiveTab("reviews")}
-            className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap flex items-center gap-1.5 ${
-              activeTab === "reviews" ? "bg-[#795BCB] text-white shadow-xs" : "text-slate-600 hover:text-slate-900"
-            }`}
+            className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap flex items-center gap-1.5 ${activeTab === "reviews" ? "bg-[#795BCB] text-white shadow-xs" : "text-slate-600 hover:text-slate-900"
+              }`}
           >
             <span>Customer Reviews</span>
             <span className="bg-slate-200 text-slate-800 text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">
@@ -650,11 +659,9 @@ export function ProductDetailView({
         <section className="bg-slate-50/80 rounded-3xl p-6 sm:p-8 border border-slate-200">
           <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-200">
             <div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-white  bg-[#795BCB] px-2.5 py-0.5 rounded-full">
-                Frequently Paired
-              </span>
+
               <h2 className="text-xl font-black text-slate-900 tracking-tight mt-1">
-                Related Salon Products
+                Related Products
               </h2>
             </div>
             <Link

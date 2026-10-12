@@ -17,10 +17,10 @@ export function SkincareBestsellers({ products }: SkincareBestsellersProps) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 sm:mb-6 pb-3 sm:pb-4 border-b border-slate-100">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-black uppercase tracking-wider text-rose-800 bg-rose-100 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+              {/*<span className="text-[10px] font-black uppercase tracking-wider  px-2.5 py-0.5 rounded-full flex items-center gap-1">
                 <Tag className="w-3 h-3 text-rose-600" /> Dr. Rashel Tubs @ ₹109 (-56% OFF)
-              </span>
-              <span className="text-xs text-slate-500 font-medium">VLCC • Lotus • Vel Aroma</span>
+              </span>*/}
+              {/*<span className="text-xs text-slate-500 font-medium">VLCC • Lotus • Vel Aroma</span>*/}
             </div>
             <h2 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
               <HeartHandshake className="w-5 h-5 text-rose-500" />

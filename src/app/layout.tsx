@@ -1,6 +1,11 @@
+
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { Inter } from "next/font/google";
+
 import "./globals.css";
+import "leaflet/dist/leaflet.css";
+
 import { StoreProvider } from "@/context/StoreContext";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -8,6 +13,12 @@ import { CartDrawer } from "@/components/CartDrawer";
 import { QuickViewModal } from "@/components/QuickViewModal";
 import { B2BModal } from "@/components/B2BModal";
 import { Toast } from "@/components/Toast";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "PureCuts - Professional Salon, Beauty & Personal Care Superstore",
@@ -17,10 +28,16 @@ export const metadata: Metadata = {
     "PureCuts, salon supplies, beauty marketplace, hair color, loreal majirel, matrix masque, wahl super taper, ikonic hair dryer, dr rashel cream, salon furniture, salon disposables, pune wagholi",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <html lang="en">
-      <body className="bg-white text-[#333333] antialiased min-h-screen flex flex-col font-sans selection:bg-[#e31837] selection:text-white">
+      <body
+        className={`${inter.className} bg-white text-[#333333] antialiased min-h-screen flex flex-col`}
+      >
         <StoreProvider>
           <Header />
 
@@ -30,6 +47,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           >
             {children}
           </div>
+
           <Footer />
           <CartDrawer />
           <QuickViewModal />

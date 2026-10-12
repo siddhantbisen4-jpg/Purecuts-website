@@ -105,7 +105,7 @@ export function CartDrawer() {
           <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
             {cart.length === 0 ? (
               <div className="text-center py-16 px-4">
-                <div className="w-16 h-16 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#7950F2] text-white rounded-full flex items-center justify-center mx-auto mb-4">
                   <ShoppingBag className="w-8 h-8" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-800 mb-1">Your salon bag is empty</h3>
@@ -191,7 +191,7 @@ export function CartDrawer() {
           {/* Footer / Summary Area */}
           {cart.length > 0 && (
             <div className="p-4 sm:p-5 border-t border-slate-100 bg-slate-50/70 space-y-3.5">
-              {/* Coupon Code Section */}
+              {/* Coupon Code Section 
               <div className="bg-white p-3 rounded-2xl border border-slate-200">
                 {appliedCoupon ? (
                   <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl">
@@ -250,9 +250,18 @@ export function CartDrawer() {
                     </div>
                   </div>
                 )}
-              </div>
+              </div>*/}
 
               {/* Price Breakdown */}
+
+
+              <div className="flex justify-between">
+                <span>Quantity</span>
+                <span className="font-semibold text-slate-900">
+                  {itemCount}
+                </span>
+              </div>
+
               <div className="space-y-1.5 text-xs text-slate-600 pt-1">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
@@ -281,21 +290,35 @@ export function CartDrawer() {
               </div>
 
               {/* Action Buttons */}
-              <div className="space-y-2 pt-1">
+
+              {/* Action Buttons */}
+              <div className="space-y-3 pt-1">
                 <button
                   onClick={handleCheckout}
-                  className="w-full py-3 bg-[#795BCB] hover:bg-[#795BCB] text-white font-bold rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-amber-500/20 text-sm"
+                  className="w-full py-3 bg-[#795BCB] hover:bg-[#6246B0] text-white font-bold rounded-xl transition flex items-center justify-center gap-2 shadow-md text-sm"
                 >
                   Proceed to Checkout <ArrowRight className="w-4 h-4" />
                 </button>
+
+                {/* Continue Shopping */}
+                <button
+                  type="button"
+                  onClick={closeCart}
+                  className="w-full py-3 bg-white border border-[#795BCB] text-[#795BCB] hover:bg-[#795BCB]/5 font-bold rounded-xl transition text-sm"
+                >
+                  Continue Shopping
+                </button>
+
                 <div className="flex items-center justify-center gap-4 text-[11px] text-slate-500 pt-1">
                   <span className="flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> 100% Genuine
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    100% Genuine
                   </span>
                   <span>•</span>
                   <span>Cash on Delivery Available</span>
                 </div>
               </div>
+
             </div>
           )}
         </div>

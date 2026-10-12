@@ -52,7 +52,7 @@ interface StoreContextType {
   pincode: string;
   deliveryCity: string;
   customerRegion: "pune" | "outside-pune" | "";
-  setPincode: (pincode: string) => void;
+  setPincode: (pincode: string, customCity?: string) => void;
 
   // Quick View
   quickViewProduct: Product | null;
@@ -165,6 +165,15 @@ export function StoreProvider({
 
       if (savedPin) {
         setPincodeState(savedPin);
+        const savedCity = localStorage.getItem("purecuts_delivery_city");
+        if (savedCity) {
+          setDeliveryCity(savedCity);
+        } else {
+          const loc = pincodes[savedPin as keyof typeof pincodes];
+          if (loc) {
+            setDeliveryCity(loc.district || "");
+          }
+        }
       }
 
       const savedRegion =
@@ -226,7 +235,7 @@ export function StoreProvider({
   // PINCODE
   // --------------------------------------------------
 
-  const setPincode = (pin: string) => {
+  const setPincode = (pin: string, customCity?: string) => {
     const cleaned = pin
       .replace(/\D/g, "")
       .slice(0, 6);
@@ -245,18 +254,22 @@ export function StoreProvider({
         cleaned as keyof typeof pincodes
       ];
 
-    if (!location) {
-      showToast(
-        "Pincode not found. Please enter a valid pincode."
-      );
-      return;
-    }
+    let isPune = false;
+    let city = customCity || "";
 
-    // Check Pune
-    const isPune =
-      location.district?.toUpperCase() === "PUNE" &&
-      location.state?.toUpperCase() ===
-        "MAHARASHTRA";
+    if (location) {
+      isPune =
+        location.district?.toUpperCase() === "PUNE" &&
+        location.state?.toUpperCase() ===
+          "MAHARASHTRA";
+      if (!city) {
+        city = location.district || (isPune ? "Pune" : "");
+      }
+    } else {
+      if (customCity && customCity.toUpperCase().includes("PUNE")) {
+        isPune = true;
+      }
+    }
 
     // Set region
     const region:
@@ -268,6 +281,7 @@ export function StoreProvider({
     // Save state
     setPincodeState(cleaned);
     setCustomerRegion(region);
+    setDeliveryCity(city || (isPune ? "Pune" : ""));
 
     // Save to localStorage
     try {
@@ -280,6 +294,13 @@ export function StoreProvider({
         "purecuts_region",
         region
       );
+
+      if (city || isPune) {
+        localStorage.setItem(
+          "purecuts_delivery_city",
+          city || "Pune"
+        );
+      }
     } catch (error) {
       console.error(
         "Failed to save pincode:",

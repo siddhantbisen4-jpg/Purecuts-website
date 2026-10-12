@@ -70,26 +70,26 @@ export default function BrandsDirectoryPage() {
 
           <div className="relative z-10 max-w-2xl space-y-4">
             <div className="inline-flex items-center gap-2 bg-white/15 border border-white/20 text-black text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm">
-              <Award className="w-4 h-4 text-amber-300" />
-              <span>Official Salon Brand Partners</span>
+               {/*<Award className="w-4 h-4 text-amber-300" />
+              <span>Official Salon Brand Partners</span>*/}
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight text-black">
-              All Top Salon & Barber Brands at PureCuts
+              Brands
             </h1>
 
-            <p className="text-xs sm:text-sm text-black leading-relaxed">
+             {/*<p className="text-xs sm:text-sm text-black leading-relaxed">
               Explore 100% genuine domestic & international salon brands. Direct manufacturer batch
               authenticity, warranty certification, and tax-compliant GST invoicing across India.
-            </p>
+            </p>*/}
 
             <div className="flex flex-wrap items-center gap-4 pt-2 text-xs text-purple-200">
               <span className="flex items-center gap-1.5 font-semibold text-black">
-                <ShieldCheck className="w-4 h-4 text-emerald-300" /> 100% Original Stock
+                {/*<ShieldCheck className="w-4 h-4 text-emerald-300" /> 100% Original Stock*/}
               </span>
               <span>•</span>
               <span className="text-black flex items-center gap-1.5 font-semibold">
-                <Building2 className="w-4 h-4 text-amber-300" /> Wagholi Pune Distribution Hub
+                {/*<Building2 className="w-4 h-4 text-amber-300" /> Wagholi Pune Distribution Hub*/}
               </span>
               
               

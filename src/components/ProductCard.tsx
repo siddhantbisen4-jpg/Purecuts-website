@@ -98,22 +98,22 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
       <div className="p-2 sm:p-4 flex flex-col flex-1">
         {/* Brand & Rating Row */}
         <div className="flex items-center justify-between gap-1 mb-1 text-xs min-w-0">
-          <span className="font-bold text-[8px] sm:text-[9px] uppercase tracking-wider text-slate-800 bg-slate-100 px-1.5 sm:px-2 py-0.5 rounded truncate max-w-[75px] sm:max-w-[120px] lg:max-w-none">
+          {/*<span className="font-bold text-[8px] sm:text-[9px] uppercase tracking-wider text-slate-800 bg-slate-100 px-1.5 sm:px-2 py-0.5 rounded truncate max-w-[75px] sm:max-w-[120px] lg:max-w-none">
             {product.brand}
-          </span>
+          </span>*/}
           <div className="flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-slate-700 bg-slate-100 px-1 sm:px-1.5 py-0.5 rounded shrink-0">
-            <span>{product.rating || "4.8"}</span>
+            {/*<span>{product.rating || "4.8"}</span>
             <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
             <span className="text-slate-400 text-[9px] sm:text-[10px]">
               ({product.reviewCount || 18})
-            </span>
+            </span>*/}
           </div>
         </div>
 
         {/* Title */}
         <Link
           href={`/product/${product.slug}`}
-          className="text-[11px] sm:text-sm font-semibold text-slate-800 hover:text-amber-600 transition line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] mt-1 mb-2 leading-snug flex-1"
+          className="text-[11px] sm:text-sm font-semibold text-slate-800 hover:text-[#7950F2] transition line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] mt-1 mb-2 leading-snug flex-1"
           title={product.name}
         >
           {product.name}
@@ -137,22 +137,22 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
 
           {/* Cart Stepper or Add Button */}
           {inCartQty > 0 ? (
-            <div className="flex items-center border border-amber-500 bg-amber-50 rounded-xl overflow-hidden shadow-xs shrink-0">
+            <div className="flex items-center border border-[#795BCB] bg-[#795BCB] rounded-xl overflow-hidden shadow-xs shrink-0">
               <button
                 type="button"
                 onClick={() => updateQuantity(product.id, inCartQty - 1)}
-                className="px-1.5 sm:px-2 py-1 sm:py-1.5 text-xs text-amber-900 hover:bg-amber-200 transition font-bold"
+                className="px-1.5 sm:px-2 py-1 sm:py-1.5 text-xs text-white hover:bg-[#795BCB] transition font-bold"
                 aria-label="Decrease quantity"
               >
                 <Minus className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </button>
-              <span className="px-1.5 sm:px-2 text-xs font-extrabold text-amber-950 min-w-[18px] sm:min-w-[20px] text-center">
+              <span className="px-1.5 sm:px-2 text-xs font-extrabold text-white min-w-[18px] sm:min-w-[20px] text-center">
                 {inCartQty}
               </span>
               <button
                 type="button"
                 onClick={() => updateQuantity(product.id, inCartQty + 1)}
-                className="px-1.5 sm:px-2 py-1 sm:py-1.5 text-xs text-amber-900 hover:bg-amber-200 transition font-bold"
+                className="px-1.5 sm:px-2 py-1 sm:py-1.5 text-xs text-white hover:bg-[#795BCB] transition font-bold"
                 aria-label="Increase quantity"
               >
                 <Plus className="w-3 h-3 sm:w-3.5 sm:h-3.5" />

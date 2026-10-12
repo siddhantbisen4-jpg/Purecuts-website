@@ -15,7 +15,7 @@ import {
   Lock,
 } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
-
+import { NAV_CATEGORIES } from "./navCategories";
 export function Footer() {
   const { openB2BModal, showToast } = useStore();
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -31,83 +31,61 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-white text-slate-700 pt-8 sm:pt-14 lg:pt-16 pb-6 sm:pb-12 border-t border-slate-200">
+
+    <footer className="relative overflow-hidden bg-[radial-gradient(ellipse_at_top_left,rgba(121,91,203,0.16),transparent_38%),radial-gradient(ellipse_at_bottom_right,rgba(184,160,255,0.20),transparent_35%),linear-gradient(135deg,#fbfaff_0%,#ffffff_48%,#f5f1ff_100%)] text-slate-700 pt-8 sm:pt-14 lg:pt-16 pb-6 sm:pb-12 border-t border-[#795BCB]/20">
+
 
       {/* =========================================================
           GUARANTEES STRIP
-          ========================================================= */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 pb-7 sm:pb-10 lg:pb-12 border-b border-slate-200">
-        <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
+      ```tsx
+{/* TRUST BENEFITS */}
+      <div className="border-y border-slate-100 bg-white">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-5">
+          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
 
-          {/* Genuine Stock */}
-          <div className="flex items-center gap-2.5 sm:gap-3.5 p-1.5 sm:p-0">
-            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-4.5 h-4.5 sm:w-6 sm:h-6" />
+            {/* Genuine Stock */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#795BCB]/20 bg-[#795BCB]/5 px-3.5 py-2.5 sm:px-5 sm:py-3">
+              <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-[#795BCB] shrink-0" />
+              <div>
+                <p className="text-[10px] sm:text-xs font-bold text-slate-900 leading-tight">
+                  100% Genuine Stock
+                </p>
+                <p className="text-[9px] sm:text-[11px] text-slate-500 leading-tight mt-0.5">
+                  Direct from authorized brands
+                </p>
+              </div>
             </div>
 
-            <div className="min-w-0">
-              <h4 className="text-[11px] sm:text-sm font-bold text-slate-900 leading-tight">
-                100% Genuine Stock
-              </h4>
-
-              <p className="text-[9px] sm:text-xs text-slate-600 leading-relaxed mt-0.5">
-                Direct from authorized brands
-              </p>
-            </div>
-          </div>
-
-          {/* Delivery */}
-          <div className="flex items-center gap-2.5 sm:gap-3.5 p-1.5 sm:p-0">
-            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center justify-center shrink-0">
-              <Truck className="w-4.5 h-4.5 sm:w-6 sm:h-6" />
+            {/* Fast Delivery */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#795BCB]/20 bg-[#795BCB]/5 px-3.5 py-2.5 sm:px-5 sm:py-3">
+              <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-[#795BCB] shrink-0" />
+              <div>
+                <p className="text-[10px] sm:text-xs font-bold text-slate-900 leading-tight">
+                  Fast Doorstep Delivery
+                </p>
+                <p className="text-[9px] sm:text-[11px] text-slate-500 leading-tight mt-0.5">
+                  Dispatch from Wagholi, Pune Hub
+                </p>
+              </div>
             </div>
 
-            <div className="min-w-0">
-              <h4 className="text-[11px] sm:text-sm font-bold text-slate-900 leading-tight">
-                Fast Doorstep Delivery
-              </h4>
-
-              <p className="text-[9px] sm:text-xs text-slate-600 leading-relaxed mt-0.5">
-                Dispatch from Wagholi Pune Hub
-              </p>
-            </div>
-          </div>
-
-          {/* B2B */}
-          <div className="flex items-center gap-2.5 sm:gap-3.5 p-1.5 sm:p-0">
-            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-500/10 text-blue-500 border border-blue-500/20 flex items-center justify-center shrink-0">
-              <Sparkles className="w-4.5 h-4.5 sm:w-6 sm:h-6" />
+            {/* Secure Payments */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#795BCB]/20 bg-[#795BCB]/5 px-3.5 py-2.5 sm:px-5 sm:py-3">
+              <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-[#795BCB] shrink-0" />
+              <div>
+                <p className="text-[10px] sm:text-xs font-bold text-slate-900 leading-tight">
+                  COD & Secure Payments
+                </p>
+                <p className="text-[9px] sm:text-[11px] text-slate-500 leading-tight mt-0.5">
+                  Cash on delivery + 100% safe UPI
+                </p>
+              </div>
             </div>
 
-            <div className="min-w-0">
-              <h4 className="text-[11px] sm:text-sm font-bold text-slate-900 leading-tight">
-                Salon B2B Wholesale
-              </h4>
-
-              <p className="text-[9px] sm:text-xs text-slate-600 leading-relaxed mt-0.5">
-                GST billing & bulk carton rates
-              </p>
-            </div>
-          </div>
-
-          {/* Payments */}
-          <div className="flex items-center gap-2.5 sm:gap-3.5 p-1.5 sm:p-0">
-            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center justify-center shrink-0">
-              <Lock className="w-4.5 h-4.5 sm:w-6 sm:h-6" />
-            </div>
-
-            <div className="min-w-0">
-              <h4 className="text-[11px] sm:text-sm font-bold text-slate-900 leading-tight">
-                COD & Secure Payments
-              </h4>
-
-              <p className="text-[9px] sm:text-xs text-slate-600 leading-relaxed mt-0.5">
-                Cash on delivery + 100% safe UPI
-              </p>
-            </div>
           </div>
         </div>
       </div>
+
 
       {/* =========================================================
           MAIN FOOTER
@@ -134,12 +112,12 @@ export function Footer() {
               />
             </Link>
 
-            <p className="text-[11px] sm:text-sm text-slate-600 leading-relaxed max-w-sm">
+            {/*<p className="text-[11px] sm:text-sm text-slate-600 leading-relaxed max-w-sm">
               PureCuts is India's dedicated professional salon, beauty, and
               personal care marketplace. We supply genuine salon essentials,
               electricals, furniture, colors, and treatments to salons,
               barbershops, academies, and consumers nationwide.
-            </p>
+            </p>*/}
 
             <div className="space-y-2.5 sm:space-y-3 pt-1.5 sm:pt-2 text-[11px] sm:text-sm text-slate-600">
 
@@ -190,6 +168,14 @@ export function Footer() {
             </div>
           </div>
 
+
+          {/* =====================================================
+              YOUR ACCOUNT
+              ===================================================== */}
+
+
+
+
           {/* =====================================================
               TOP CATEGORIES
               ===================================================== */}
@@ -200,72 +186,22 @@ export function Footer() {
               </span>
             </h4>
 
+
+
             <ul className="space-y-2 sm:space-y-2.5 text-[11px] sm:text-sm text-slate-600">
-
-              <li>
-                <Link
-                  href="/category/haircare"
-                  className="hover:text-[#795BCB] transition"
-                >
-                  Haircare & Treatments
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/category/skincare"
-                  className="hover:text-[#795BCB] transition"
-                >
-                  Skincare & Facial Kits
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/category/machineries"
-                  className="hover:text-[#795BCB] transition"
-                >
-                  Clippers, Trimmers & Dryers
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/category/accessories"
-                  className="hover:text-[#795BCB] transition"
-                >
-                  Blades, Scissors & Shaving
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/category/furniture"
-                  className="hover:text-[#795BCB] transition"
-                >
-                  Salon Chairs & Wash Units
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/category/disposable"
-                  className="hover:text-[#795BCB] transition"
-                >
-                  Neck Rolls & Disposables
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/category/hair-color"
-                  className="hover:text-[#795BCB] transition"
-                >
-                  Hair Color & Developers
-                </Link>
-              </li>
-
+              {NAV_CATEGORIES.map((cat) => (
+                <li key={cat.slug}>
+                  <Link
+                    href={`/category/${cat.slug}`}
+                    className="hover:text-[#795BCB] transition"
+                  >
+                    {cat.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
+
+
           </div>
 
           {/* =====================================================
@@ -274,11 +210,13 @@ export function Footer() {
           <div>
             <h4 className="text-[11px] sm:text-sm font-bold text-slate-900 uppercase tracking-wider mb-3 sm:mb-4">
               <span className="text-[#795BCB]">
-                Company & Help
+                More from Purecuts
               </span>
             </h4>
 
             <ul className="space-y-2 sm:space-y-2.5 text-[11px] sm:text-sm text-slate-600">
+
+
 
               <li>
                 <Link
@@ -286,6 +224,14 @@ export function Footer() {
                   className="hover:text-[#795BCB] transition"
                 >
                   About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact-us"
+                  className="hover:text-[#795BCB] transition"
+                >
+                  Contact
                 </Link>
               </li>
 
@@ -298,14 +244,6 @@ export function Footer() {
                 </Link>
               </li>
 
-              <li>
-                <Link
-                  href="/contact-us"
-                  className="hover:text-[#795BCB] transition"
-                >
-                  Contact Us
-                </Link>
-              </li>
 
               <li>
                 <button
@@ -316,23 +254,7 @@ export function Footer() {
                 </button>
               </li>
 
-              <li>
-                <Link
-                  href="/shipping-policy"
-                  className="hover:text-[#795BCB] transition"
-                >
-                  Shipping & Delivery
-                </Link>
-              </li>
 
-              <li>
-                <Link
-                  href="/refund-policy"
-                  className="hover:text-[#795BCB] transition"
-                >
-                  Refund & Cancellation Policy
-                </Link>
-              </li>
 
               <li>
                 <Link
@@ -357,7 +279,7 @@ export function Footer() {
 
           {/* =====================================================
               NEWSLETTER
-              ===================================================== */}
+              ===================================================== 
           <div className="space-y-3.5 sm:space-y-4 sm:col-span-2 lg:col-span-1">
 
             <h4 className="text-[11px] sm:text-sm font-bold text-slate-900 uppercase tracking-wider">
@@ -408,7 +330,7 @@ export function Footer() {
               </form>
             )}
 
-            {/* Authorized Brands */}
+            {/* Authorized Brands 
             <div className="pt-1.5 sm:pt-2">
               <span className="text-[9px] sm:text-[11px] text-slate-500 uppercase tracking-wider block mb-1 font-semibold">
                 Authorized Brands
@@ -419,7 +341,7 @@ export function Footer() {
                 Wahl • Dr. Rashel • VLCC • Streax • Gillette
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* =========================================================
@@ -429,35 +351,10 @@ export function Footer() {
 
           <p>
             © {new Date().getFullYear()} PureCuts. All Rights Reserved.
-            Domkhel Road, Wagholi, Pune.
+
           </p>
 
-          <div className="flex items-center gap-2.5 sm:gap-4">
-            <Link
-              href="/privacy-policy"
-              className="hover:text-[#795BCB] transition"
-            >
-              Privacy
-            </Link>
 
-            <span>•</span>
-
-            <Link
-              href="/terms"
-              className="hover:text-[#795BCB] transition"
-            >
-              Terms
-            </Link>
-
-            <span>•</span>
-
-            <Link
-              href="/contact-us"
-              className="hover:text-[#795BCB] transition"
-            >
-              Support
-            </Link>
-          </div>
         </div>
       </div>
     </footer>
