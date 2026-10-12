@@ -1,5 +1,12 @@
 
-export const NAV_CATEGORIES = [
+export interface NavCategory {
+    name: string;
+    slug: string;
+    badge?: string;
+    isDeal?: boolean;
+}
+
+export const NAV_CATEGORIES: NavCategory[] = [
     { name: "Haircare", slug: "haircare", badge: "Hot" },
     { name: "Skincare & Bodycare", slug: "skincare" },
     {

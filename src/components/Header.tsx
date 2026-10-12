@@ -33,7 +33,8 @@ const POPULAR_SEARCH_TAGS = [
   "Neck Strips",
   "Facial Kit",
 ];
-{/*export const NAV_CATEGORIES = [
+{
+  /*export const NAV_CATEGORIES = [
   { name: "Haircare", slug: "haircare", badge: "Hot" },
   { name: "Skincare & Bodycare", slug: "skincare" },
   { name: "Machineries & Tools", slug: "machineries", badge: "Up to 50% Off" },
@@ -42,7 +43,167 @@ const POPULAR_SEARCH_TAGS = [
   { name: "Salon Disposables", slug: "disposable", badge: "Wholesale" },
 
 
-];*/}
+];*/
+}
+
+type HeaderProduct = {
+  id: number;
+  slug: string;
+  name: string;
+  brand: string;
+  category: string;
+  price: number;
+  originalPrice?: number;
+  discountPercent?: number;
+  image: string;
+};
+
+type ProductSearchResponse = {
+  products?: HeaderProduct[];
+};
+
+function ProductSuggestions({
+  query,
+  products,
+  loading,
+  onClose,
+  onSelectProduct,
+  selectedIndex = -1,
+}: {
+  query: string;
+  products: HeaderProduct[];
+  loading: boolean;
+  onClose: () => void;
+  onSelectProduct: (product: HeaderProduct) => void;
+  selectedIndex?: number;
+}) {
+  const router = useRouter();
+
+  if (query.trim().length < 1) return null;
+
+  return (
+    <div
+      onMouseDown={(e) => e.stopPropagation()}
+      className="absolute left-0 right-0 top-full z-[110] mt-2 max-h-[75vh] overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-2xl animate-in fade-in slide-in-from-top-1 duration-150"
+    >
+      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-2.5 bg-slate-50/70">
+        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-[#795BCB]" />
+          Product Suggestions
+        </span>
+        {products.length > 0 && !loading && (
+          <span className="text-[11px] font-medium text-slate-400">
+            {products.length} match{products.length === 1 ? "" : "es"}
+          </span>
+        )}
+      </div>
+
+      {loading ? (
+        <div className="flex items-center gap-3 px-4 py-6">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#795BCB] border-t-transparent" />
+          <p className="text-sm font-medium text-slate-500">
+            Searching products for &quot;{query}&quot;...
+          </p>
+        </div>
+      ) : products.length > 0 ? (
+        <div className="divide-y divide-slate-100">
+          {products.map((product, index) => {
+            const isSelected = index === selectedIndex;
+            return (
+              <Link
+                key={product.id}
+                href={
+                  product.slug
+                    ? `/product/${encodeURIComponent(product.slug)}`
+                    : "/category/all"
+                }
+                onClick={(event) => {
+                  if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
+                    event.preventDefault();
+                    onSelectProduct(product);
+                  } else {
+                    onClose();
+                  }
+                }}
+                className={`flex w-full items-center gap-3.5 px-4 py-3 text-left transition-all cursor-pointer group ${
+                  isSelected
+                    ? "bg-purple-50/90 ring-1 ring-inset ring-[#795BCB]/30"
+                    : "hover:bg-purple-50/50"
+                }`}
+              >
+                <div className="relative h-12 w-12 shrink-0 rounded-xl border border-slate-200 bg-white p-1 flex items-center justify-center overflow-hidden shadow-xs group-hover:border-[#795BCB]/50 transition-colors">
+                  <img
+                    src={product.image || "/placeholder.png"}
+                    alt={product.name}
+                    className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
+                  />
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold text-slate-800 group-hover:text-[#795BCB] transition-colors">
+                    {product.name}
+                  </span>
+                  <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
+                    <span className="font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded text-[10px]">
+                      {product.brand}
+                    </span>
+                    <span className="text-slate-300">•</span>
+                    <span className="truncate text-slate-500 text-[11px]">{product.category}</span>
+                  </div>
+                </div>
+
+                <div className="shrink-0 text-right pl-2">
+                  <span className="block text-sm font-extrabold text-[#795BCB]">
+                    ₹{product.price.toLocaleString("en-IN")}
+                  </span>
+                  {product.originalPrice && product.originalPrice > product.price && (
+                    <span className="block text-[11px] text-slate-400 line-through">
+                      ₹{product.originalPrice.toLocaleString("en-IN")}
+                    </span>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
+
+          <button
+            type="button"
+            onClick={() => {
+              onClose();
+              router.push(
+                `/category/all?q=${encodeURIComponent(query.trim())}`,
+              );
+            }}
+            className="flex w-full items-center justify-center gap-1.5 bg-slate-50 hover:bg-[#795BCB]/10 px-4 py-3 text-xs font-bold text-[#795BCB] transition-colors"
+          >
+            <span>View all results for &quot;{query}&quot;</span>
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      ) : (
+        <div className="px-5 py-6 text-center">
+          <p className="text-sm font-semibold text-slate-700">No matching products found</p>
+          <p className="mt-1 text-xs text-slate-500">
+            No items matched &quot;{query}&quot;. Try checking the spelling or search by brand name.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              onClose();
+              router.push(
+                `/category/all?q=${encodeURIComponent(query.trim())}`,
+              );
+            }}
+            className="mt-3 inline-flex items-center justify-center text-xs font-bold text-[#795BCB] hover:underline"
+          >
+            Search all categories for &quot;{query}&quot; →
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function Header() {
   const router = useRouter();
   const pathname = usePathname();
@@ -58,12 +219,61 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCat, setSelectedCat] = useState("all");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const [searchSuggestions, setSearchSuggestions] = useState<HeaderProduct[]>(
+    [],
+  );
+
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
+  const desktopSearchRef = useRef<HTMLDivElement>(null);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+
+  useEffect(() => {
+    setSelectedSuggestionIndex(-1);
+  }, [searchQuery]);
+
+  const handleSelectProduct = (product: HeaderProduct) => {
+    setIsSearchOpen(false);
+    setIsMobileMenuOpen(false);
+    if (product.slug) {
+      router.push(`/product/${encodeURIComponent(product.slug)}`);
+    }
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!isSearchOpen || searchSuggestions.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedSuggestionIndex((prev) =>
+        prev < searchSuggestions.length - 1 ? prev + 1 : 0
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedSuggestionIndex((prev) =>
+        prev > 0 ? prev - 1 : searchSuggestions.length - 1
+      );
+    } else if (e.key === "Enter") {
+      if (
+        selectedSuggestionIndex >= 0 &&
+        selectedSuggestionIndex < searchSuggestions.length
+      ) {
+        e.preventDefault();
+        handleSelectProduct(searchSuggestions[selectedSuggestionIndex]);
+      }
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setIsSearchOpen(false);
+    }
+  };
+
   /* ========================================================= HEADER HEIGHT ========================================================= */ useEffect(() => {
     const updateHeaderHeight = () => {
       if (headerRef.current && !isMobileMenuOpen) {
@@ -100,26 +310,29 @@ export function Header() {
       return pathname === `/category/${slug}`;
     };
   /* ========================================================= CLOSE DROPDOWNS ========================================================= */ useEffect(() => {
-      function handleClickOutside(event: MouseEvent) {
-        const target = event.target as Node;
-        if (searchRef.current && !searchRef.current.contains(target)) {
-          setIsSearchOpen(false);
-        }
-        if (accountRef.current && !accountRef.current.contains(target)) {
-          setIsAccountOpen(false);
-        }
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Node;
+      const insideDesktop = desktopSearchRef.current?.contains(target);
+      const insideMobile = mobileSearchRef.current?.contains(target);
+
+      if (!insideDesktop && !insideMobile) {
+        setIsSearchOpen(false);
       }
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    }, []);
+      if (accountRef.current && !accountRef.current.contains(target)) {
+        setIsAccountOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   /* ========================================================= FIRST VISIT LOCATION POPUP ========================================================= */ useEffect(() => {
-      const savedPin = localStorage.getItem("purecuts_pincode");
-      if (!savedPin) {
-        setIsLocationModalOpen(true);
-      }
-    }, []);
+    const savedPin = localStorage.getItem("purecuts_pincode");
+    if (!savedPin) {
+      setIsLocationModalOpen(true);
+    }
+  }, []);
   /* ========================================================= SEARCH ========================================================= */ const handleSearch =
     (e?: React.FormEvent, customQuery?: string) => {
       if (e) {
@@ -134,18 +347,70 @@ export function Header() {
       }
       router.push(url);
     };
+
+  useEffect(() => {
+    const query = searchQuery.trim();
+
+    if (!isSearchOpen || query.length < 1) {
+      setSearchSuggestions([]);
+      setIsLoadingSuggestions(false);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const timeoutId = window.setTimeout(async () => {
+      setIsLoadingSuggestions(true);
+
+      try {
+        const response = await fetch(
+          `/api/products?q=${encodeURIComponent(query)}&limit=6`,
+          { signal: controller.signal },
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch product suggestions");
+        }
+
+        const data: ProductSearchResponse = await response.json();
+
+        setSearchSuggestions(data.products ?? []);
+      } catch (error) {
+        if (error instanceof Error && error.name !== "AbortError") {
+          console.error("Product suggestion error:", error);
+          setSearchSuggestions([]);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoadingSuggestions(false);
+        }
+      }
+    }, 250);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      controller.abort();
+    };
+  }, [searchQuery, isSearchOpen]);
+
   /* ========================================================= MOBILE MENU CLOSE ========================================================= */ const closeMobileMenu =
     () => {
       setIsMobileMenuOpen(false);
     };
   return (
     <>
-
+      {/* Blur the page behind the search suggestions */}
+      {isSearchOpen && searchQuery.trim().length > 0 && (
+        <div
+          className="fixed inset-0 z-[90] bg-black/10 backdrop-blur-sm"
+          onClick={() => setIsSearchOpen(false)}
+          aria-hidden="true"
+        />
+      )}
       <header
         ref={headerRef}
-        className="fixed top-0 left-0 right-0 z-[100] w-full bg-white border-b border-[#e5e5e5]"
+        className="fixed top-0 left-0 right-0 z-[100] w-full bg-white border-b border-slate-200 shadow-sm"
       >
-
         {/* ===================================================== DESKTOP HEADER IMPORTANT: Existing desktop design is preserved. Visible from lg and above. ===================================================== */}
         <div className="hidden lg:block">
           {" "}
@@ -190,17 +455,15 @@ export function Header() {
                 </div>{" "}
               </button>{" "}
               {/* Search */}{" "}
-              <div ref={searchRef} className="flex-1 max-w-2xl relative">
+              <div ref={desktopSearchRef} className="flex-1 max-w-2xl relative">
                 {" "}
-
                 <form
                   id="header-search"
                   onSubmit={handleSearch}
                   className="flex-1 max-w-2xl mx-auto scroll-mt-24"
                 >
-
                   {" "}
-                  <div className="flex h-11 border border-[#dddddd] rounded-sm overflow-hidden bg-white">
+                  <div className="flex h-11 border border-slate-300 rounded-lg overflow-hidden bg-white focus-within:border-[#795BCB] focus-within:ring-2 focus-within:ring-[#795BCB]/10 transition">
                     {" "}
                     {/* <select
                       value={selectedCat}
@@ -218,8 +481,12 @@ export function Header() {
                     <input
                       type="text"
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setIsSearchOpen(true);
+                      }}
                       onFocus={() => setIsSearchOpen(true)}
+                      onKeyDown={handleSearchKeyDown}
                       placeholder="I'm shopping for..."
                       className="flex-1 px-4 text-sm outline-none text-[#333] placeholder:text-[#999]"
                     />{" "}
@@ -233,7 +500,7 @@ export function Header() {
                   </div>{" "}
                 </form>{" "}
                 {/* Desktop Search Drawer */}{" "}
-                {isSearchOpen && (
+                {isSearchOpen && searchQuery.trim().length === 0 && (
                   <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200 p-4 z-50 animate-in fade-in duration-150">
                     {" "}
                     <div className="flex items-center justify-between mb-2">
@@ -290,6 +557,17 @@ export function Header() {
                       </button>{" "}
                     </div>{" "}
                   </div>
+                )}
+                {/* Live product suggestions */}
+                {isSearchOpen && searchQuery.trim().length >= 1 && (
+                  <ProductSuggestions
+                    query={searchQuery}
+                    products={searchSuggestions}
+                    loading={isLoadingSuggestions}
+                    onClose={() => setIsSearchOpen(false)}
+                    onSelectProduct={handleSelectProduct}
+                    selectedIndex={selectedSuggestionIndex}
+                  />
                 )}{" "}
               </div>{" "}
               {/* Desktop Right Actions */}{" "}
@@ -387,7 +665,6 @@ export function Header() {
                         <Heart className="w-4 h-4 text-slate-400" /> Saved
                         Wishlist ({wishlistCount}){" "}
                       </Link>{" "}
-
                     </div>
                   )}{" "}
                 </div>{" "}
@@ -425,13 +702,11 @@ export function Header() {
             </div>{" "}
           </div>{" "}
           {/* Desktop Category Navigation */}{" "}
-
-
           {/* Desktop Category Navigation */}
-          <div className="bg-slate-50 border-t border-slate-200/80 px-4 mt-4">
+          <div className="bg-white border-t border-slate-200 px-4 mt-2">
             <div className="h-2 bg-white" />
 
-            <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto no-scrollbar py-0 text-xs font-semibold text-black">
+            <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto no-scrollbar py-2 text-sm font-medium text-slate-700">
               <div className="flex items-center gap-1 sm:gap-9 shrink-0">
                 {NAV_CATEGORIES.map((cat) => {
                   const active = isCategoryActive(cat.slug, cat.isDeal);
@@ -444,28 +719,35 @@ export function Header() {
                           ? "/category/all?deal=true"
                           : `/category/${cat.slug}`
                       }
-                      className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 ${active
-                        ? "!bg-[#795BCB] !text-white shadow-sm"
-                        : "text-slate-700 hover:bg-[#795BCB]/10 hover:text-[#795BCB]"
-                        }`}
+                      className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 ${
+                        active
+                          ? "!bg-[#795BCB] !text-white shadow-sm"
+                          : "text-slate-700 hover:bg-[#795BCB]/10 hover:text-[#795BCB]"
+                      }`}
                     >
                       {cat.isDeal && (
                         <Flame
-                          className={`w-3.5 h-3.5 ${active ? "!text-white !fill-white" : "text-[#795BCB]"
-                            }`}
+                          className={`w-3.5 h-3.5 ${
+                            active
+                              ? "!text-white !fill-white"
+                              : "text-[#795BCB]"
+                          }`}
                         />
                       )}
 
-                      <span className={active ? "!text-white" : "text-slate-700"}>
+                      <span
+                        className={active ? "!text-white" : "text-slate-700"}
+                      >
                         {cat.name}
                       </span>
 
                       {cat.badge && (
                         <span
-                          className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${active
-                            ? "!bg-white !text-[#795BCB]"
-                            : "bg-[#795BCB] text-white"
-                            }`}
+                          className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${
+                            active
+                              ? "!bg-white !text-[#795BCB]"
+                              : "bg-[#795BCB] text-white"
+                          }`}
                         >
                           {cat.badge}
                         </span>
@@ -476,8 +758,6 @@ export function Header() {
               </div>
             </div>
           </div>
-
-
         </div>{" "}
         {/* ===================================================== MOBILE HEADER Professional mobile layout. Visible below lg. ===================================================== */}{" "}
         <div className="lg:hidden bg-white">
@@ -562,56 +842,50 @@ export function Header() {
           {/* Mobile Search */}{" "}
           <div className="px-3 pb-2.5">
             {" "}
-            <div ref={searchRef} className="relative w-full">
-              {" "}
+            <div ref={mobileSearchRef} className="relative w-full">
               <form onSubmit={handleSearch} className="w-full">
-                {" "}
                 <div className="flex h-11 rounded-xl border border-slate-200 bg-slate-50 overflow-hidden focus-within:border-[#795BCB] focus-within:ring-2 focus-within:ring-[#795BCB]/10 transition">
-                  {" "}
                   <div className="flex-1 flex items-center min-w-0">
-                    {" "}
-                    <Search className="w-4 h-4 text-slate-400 ml-3 shrink-0" />{" "}
+                    <Search className="w-4 h-4 text-slate-400 ml-3 shrink-0" />
                     <input
                       type="text"
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setIsSearchOpen(true);
+                      }}
                       onFocus={() => setIsSearchOpen(true)}
+                      onKeyDown={handleSearchKeyDown}
                       placeholder="Search salon products..."
                       className="w-full min-w-0 bg-transparent px-2.5 text-sm outline-none text-slate-800 placeholder:text-slate-400"
-                    />{" "}
-                  </div>{" "}
+                    />
+                  </div>
                   <button
                     type="submit"
                     className="w-11 shrink-0 bg-[#795BCB] text-white flex items-center justify-center active:bg-[#6246B0] transition"
                     aria-label="Search"
                   >
-                    {" "}
-                    <Search className="w-[18px] h-[18px]" />{" "}
-                  </button>{" "}
-                </div>{" "}
-              </form>{" "}
-              {/* Mobile Search Suggestions */}{" "}
-              {isSearchOpen && (
+                    <Search className="w-[18px] h-[18px]" />
+                  </button>
+                </div>
+              </form>
+              {/* Mobile Search Suggestions */}
+              {isSearchOpen && searchQuery.trim().length === 0 && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-[60]">
-                  {" "}
                   <div className="flex items-center justify-between mb-2">
-                    {" "}
                     <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                      {" "}
                       <Flame className="w-3.5 h-3.5 text-rose-500" /> Trending
-                      Searches{" "}
-                    </span>{" "}
+                      Searches
+                    </span>
                     <button
                       type="button"
                       onClick={() => setIsSearchOpen(false)}
                       className="text-[11px] text-slate-400 px-2 py-1"
                     >
-                      {" "}
-                      Close{" "}
-                    </button>{" "}
-                  </div>{" "}
+                      Close
+                    </button>
+                  </div>
                   <div className="flex flex-wrap gap-1.5">
-                    {" "}
                     {POPULAR_SEARCH_TAGS.map((tag) => (
                       <button
                         key={tag}
@@ -622,13 +896,23 @@ export function Header() {
                         }}
                         className="text-[11px] font-medium text-slate-700 bg-slate-100 active:bg-[#795BCB]/10 px-2.5 py-1.5 rounded-lg border border-slate-200"
                       >
-                        {" "}
-                        {tag}{" "}
+                        {tag}
                       </button>
-                    ))}{" "}
-                  </div>{" "}
+                    ))}
+                  </div>
                 </div>
-              )}{" "}
+              )}
+              {/* Live product suggestions */}
+              {isSearchOpen && searchQuery.trim().length >= 1 && (
+                <ProductSuggestions
+                  query={searchQuery}
+                  products={searchSuggestions}
+                  loading={isLoadingSuggestions}
+                  onClose={() => setIsSearchOpen(false)}
+                  onSelectProduct={handleSelectProduct}
+                  selectedIndex={selectedSuggestionIndex}
+                />
+              )}
             </div>{" "}
           </div>{" "}
           {/* Mobile Delivery Location */}{" "}

@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { products, categories, orders, reviews, blogPosts, coupons, b2bInquiries } from "@/db/schema";
-import { eq, ilike, and, gte, lte, desc, asc, or, count, inArray } from "drizzle-orm";
+import { eq, ilike, and, gte, lte, desc, asc, or, count, inArray, sql } from "drizzle-orm";
 import { Product, Category, FilterOptions, BlogPost, Coupon, Review, Order } from "./types";
 import { PRODUCTS_DATA, CATEGORIES_DATA, BLOG_POSTS_DATA, COUPONS_DATA } from "@/db/seed-data";
 import { seedDatabase } from "@/db/seed";
@@ -89,15 +89,23 @@ export async function getProducts(options: FilterOptions = {}): Promise<{
     }
 
     if (options.search && options.search.trim()) {
-      const q = `%${options.search.trim()}%`;
-      conditions.push(
-        or(
-          ilike(products.name, q),
-          ilike(products.brand, q),
-          ilike(products.category, q),
-          ilike(products.description, q)
-        )
-      );
+      const terms = options.search.trim().split(/\s+/).filter(Boolean);
+      const termConditions = terms.map((term) => {
+        const pattern = `%${term}%`;
+        return or(
+          ilike(products.name, pattern),
+          ilike(products.brand, pattern),
+          ilike(products.category, pattern),
+          ilike(products.subcategory, pattern),
+          ilike(products.shortDescription, pattern),
+          ilike(products.description, pattern),
+          sql`${products.tags}::text ILIKE ${pattern}`
+        );
+      });
+
+      if (termConditions.length > 0) {
+        conditions.push(and(...termConditions));
+      }
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
@@ -171,13 +179,13 @@ export async function getProducts(options: FilterOptions = {}): Promise<{
     if (options.brand && options.brand !== "all") {
       filtered = filtered.filter((p) => p.brand.toLowerCase() === options.brand?.toLowerCase());
     }
-    if (options.search) {
-      const q = options.search.toLowerCase();
-      filtered = filtered.filter((p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.brand.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q)
-      );
+    if (options.search && options.search.trim()) {
+      const terms = options.search.toLowerCase().trim().split(/\s+/).filter(Boolean);
+      filtered = filtered.filter((p) => {
+        const tagsStr = Array.isArray(p.tags) ? p.tags.join(" ") : (p.tags || "");
+        const fullText = `${p.name} ${p.brand} ${p.category} ${p.subcategory || ""} ${tagsStr} ${p.description || ""} ${p.shortDescription || ""}`.toLowerCase();
+        return terms.every((t) => fullText.includes(t));
+      });
     }
     if (options.isDeal) {
       filtered = filtered.filter((p) => p.isDealOfTheDay);

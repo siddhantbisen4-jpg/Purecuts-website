@@ -36,7 +36,11 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
   const inCartQty = cartItem ? cartItem.quantity : 0;
 
   return (
-    <div className="group relative bg-white rounded-2xl border border-slate-200/80 hover:border-[#795BCB] hover:shadow-xl transition-all duration-300 flex flex-col h-full overflow-hidden">
+    <div
+      id={`product-${product.slug}`}
+      data-product-slug={product.slug}
+      className="group relative bg-white rounded-2xl border border-slate-200/80 hover:border-[#795BCB] hover:shadow-xl transition-all duration-300 flex flex-col h-full overflow-hidden scroll-mt-24"
+    >
       {/* Top Image Container */}
       <div className="relative bg-slate-50/70 p-2.5 sm:p-4 flex items-center justify-center aspect-square overflow-hidden border-b border-slate-100">
         {/* Sale / Discount Badge */}

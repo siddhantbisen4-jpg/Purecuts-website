@@ -1374,7 +1374,7 @@ export function CategoryCatalog({
                   </div>
                 </div>
 
-                {/* TOGGLES */}
+                {/* TOGGLES 
 
                 <div className="pt-2 border-t border-slate-100 space-y-2.5 text-xs">
                   <label className="flex items-center gap-2 cursor-pointer font-medium text-slate-700">
@@ -1398,7 +1398,7 @@ export function CategoryCatalog({
 
                     <span>Salon Professional Only</span>
                   </label>
-                </div>
+                </div>*/}
               </>
             )}
           </aside>
