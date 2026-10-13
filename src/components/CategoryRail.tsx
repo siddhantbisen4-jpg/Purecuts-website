@@ -2,34 +2,48 @@
 
 import React from "react";
 import Link from "next/link";
-import { Sparkles, HeartHandshake, Zap, Scissors, Armchair, Layers, Palette, PackageCheck, Flame } from "lucide-react";
+import {
+  Sparkles,
+  HeartHandshake,
+  Zap,
+  Scissors,
+  Armchair,
+  Layers,
+  Palette,
+  PackageCheck,
+  Flame,
+} from "lucide-react";
 import Image from "next/image";
 const CATEGORY_ITEMS = [
   {
     name: "",
     slug: "haircare",
-    image: "https://static.vecteezy.com/system/resources/previews/046/631/483/non_2x/hair-care-shampoo-treatment-outline-color-icon-vector.jpg",
+    image:
+      "https://static.vecteezy.com/system/resources/previews/046/631/483/non_2x/hair-care-shampoo-treatment-outline-color-icon-vector.jpg",
     badge: "Haircare",
     badgeColor: "bg-[#795BCB] text-white",
   },
   {
     name: "",
     slug: "skincare",
-    image: "https://i.pinimg.com/736x/24/7f/9a/247f9a5613d83a9442729b45024cbe0b.jpg",
+    image:
+      "https://i.pinimg.com/736x/24/7f/9a/247f9a5613d83a9442729b45024cbe0b.jpg",
     badge: "skincare & Bodycare",
     badgeColor: "bg-[#795BCB] text-white",
   },
   {
     name: "",
     slug: "machineries",
-    image: "https://static.vecteezy.com/system/resources/thumbnails/075/365/015/small/hair-salon-equipment-silhouette-hair-dryer-comb-and-scissors-vector.jpg",
+    image:
+      "https://static.vecteezy.com/system/resources/thumbnails/075/365/015/small/hair-salon-equipment-silhouette-hair-dryer-comb-and-scissors-vector.jpg",
     badge: "machineries & Tools",
     badgeColor: "bg-[#795BCB] text-white",
   },
   {
     name: "",
     slug: "accessories",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDcvZ_4vEq-BrJuPt3DEwi3C8C3Ncp-5427EPKfjG1O65Iz87D3pjAj-8&s=10",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDcvZ_4vEq-BrJuPt3DEwi3C8C3Ncp-5427EPKfjG1O65Iz87D3pjAj-8&s=10",
     badge: "accessories",
     badgeColor: "bg-[#795BCB] text-white",
   },
@@ -43,11 +57,11 @@ const CATEGORY_ITEMS = [
   {
     name: "",
     slug: "disposable",
-    image: "https://www.shutterstock.com/image-vector/barber-hair-salon-icon-single-260nw-1282664899.jpg",
+    image:
+      "https://www.shutterstock.com/image-vector/barber-hair-salon-icon-single-260nw-1282664899.jpg",
     badge: "disposable",
     badgeColor: "bg-[#795BCB] text-white",
   },
-
 ];
 
 export function CategoryRail() {
@@ -60,11 +74,14 @@ export function CategoryRail() {
               <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-[#795BCB]" />
               Explore PureCuts Salon Categories
             </h2>
-            <p className="text-[11px] sm:text-xs text-slate-500">Fast product discovery across beauty & professional salon departments</p>
+            <p className="text-[11px] sm:text-xs text-slate-500">
+              Fast product discovery across beauty & professional salon
+              departments
+            </p>
           </div>
           <Link
             href="/category/all"
-            className="text-xs font-bold text-amber-700 hover:text-amber-800 hover:underline shrink-0"
+            className="text-xs font-bold text-[#7950F2] hover:text-[#7950F2] hover:underline shrink-0"
           >
             View All →
           </Link>

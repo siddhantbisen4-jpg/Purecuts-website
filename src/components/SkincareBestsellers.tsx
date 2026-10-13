@@ -30,7 +30,7 @@ export function SkincareBestsellers({ products }: SkincareBestsellersProps) {
 
           <Link
             href="/category/skincare"
-            className="text-xs font-bold text-amber-700 hover:text-amber-800 hover:underline flex items-center gap-1 group shrink-0"
+            className="text-xs font-bold text-[#7950F2] hover:text-[#7950F2] hover:underline flex items-center gap-1 group shrink-0"
           >
             <span>Explore All Skincare</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />

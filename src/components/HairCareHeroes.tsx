@@ -31,7 +31,7 @@ export function HairCareHeroes({ products }: HairCareHeroesProps) {
 
           <Link
             href="/category/haircare"
-            className="text-xs font-bold text-amber-700 hover:text-amber-800 hover:underline flex items-center gap-1 group shrink-0"
+            className="text-xs font-bold text-[#7950F2] hover:text-[#7950F2] hover:underline flex items-center gap-1 group shrink-0"
           >
             <span>Explore All Haircare</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />

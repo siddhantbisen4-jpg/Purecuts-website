@@ -31,18 +31,14 @@ export function Footer() {
   };
 
   return (
-
     <footer className="relative overflow-hidden bg-[radial-gradient(ellipse_at_top_left,rgba(121,91,203,0.16),transparent_38%),radial-gradient(ellipse_at_bottom_right,rgba(184,160,255,0.20),transparent_35%),linear-gradient(135deg,#fbfaff_0%,#ffffff_48%,#f5f1ff_100%)] text-slate-700 pt-8 sm:pt-14 lg:pt-16 pb-6 sm:pb-12 border-t border-[#795BCB]/20">
-
-
       {/* =========================================================
           GUARANTEES STRIP
       ```tsx
 {/* TRUST BENEFITS */}
       <div className="border-y border-slate-100 bg-white">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-5">
-          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
-
+          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-25">
             {/* Genuine Stock */}
             <div className="inline-flex items-center gap-2 rounded-full border border-[#795BCB]/20 bg-[#795BCB]/5 px-3.5 py-2.5 sm:px-5 sm:py-3">
               <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-[#795BCB] shrink-0" />
@@ -81,28 +77,20 @@ export function Footer() {
                 </p>
               </div>
             </div>
-
           </div>
         </div>
       </div>
-
 
       {/* =========================================================
           MAIN FOOTER
           ========================================================= */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 pt-7 sm:pt-10 lg:pt-12">
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-7 sm:gap-10 lg:gap-10">
-
           {/* =====================================================
               COMPANY INFORMATION
               ===================================================== */}
           <div className="lg:col-span-2 space-y-3.5 sm:space-y-4">
-
-            <Link
-              href="/"
-              className="flex items-center gap-2 w-fit"
-            >
+            <Link href="/" className="flex items-center gap-2 w-fit">
               <img
                 src="https://purecuts.in/wp-content/uploads/2025/06/purecuts_logo_no_bg-cropped.png"
                 alt="PureCuts"
@@ -120,15 +108,12 @@ export function Footer() {
             </p>*/}
 
             <div className="space-y-2.5 sm:space-y-3 pt-1.5 sm:pt-2 text-[11px] sm:text-sm text-slate-600">
-
               {/* Address */}
               <div className="flex items-start gap-2 sm:gap-2.5">
                 <MapPin className="w-4 h-4 sm:w-6 sm:h-6 text-amber-500 shrink-0 mt-0.5" />
 
                 <span className="leading-relaxed">
-                  <strong className="text-slate-900">
-                    EUREKA, A Building
-                  </strong>
+                  <strong className="text-slate-900">EUREKA, A Building</strong>
                   , GHRCEM Domkhel Road, Wagholi - 412207, Pune, Maharashtra
                 </span>
               </div>
@@ -168,25 +153,17 @@ export function Footer() {
             </div>
           </div>
 
-
           {/* =====================================================
               YOUR ACCOUNT
               ===================================================== */}
-
-
-
 
           {/* =====================================================
               TOP CATEGORIES
               ===================================================== */}
           <div>
             <h4 className="text-[11px] sm:text-sm font-bold text-slate-900 uppercase tracking-wider mb-3 sm:mb-4">
-              <span className="text-[#795BCB]">
-                Top Categories
-              </span>
+              <span className="text-[#795BCB]">Top Categories</span>
             </h4>
-
-
 
             <ul className="space-y-2 sm:space-y-2.5 text-[11px] sm:text-sm text-slate-600">
               {NAV_CATEGORIES.map((cat) => (
@@ -200,8 +177,6 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-
-
           </div>
 
           {/* =====================================================
@@ -209,15 +184,10 @@ export function Footer() {
               ===================================================== */}
           <div>
             <h4 className="text-[11px] sm:text-sm font-bold text-slate-900 uppercase tracking-wider mb-3 sm:mb-4">
-              <span className="text-[#795BCB]">
-                More from Purecuts
-              </span>
+              <span className="text-[#795BCB]">More from Purecuts</span>
             </h4>
 
             <ul className="space-y-2 sm:space-y-2.5 text-[11px] sm:text-sm text-slate-600">
-
-
-
               <li>
                 <Link
                   href="/about-us"
@@ -236,14 +206,10 @@ export function Footer() {
               </li>
 
               <li>
-                <Link
-                  href="/blog"
-                  className="hover:text-[#795BCB] transition"
-                >
+                <Link href="/blog" className="hover:text-[#795BCB] transition">
                   Salon Blog & Tips
                 </Link>
               </li>
-
 
               <li>
                 <button
@@ -253,8 +219,6 @@ export function Footer() {
                   Salon Wholesale / B2B Inquiry
                 </button>
               </li>
-
-
 
               <li>
                 <Link
@@ -266,14 +230,10 @@ export function Footer() {
               </li>
 
               <li>
-                <Link
-                  href="/terms"
-                  className="hover:text-[#795BCB] transition"
-                >
+                <Link href="/terms" className="hover:text-[#795BCB] transition">
                   Terms & Conditions
                 </Link>
               </li>
-
             </ul>
           </div>
 
@@ -348,13 +308,7 @@ export function Footer() {
             BOTTOM COPYRIGHT
             ========================================================= */}
         <div className="mt-7 sm:mt-10 lg:mt-12 pt-5 sm:pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-[9px] sm:text-xs text-slate-500 text-center sm:text-left">
-
-          <p>
-            © {new Date().getFullYear()} PureCuts. All Rights Reserved.
-
-          </p>
-
-
+          <p>© {new Date().getFullYear()} PureCuts. All Rights Reserved.</p>
         </div>
       </div>
     </footer>
