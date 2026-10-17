@@ -12,7 +12,10 @@ import {
   Building2,
 } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
-
+import Image from "next/image";
+import banner from "../image/main banner.png";
+import banner2 from "../image/banner8.png";
+import sliderBanner from "../image/sliderbanner1.png";
 const HERO_SLIDES = [
   {
     id: 1,
@@ -25,8 +28,7 @@ const HERO_SLIDES = [
     bgGradient: "from-slate-950 via-slate-900 to-amber-950/80",
     link: "/category/machineries",
     cta: "Explore Machineries",
-    image:
-      "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=900&q=80",
+    image: sliderBanner.src,
     offer: "Flat 35% - 50% OFF",
   },
   {
@@ -88,7 +90,6 @@ export function HeroSlider() {
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 pt-3 sm:pt-4 pb-5 sm:pb-6">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-
         {/* =====================================================
             MAIN BANNER SLIDER
         ====================================================== */}
@@ -113,10 +114,41 @@ export function HeroSlider() {
             className="absolute inset-0 bg-cover bg-center transition-all duration-700"
             style={{ backgroundImage: `url(${slide.image})` }}
           >
-            <div
-              className={`absolute inset-0 bg-gradient-to-r ${slide.bgGradient} opacity-92`}
-            />
+            <div />
           </div>
+          {/* ORDER NOW BUTTON — ONLY ON MACHINERY BANNER */}
+          {currentSlide === 0 && (
+            <Link
+              href="/category/skincare"
+              className="
+      absolute
+      bottom-12
+      sm:bottom-14
+      left-4
+      sm:left-6
+      lg:left-10
+      z-20
+      inline-flex
+      items-center
+      gap-2
+      rounded-xl
+      bg-[#795BCB]
+      hover:bg-[#6847B8]
+      px-5
+      py-3
+      text-sm
+      font-bold
+      text-white
+      shadow-lg
+      transition-all
+      duration-300
+      hover:scale-105
+    "
+            >
+              <span>Order Now</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          )}
 
           {/* =====================================================
               SLIDE CONTENT
@@ -133,146 +165,9 @@ export function HeroSlider() {
               w-full
             "
           >
-            {/* Badge + Tag */}
-            <div className="flex flex-wrap items-center gap-2 mb-3">
-              <span
-                className={`
-                  text-[9px]
-                  sm:text-xs
-                  font-black
-                  uppercase
-                  tracking-wider
-                  px-2.5
-                  sm:px-3
-                  py-1
-                  rounded-full
-                  shadow-xs
-                `}
-              >
-                <span
-                  className={`
-                    ${slide.badgeColor}
-                    inline-block
-                    px-2.5
-                    sm:px-3
-                    py-1
-                    rounded-full
-                  `}
-                >
-                  {slide.badge}
-                </span>
-              </span>
-
-              <span className="text-[10px] sm:text-xs font-bold text-amber-400 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                {slide.tag}
-              </span>
-            </div>
-
-            {/* Heading */}
-            <h1
-              className="
-                text-xl
-                sm:text-3xl
-                lg:text-4xl
-                font-black
-                leading-tight
-                tracking-tight
-                mb-3
-                text-balance
-              "
-            >
-              {slide.title}
-            </h1>
-
-            {/* Subtitle */}
-            <p
-              className="
-                text-[11px]
-                sm:text-xs
-                lg:text-sm
-                text-slate-300
-                leading-relaxed
-                mb-4
-                sm:mb-6
-                max-w-md
-              "
-            >
-              {slide.subtitle}
-            </p>
-
             {/* =====================================================
                 CTA + OFFER
             ====================================================== */}
-            <div
-              className="
-                flex
-                flex-col
-                sm:flex-row
-                items-stretch
-                sm:items-center
-                gap-2.5
-                sm:gap-3
-              "
-            >
-              <Link
-                href={slide.link}
-                className="
-                  px-4
-                  sm:px-6
-                  py-2.5
-                  sm:py-3
-                  bg-amber-500
-                  hover:bg-amber-400
-                  text-slate-950
-                  font-extrabold
-                  text-xs
-                  sm:text-sm
-                  rounded-xl
-                  transition
-                  flex
-                  items-center
-                  justify-center
-                  gap-2
-                  shadow-lg
-                  shadow-amber-500/20
-                  group
-                  whitespace-nowrap
-                "
-              >
-                <span>{slide.cta}</span>
-
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
-              </Link>
-
-              <span
-                className="
-                  px-3
-                  sm:px-4
-                  py-2.5
-                  sm:py-3
-                  bg-white/10
-                  hover:bg-white/15
-                  backdrop-blur-md
-                  text-amber-300
-                  font-bold
-                  text-xs
-                  sm:text-sm
-                  rounded-xl
-                  border
-                  border-white/20
-                  flex
-                  items-center
-                  justify-center
-                  gap-1.5
-                  whitespace-nowrap
-                "
-              >
-                <Flame className="w-4 h-4 text-rose-400" />
-
-                {slide.offer}
-              </span>
-            </div>
           </div>
 
           {/* =====================================================
@@ -368,7 +263,7 @@ export function HeroSlider() {
                   transition-all
                   ${
                     i === currentSlide
-                      ? "w-6 sm:w-7 bg-amber-500"
+                      ? "w-6 sm:w-7 bg-[#795BCB]"
                       : "w-1.5 sm:w-2 bg-white/40 hover:bg-white/70"
                   }
                 `}
@@ -382,46 +277,27 @@ export function HeroSlider() {
             RIGHT SIDE PROMOTIONAL CARDS
         ====================================================== */}
         <div className="lg:col-span-4 flex flex-col gap-4">
-
           {/* =====================================================
               CARD 1 — B2B WHOLESALE
           ====================================================== */}
           <div
             className="
-              flex-1
-              bg-gradient-to-br
-              from-amber-500
-              via-amber-600
-              to-amber-700
-              rounded-3xl
-              p-4
-              sm:p-6
-              text-slate-950
-              flex
-              flex-col
-              justify-between
-              shadow-lg
-              relative
-              overflow-hidden
-              group
-            "
+    lg:col-span-4
+    relative
+    rounded-3xl
+    overflow-hidden
+    border
+    border-slate-800
+    bg-white"
           >
-            <div
-              className="
-                absolute
-                -right-6
-                -bottom-6
-                w-32
-                h-32
-                bg-white/15
-                rounded-full
-                blur-xl
-                group-hover:scale-125
-                transition
-              "
+            <div />
+            <Image
+              src={banner}
+              alt="Salon wholesale banner"
+              className="object-contain object-center"
             />
 
-            <div>
+            {/*<div>
               <div className="flex items-center justify-between mb-2">
                 <span
                   className="
@@ -436,19 +312,19 @@ export function HeroSlider() {
                   "
                 >
                   B2B Wholesale
-                </span>
+                </span>*/}
 
-                <Building2 className="w-5 h-5 text-slate-900" />
-              </div>
+            {/*<Building2 className="w-5 h-5 text-slate-900" />
+              </div>*/}
 
-              <h3 className="text-lg sm:text-xl font-black leading-tight text-slate-950 mb-1">
+            {/*<h3 className="text-lg sm:text-xl font-black leading-tight text-slate-950 mb-1">
                 Salon Bulk Cartons & GST Billing
               </h3>
 
               <p className="text-xs text-amber-950/90 font-medium">
                 Get up to 30% additional discount on bulk chemical cartons,
                 salon furniture, clippers, and disposables.
-              </p>
+              </p></div>
             </div>
 
             <div className="pt-4 flex items-center justify-between gap-2">
@@ -479,7 +355,7 @@ export function HeroSlider() {
               <span className="text-[10px] sm:text-[11px] font-bold text-amber-950 text-right">
                 Pune Hub Dispatch
               </span>
-            </div>
+            </div>*/}
           </div>
 
           {/* =====================================================
@@ -487,22 +363,22 @@ export function HeroSlider() {
           ====================================================== */}
           <div
             className="
-              bg-slate-900
-              rounded-3xl
-              p-4
-              sm:p-6
-              text-white
-              border
-              border-slate-800
-              flex
-              flex-col
-              justify-between
-              shadow-lg
-              relative
-              overflow-hidden
-            "
+    lg:col-span-4
+    relative
+    rounded-3xl
+    overflow-hidden
+    border
+    border-slate-800
+    bg-white
+  "
           >
-            <div className="flex items-center gap-3 mb-3">
+            <Image
+              src={banner2}
+              alt="Salon product promotional banner"
+              className=" object-center"
+            />
+
+            {/*<div className="flex items-center gap-3 mb-3">
               <div
                 className="
                   w-10
@@ -568,7 +444,7 @@ export function HeroSlider() {
                   Pay at Doorstep
                 </span>
               </div>
-            </div>
+            </div>*/}
           </div>
         </div>
       </div>

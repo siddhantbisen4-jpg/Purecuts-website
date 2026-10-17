@@ -17,6 +17,7 @@ import {
   Package,
   Menu,
   X,
+  Mic,
 } from "lucide-react";
 
 import { NAV_CATEGORIES } from "./navCategories";
@@ -148,7 +149,9 @@ function ProductSuggestions({
                       {product.brand}
                     </span>
                     <span className="text-slate-300">•</span>
-                    <span className="truncate text-slate-500 text-[11px]">{product.category}</span>
+                    <span className="truncate text-slate-500 text-[11px]">
+                      {product.category}
+                    </span>
                   </div>
                 </div>
 
@@ -156,11 +159,12 @@ function ProductSuggestions({
                   <span className="block text-sm font-extrabold text-[#795BCB]">
                     ₹{product.price.toLocaleString("en-IN")}
                   </span>
-                  {product.originalPrice && product.originalPrice > product.price && (
-                    <span className="block text-[11px] text-slate-400 line-through">
-                      ₹{product.originalPrice.toLocaleString("en-IN")}
-                    </span>
-                  )}
+                  {product.originalPrice &&
+                    product.originalPrice > product.price && (
+                      <span className="block text-[11px] text-slate-400 line-through">
+                        ₹{product.originalPrice.toLocaleString("en-IN")}
+                      </span>
+                    )}
                 </div>
               </Link>
             );
@@ -182,9 +186,12 @@ function ProductSuggestions({
         </div>
       ) : (
         <div className="px-5 py-6 text-center">
-          <p className="text-sm font-semibold text-slate-700">No matching products found</p>
+          <p className="text-sm font-semibold text-slate-700">
+            No matching products found
+          </p>
           <p className="mt-1 text-xs text-slate-500">
-            No items matched &quot;{query}&quot;. Try checking the spelling or search by brand name.
+            No items matched &quot;{query}&quot;. Try checking the spelling or
+            search by brand name.
           </p>
           <button
             type="button"
@@ -235,9 +242,98 @@ export function Header() {
   const headerRef = useRef<HTMLElement>(null);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
 
+  const [isListening, setIsListening] = useState(false);
+
   useEffect(() => {
     setSelectedSuggestionIndex(-1);
   }, [searchQuery]);
+
+  const handleVoiceSearch = () => {
+    const browserWindow = window as any;
+    const SpeechRecognitionAPI =
+      browserWindow.SpeechRecognition || browserWindow.webkitSpeechRecognition;
+
+    if (!SpeechRecognitionAPI) {
+      alert(
+        "Voice search is not supported in this browser. Please use Chrome or Edge.",
+      );
+      return;
+    }
+
+    const recognition = new SpeechRecognitionAPI();
+
+    recognition.lang = "en-IN";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onresult = async (event: any) => {
+      const spokenText = event.results[0][0].transcript.trim();
+
+      if (!spokenText) return;
+
+      setSearchQuery(spokenText);
+      setIsSearchOpen(true);
+      setSelectedSuggestionIndex(-1);
+
+      try {
+        const response = await fetch(
+          `/api/products?q=${encodeURIComponent(spokenText)}&limit=6`,
+        );
+
+        if (!response.ok) {
+          throw new Error("Product search failed");
+        }
+
+        const data: ProductSearchResponse = await response.json();
+        const products = data.products ?? [];
+
+        const normalize = (value: string) =>
+          value.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+        const spoken = normalize(spokenText);
+
+        const exactMatch = products.find(
+          (product) =>
+            normalize(product.name) === spoken ||
+            normalize(product.slug) === spoken,
+        );
+
+        const partialMatch = products.find(
+          (product) =>
+            normalize(product.name).includes(spoken) ||
+            spoken.includes(normalize(product.name)),
+        );
+
+        const matchedProduct = exactMatch || partialMatch;
+
+        if (matchedProduct?.slug) {
+          setIsSearchOpen(false);
+          router.push(`/product/${encodeURIComponent(matchedProduct.slug)}`);
+        }
+      } catch (error) {
+        console.error("Voice product search failed:", error);
+      }
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error("Voice recognition error:", event.error);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    try {
+      recognition.start();
+    } catch (error) {
+      setIsListening(false);
+      console.error("Could not start voice recognition:", error);
+    }
+  };
 
   const handleSelectProduct = (product: HeaderProduct) => {
     setIsSearchOpen(false);
@@ -253,12 +349,12 @@ export function Header() {
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setSelectedSuggestionIndex((prev) =>
-        prev < searchSuggestions.length - 1 ? prev + 1 : 0
+        prev < searchSuggestions.length - 1 ? prev + 1 : 0,
       );
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setSelectedSuggestionIndex((prev) =>
-        prev > 0 ? prev - 1 : searchSuggestions.length - 1
+        prev > 0 ? prev - 1 : searchSuggestions.length - 1,
       );
     } else if (e.key === "Enter") {
       if (
@@ -491,6 +587,23 @@ export function Header() {
                       className="flex-1 px-4 text-sm outline-none text-[#333] placeholder:text-[#999]"
                     />{" "}
                     <button
+                      type="button"
+                      onClick={handleVoiceSearch}
+                      aria-label={
+                        isListening
+                          ? "Listening for product name"
+                          : "Search by voice"
+                      }
+                      title={isListening ? "Listening..." : "Search by voice"}
+                      className="w-10 shrink-0 flex items-center justify-center text-[#795BCB] hover:bg-[#795BCB]/10 transition"
+                    >
+                      <Mic
+                        className={`w-5 h-5 ${
+                          isListening ? "animate-pulse text-rose-500" : ""
+                        }`}
+                      />
+                    </button>
+                    <button
                       type="submit"
                       className="w-12 bg-[#795BCB] text-white flex items-center justify-center hover:bg-[#6246B0] transition"
                     >
@@ -539,22 +652,7 @@ export function Header() {
                     </div>{" "}
                     <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                       {" "}
-                      <span className="flex items-center gap-1">
-                        {" "}
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />{" "}
-                        100% Genuine Brands Guarantee{" "}
-                      </span>{" "}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsSearchOpen(false);
-                          openB2BModal();
-                        }}
-                        className="text-[#795BCB] hover:underline font-semibold"
-                      >
-                        {" "}
-                        Need Salon Wholesale Quotation?{" "}
-                      </button>{" "}
+                      <span className="flex items-center gap-1"> </span>{" "}
                     </div>{" "}
                   </div>
                 )}
@@ -860,6 +958,25 @@ export function Header() {
                       className="w-full min-w-0 bg-transparent px-2.5 text-sm outline-none text-slate-800 placeholder:text-slate-400"
                     />
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={handleVoiceSearch}
+                    aria-label={
+                      isListening
+                        ? "Listening for product name"
+                        : "Search by voice"
+                    }
+                    title={isListening ? "Listening..." : "Search by voice"}
+                    className="w-10 shrink-0 flex items-center justify-center text-[#795BCB] hover:bg-[#795BCB]/10 transition"
+                  >
+                    <Mic
+                      className={`w-[18px] h-[18px] ${
+                        isListening ? "animate-pulse text-rose-500" : ""
+                      }`}
+                    />
+                  </button>
+
                   <button
                     type="submit"
                     className="w-11 shrink-0 bg-[#795BCB] text-white flex items-center justify-center active:bg-[#6246B0] transition"
