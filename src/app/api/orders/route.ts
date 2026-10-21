@@ -36,9 +36,10 @@ export async function POST(request: NextRequest) {
     } = body;
     
     if (
-  customerType !== "SALON_OWNER" &&
-  customerType !== "GUEST"
-) {
+      customerType !== "SALON_OWNER" &&
+      customerType !== "GUEST" &&
+      customerType !== "LOCAL_CUSTOMER"
+    ) {
   return NextResponse.json(
     {
       success: false,

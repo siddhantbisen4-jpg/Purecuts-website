@@ -49,9 +49,57 @@ export default function RegisterPage() {
   });
 
   const updateField = (field: keyof typeof form, value: string) => {
+    let sanitized = value;
+
+    if (field === "name") {
+      // Letters, spaces, hyphens, and apostrophes only. No digits or special symbols.
+      sanitized = value
+        .replace(/[^a-zA-Z\s'-]/g, "")
+        .replace(/^\s+/, "")
+        .replace(/\s{2,}/g, " ")
+        .slice(0, 50);
+    } else if (field === "phone") {
+      // Digits only, maximum 10 digits
+      sanitized = value.replace(/\D/g, "").slice(0, 10);
+    } else if (field === "email") {
+      // No spaces, lowercase
+      sanitized = value.replace(/\s/g, "").toLowerCase().slice(0, 80);
+    } else if (field === "city" || field === "state") {
+      // Letters and spaces only, no digits or special symbols
+      sanitized = value
+        .replace(/[^a-zA-Z\s]/g, "")
+        .replace(/^\s+/, "")
+        .replace(/\s{2,}/g, " ")
+        .slice(0, 40);
+    } else if (field === "pincode") {
+      // Digits only, maximum 6 digits
+      sanitized = value.replace(/\D/g, "").slice(0, 6);
+    } else if (field === "salonName") {
+      // Letters, numbers, spaces, and standard business symbols
+      sanitized = value
+        .replace(/[^a-zA-Z0-9\s&'.,-]/g, "")
+        .replace(/^\s+/, "")
+        .replace(/\s{2,}/g, " ")
+        .slice(0, 80);
+    } else if (field === "gstNumber") {
+      // Uppercase alphanumeric only, max 15
+      sanitized = value
+        .replace(/[^a-zA-Z0-9]/g, "")
+        .toUpperCase()
+        .slice(0, 15);
+    } else if (field === "udyamNumber") {
+      // Uppercase alphanumeric and hyphens only, max 19
+      sanitized = value
+        .replace(/[^a-zA-Z0-9-]/g, "")
+        .toUpperCase()
+        .slice(0, 19);
+    } else if (field === "address") {
+      sanitized = value.slice(0, 250);
+    }
+
     setForm((current) => ({
       ...current,
-      [field]: value,
+      [field]: sanitized,
     }));
 
     setError("");
@@ -67,9 +115,9 @@ export default function RegisterPage() {
 
     const phone = form.phone.replace(/\D/g, "");
 
-    if (!/^\d{10}$/.test(phone)) {
+    if (!/^[6-9]\d{9}$/.test(phone)) {
       setError(
-        "Please enter a valid 10-digit phone number before sending OTP.",
+        "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9 before sending OTP."
       );
       return;
     }
@@ -97,18 +145,33 @@ export default function RegisterPage() {
       return;
     }
 
-    if (!form.name.trim()) {
+    const nameTrimmed = form.name.trim();
+    if (!nameTrimmed) {
       setError("Please enter your full name.");
       return;
     }
-
-    if (!/^\S+@\S+\.\S+$/.test(form.email)) {
-      setError("Please enter a valid email address.");
+    if (!/^[a-zA-Z\s'-]{2,50}$/.test(nameTrimmed)) {
+      setError("Full name must only contain letters and spaces (minimum 2 characters).");
       return;
     }
 
-    if (!/^\d{10}$/.test(form.phone.replace(/\D/g, ""))) {
-      setError("Please enter a valid 10-digit phone number.");
+    const phoneClean = form.phone.replace(/\D/g, "");
+    if (!phoneClean) {
+      setError("Please enter your phone number.");
+      return;
+    }
+    if (!/^[6-9]\d{9}$/.test(phoneClean)) {
+      setError("Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.");
+      return;
+    }
+
+    const emailTrimmed = form.email.trim();
+    if (!emailTrimmed) {
+      setError("Please enter your email address.");
+      return;
+    }
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(emailTrimmed)) {
+      setError("Please enter a valid email address (e.g. name@example.com).");
       return;
     }
 
@@ -117,30 +180,44 @@ export default function RegisterPage() {
       return;
     }
 
-    if (!form.address.trim()) {
-      setError("Please enter your address.");
+    if (!form.address.trim() || form.address.trim().length < 5) {
+      setError("Please enter your full address (minimum 5 characters).");
       return;
     }
 
-    if (!form.city.trim()) {
-      setError("Please enter your city.");
+    if (!form.city.trim() || !/^[a-zA-Z\s]{2,40}$/.test(form.city.trim())) {
+      setError("Please enter a valid city name (letters only).");
       return;
     }
 
-    if (!form.state.trim()) {
-      setError("Please enter your state.");
+    if (!form.state.trim() || !/^[a-zA-Z\s]{2,40}$/.test(form.state.trim())) {
+      setError("Please enter a valid state name (letters only).");
       return;
     }
 
     if (!/^\d{6}$/.test(form.pincode)) {
-      setError("Please enter a valid six-digit pincode.");
+      setError("Please enter a valid 6-digit postal pincode.");
       return;
+    }
+
+    if (accountType === "salon_owner") {
+      const gstClean = form.gstNumber.trim().toUpperCase();
+      const udyamClean = form.udyamNumber.trim().toUpperCase();
+
+      if (gstClean && gstClean.length !== 15) {
+        setError("GSTIN must be 15 alphanumeric characters (e.g. 27AAAAA0000A1Z5).");
+        return;
+      }
+      if (udyamClean && !/^UDYAM-[A-Z]{2}-\d{2}-\d{7}$/.test(udyamClean) && udyamClean.length < 12) {
+        setError("UDYAM format must be UDYAM-XX-00-0000000.");
+        return;
+      }
     }
 
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("/api/auth/login/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -686,10 +763,8 @@ function Input({
 
       <div className="relative">
         {icon && (
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-            {React.cloneElement(icon as React.ReactElement, {
-              className: "w-4 h-4",
-            })}
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 [&>svg]:w-4 [&>svg]:h-4">
+            {icon}
           </span>
         )}
 
@@ -699,9 +774,8 @@ function Input({
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
           required={required}
-          className={`w-full rounded-xl border border-slate-200 bg-white py-3.5 ${
-            icon ? "pl-11" : "px-4"
-          } pr-4 text-sm text-slate-900 outline-none transition focus:border-[#795BCB] focus:ring-4 focus:ring-[#795BCB]/10`}
+          className={`w-full rounded-xl border border-slate-200 bg-white py-3.5 ${icon ? "pl-11" : "px-4"
+            } pr-4 text-sm text-slate-900 outline-none transition focus:border-[#795BCB] focus:ring-4 focus:ring-[#795BCB]/10`}
         />
       </div>
     </label>

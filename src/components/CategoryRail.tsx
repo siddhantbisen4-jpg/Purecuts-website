@@ -87,7 +87,7 @@ export function CategoryRail() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-3 gap-y-7 sm:gap-4">
           {CATEGORY_ITEMS.map((item) => (
             <Link
               key={item.slug}
@@ -106,7 +106,7 @@ export function CategoryRail() {
                 </div>
                 {item.badge && (
                   <span
-                    className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] font-extrabold px-1.5 py-0.5 rounded-full whitespace-nowrap shadow-xs uppercase tracking-wider max-w-[95%] truncate ${item.badgeColor}`}
+                    className={`absolute -bottom-2 left-1/2 z-10 -translate-x-1/2 w-max max-w-[120px] sm:max-w-[150px] text-center text-[8px] sm:text-[9px] font-extrabold px-2 py-1 rounded-full whitespace-normal break-words leading-tight shadow-xs uppercase tracking-wider ${item.badgeColor}`}
                   >
                     {item.badge}
                   </span>

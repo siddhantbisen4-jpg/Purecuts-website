@@ -300,7 +300,7 @@ export default function CartPage() {
                 onClick={() => router.push("/checkout")}
                 className="w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20"
               >
-                <span>Proceed to Checkout</span>
+                <span>Check Out</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 

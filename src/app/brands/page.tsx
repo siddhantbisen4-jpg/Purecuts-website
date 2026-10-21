@@ -15,7 +15,8 @@ import {
   X,
   ExternalLink,
 } from "lucide-react";
-
+import Image from "next/image";
+import brand from"@/image/brand.png";
 export default function BrandsDirectoryPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -59,6 +60,8 @@ export default function BrandsDirectoryPage() {
         </nav>
 
         {/* Hero Banner with purecuts purple gradient */}
+       
+          
         <div className="relative rounded-3xl overflow-hidden p-8 sm:p-12 text-white pc-gradient-hero border border-purple-900/40 shadow-xl">
           <div
             className="absolute inset-0 opacity-15 pointer-events-none"
@@ -72,6 +75,8 @@ export default function BrandsDirectoryPage() {
             <div className="inline-flex items-center gap-2 bg-white/15 border border-white/20 text-black text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm">
                {/*<Award className="w-4 h-4 text-amber-300" />
               <span>Official Salon Brand Partners</span>*/}
+
+              
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight text-black">
@@ -96,6 +101,7 @@ export default function BrandsDirectoryPage() {
             </div>
           </div>
         </div>
+        
 
         {/* Search & Filter Bar */}
         <div className="bg-white rounded-3xl p-5 border border-purple-100 shadow-sm space-y-4">

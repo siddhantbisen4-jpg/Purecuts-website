@@ -22,6 +22,7 @@ import {
 
 import { NAV_CATEGORIES } from "./navCategories";
 import { LocationModal } from "./LocationModal";
+import { VoiceSearchModal, VoiceSearchStatus } from "./VoiceSearchModal";
 import logo from "../image/purecuts_logo_no_bg-cropped.png";
 import Image from "next/image";
 const POPULAR_SEARCH_TAGS = [
@@ -243,95 +244,225 @@ export function Header() {
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
 
   const [isListening, setIsListening] = useState(false);
+  const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
+  const [voiceStatus, setVoiceStatus] = useState<VoiceSearchStatus>("idle");
+  const [voiceTranscript, setVoiceTranscript] = useState("");
+  const [voiceErrorMessage, setVoiceErrorMessage] = useState("");
+  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     setSelectedSuggestionIndex(-1);
   }, [searchQuery]);
 
+  // Cleanup speech recognition on unmount
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+        } catch {
+          // ignore
+        }
+      }
+    };
+  }, []);
+
+  const handleCloseVoiceModal = () => {
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.abort();
+      } catch {
+        // ignore
+      }
+    }
+    setIsListening(false);
+    setIsVoiceModalOpen(false);
+    setVoiceStatus("idle");
+  };
+
+  const handleSelectVoiceQuery = (query: string) => {
+    handleCloseVoiceModal();
+    setSearchQuery(query);
+    setIsSearchOpen(false);
+    router.push(`/category/all?q=${encodeURIComponent(query.trim())}`);
+  };
+
   const handleVoiceSearch = () => {
+    // If currently listening, clicking the mic stops it
+    if (isListening) {
+      handleCloseVoiceModal();
+      return;
+    }
+
     const browserWindow = window as any;
     const SpeechRecognitionAPI =
       browserWindow.SpeechRecognition || browserWindow.webkitSpeechRecognition;
 
     if (!SpeechRecognitionAPI) {
       alert(
-        "Voice search is not supported in this browser. Please use Chrome or Edge.",
+        "Voice search is not supported in this browser. Please use Google Chrome or Microsoft Edge.",
       );
       return;
     }
 
-    const recognition = new SpeechRecognitionAPI();
-
-    recognition.lang = "en-IN";
-    recognition.continuous = false;
-    recognition.interimResults = false;
-
-    recognition.onstart = () => {
-      setIsListening(true);
-    };
-
-    recognition.onresult = async (event: any) => {
-      const spokenText = event.results[0][0].transcript.trim();
-
-      if (!spokenText) return;
-
-      setSearchQuery(spokenText);
-      setIsSearchOpen(true);
-      setSelectedSuggestionIndex(-1);
-
+    // Stop any existing recognition instance
+    if (recognitionRef.current) {
       try {
-        const response = await fetch(
-          `/api/products?q=${encodeURIComponent(spokenText)}&limit=6`,
-        );
-
-        if (!response.ok) {
-          throw new Error("Product search failed");
-        }
-
-        const data: ProductSearchResponse = await response.json();
-        const products = data.products ?? [];
-
-        const normalize = (value: string) =>
-          value.toLowerCase().replace(/[^a-z0-9]/g, "");
-
-        const spoken = normalize(spokenText);
-
-        const exactMatch = products.find(
-          (product) =>
-            normalize(product.name) === spoken ||
-            normalize(product.slug) === spoken,
-        );
-
-        const partialMatch = products.find(
-          (product) =>
-            normalize(product.name).includes(spoken) ||
-            spoken.includes(normalize(product.name)),
-        );
-
-        const matchedProduct = exactMatch || partialMatch;
-
-        if (matchedProduct?.slug) {
-          setIsSearchOpen(false);
-          router.push(`/product/${encodeURIComponent(matchedProduct.slug)}`);
-        }
-      } catch (error) {
-        console.error("Voice product search failed:", error);
+        recognitionRef.current.abort();
+      } catch {
+        // ignore
       }
-    };
+    }
 
-    recognition.onerror = (event: any) => {
-      console.error("Voice recognition error:", event.error);
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
+    // Open Google-style Voice Search Modal immediately to show active state
+    setIsVoiceModalOpen(true);
+    setVoiceStatus("listening");
+    setVoiceTranscript("");
+    setVoiceErrorMessage("");
 
     try {
+      const recognition = new SpeechRecognitionAPI();
+      recognitionRef.current = recognition;
+
+      recognition.lang = "en-IN";
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        setIsListening(true);
+        setVoiceStatus("listening");
+      };
+
+      recognition.onresult = async (event: any) => {
+        let interim = "";
+        let final = "";
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          const item = event.results[i];
+          if (item.isFinal) {
+            final += item[0].transcript;
+          } else {
+            interim += item[0].transcript;
+          }
+        }
+
+        const spokenText = (final || interim).trim();
+        if (spokenText) {
+          setVoiceTranscript(spokenText);
+        }
+
+        if (final.trim()) {
+          const queryText = final.trim();
+          setVoiceStatus("processing");
+          setSearchQuery(queryText);
+
+          try {
+            const response = await fetch(
+              `/api/products?q=${encodeURIComponent(queryText)}&limit=6`,
+            );
+
+            if (response.ok) {
+              const data: ProductSearchResponse = await response.json();
+              const products = data.products ?? [];
+
+              const normalize = (value: string) =>
+                value.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+              const spoken = normalize(queryText);
+
+              const exactMatch = products.find(
+                (product) =>
+                  normalize(product.name) === spoken ||
+                  normalize(product.slug) === spoken,
+              );
+
+              const partialMatch = products.find(
+                (product) =>
+                  normalize(product.name).includes(spoken) ||
+                  spoken.includes(normalize(product.name)),
+              );
+
+              const matchedProduct = exactMatch || partialMatch;
+
+              if (matchedProduct?.slug) {
+                setTimeout(() => {
+                  setIsVoiceModalOpen(false);
+                  setIsListening(false);
+                  setIsSearchOpen(false);
+                  router.push(`/product/${encodeURIComponent(matchedProduct.slug)}`);
+                }, 500);
+                return;
+              }
+            }
+          } catch (error) {
+            console.error("Voice product search failed:", error);
+          }
+
+          // If no specific single product slug matched, redirect to category search
+          setTimeout(() => {
+            setIsVoiceModalOpen(false);
+            setIsListening(false);
+            setIsSearchOpen(false);
+            router.push(`/category/all?q=${encodeURIComponent(queryText)}`);
+          }, 500);
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        console.warn("Voice recognition error:", event.error);
+        setIsListening(false);
+        setVoiceStatus("error");
+
+        if (
+          event.error === "not-allowed" ||
+          event.error === "service-not-allowed"
+        ) {
+          setVoiceErrorMessage(
+            "Microphone access is blocked. Please allow microphone permission in your browser address bar.",
+          );
+        } else if (event.error === "no-speech") {
+          setVoiceErrorMessage(
+            "Didn't catch any speech. Tap the microphone to try again.",
+          );
+        } else if (event.error === "network") {
+          setVoiceErrorMessage(
+            "Network error communicating with speech recognition. Please try again.",
+          );
+        } else {
+          setVoiceErrorMessage(
+            "Could not recognize speech. Please tap the microphone to retry.",
+          );
+        }
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+        setVoiceStatus((prev) => (prev === "listening" ? "error" : prev));
+      };
+
       recognition.start();
     } catch (error) {
-      setIsListening(false);
       console.error("Could not start voice recognition:", error);
+      setIsListening(false);
+      setVoiceStatus("error");
+      setVoiceErrorMessage(
+        "Could not activate microphone. Please check browser microphone permissions.",
+      );
+    }
+  };
+
+  const handleRestartVoiceSearch = () => {
+    if (isListening && recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch {
+        // ignore
+      }
+      setIsListening(false);
+      setVoiceStatus("idle");
+    } else {
+      handleVoiceSearch();
     }
   };
 
@@ -583,7 +714,11 @@ export function Header() {
                       }}
                       onFocus={() => setIsSearchOpen(true)}
                       onKeyDown={handleSearchKeyDown}
-                      placeholder="I'm shopping for..."
+                      placeholder={
+                        isListening
+                          ? "🎙️ Listening... Speak now"
+                          : "I'm shopping for..."
+                      }
                       className="flex-1 px-4 text-sm outline-none text-[#333] placeholder:text-[#999]"
                     />{" "}
                     <button
@@ -591,15 +726,26 @@ export function Header() {
                       onClick={handleVoiceSearch}
                       aria-label={
                         isListening
-                          ? "Listening for product name"
+                          ? "Listening for product name. Click to stop"
                           : "Search by voice"
                       }
-                      title={isListening ? "Listening..." : "Search by voice"}
-                      className="w-10 shrink-0 flex items-center justify-center text-[#795BCB] hover:bg-[#795BCB]/10 transition"
+                      title={
+                        isListening
+                          ? "Listening... Click to stop"
+                          : "Search by voice"
+                      }
+                      className={`relative w-11 shrink-0 flex items-center justify-center transition-all duration-200 ${
+                        isListening
+                          ? "bg-[#795BCB] text-white shadow-md shadow-[#795BCB]/30"
+                          : "text-[#795BCB] hover:bg-[#795BCB]/10"
+                      }`}
                     >
+                      {isListening && (
+                        <span className="absolute inset-0 bg-[#795BCB]/40 animate-ping pointer-events-none" />
+                      )}
                       <Mic
-                        className={`w-5 h-5 ${
-                          isListening ? "animate-pulse text-rose-500" : ""
+                        className={`w-5 h-5 relative z-10 ${
+                          isListening ? "animate-pulse text-white" : ""
                         }`}
                       />
                     </button>
@@ -954,7 +1100,11 @@ export function Header() {
                       }}
                       onFocus={() => setIsSearchOpen(true)}
                       onKeyDown={handleSearchKeyDown}
-                      placeholder="Search salon products..."
+                      placeholder={
+                        isListening
+                          ? "🎙️ Listening... Speak now"
+                          : "Search salon products..."
+                      }
                       className="w-full min-w-0 bg-transparent px-2.5 text-sm outline-none text-slate-800 placeholder:text-slate-400"
                     />
                   </div>
@@ -964,15 +1114,26 @@ export function Header() {
                     onClick={handleVoiceSearch}
                     aria-label={
                       isListening
-                        ? "Listening for product name"
+                        ? "Listening for product name. Click to stop"
                         : "Search by voice"
                     }
-                    title={isListening ? "Listening..." : "Search by voice"}
-                    className="w-10 shrink-0 flex items-center justify-center text-[#795BCB] hover:bg-[#795BCB]/10 transition"
+                    title={
+                      isListening
+                        ? "Listening... Click to stop"
+                        : "Search by voice"
+                    }
+                    className={`relative w-11 shrink-0 flex items-center justify-center transition-all duration-200 ${
+                      isListening
+                        ? "bg-[#795BCB] text-white shadow-md shadow-[#795BCB]/30"
+                        : "text-[#795BCB] hover:bg-[#795BCB]/10"
+                    }`}
                   >
+                    {isListening && (
+                      <span className="absolute inset-0 bg-[#795BCB]/40 animate-ping pointer-events-none" />
+                    )}
                     <Mic
-                      className={`w-[18px] h-[18px] ${
-                        isListening ? "animate-pulse text-rose-500" : ""
+                      className={`w-[18px] h-[18px] relative z-10 ${
+                        isListening ? "animate-pulse text-white" : ""
                       }`}
                     />
                   </button>
@@ -1246,6 +1407,16 @@ export function Header() {
         isOpen={isLocationModalOpen}
         onClose={() => setIsLocationModalOpen(false)}
       />{" "}
+      {/* Google-Style Voice Search Modal */}
+      <VoiceSearchModal
+        isOpen={isVoiceModalOpen}
+        status={voiceStatus}
+        transcript={voiceTranscript}
+        errorMessage={voiceErrorMessage}
+        onClose={handleCloseVoiceModal}
+        onRestart={handleRestartVoiceSearch}
+        onSelectQuery={handleSelectVoiceQuery}
+      />
     </>
   );
 }
