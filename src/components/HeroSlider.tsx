@@ -298,7 +298,7 @@ export function HeroSlider() {
             />
 
             <Link
-              href="/category/machineries"
+              href="/category/machineries?brand=wahl"
               className="
     absolute
     right-3
@@ -411,7 +411,7 @@ export function HeroSlider() {
               className=" object-center"
             />
             <Link
-              href="/category/machineries"
+              href="/category/all?brand=Streax%20Professional"
               className="
     absolute
     right-3
