@@ -1,3 +1,22 @@
+export interface ProductVariant {
+  id: string;
+  name: string;
+  value?: string;
+  attribute?: string;
+  sku?: string;
+  price: number;
+  originalPrice?: number;
+  sellingPrice?: number;
+  costPrice?: number;
+  salonPunePrice?: number;
+  salonOutsidePunePrice?: number;
+  stock?: number;
+  inStock?: boolean;
+  image?: string;
+  colorCode?: string;
+  shadeName?: string;
+}
+
 export interface Product {
   id: number | string;
   slug: string;
@@ -27,6 +46,7 @@ export interface Product {
   usageInstructions?: string | null;
   specifications?: Record<string, string> | null;
   volumeSize?: string | null;
+  variants?: ProductVariant[] | null;
   isFeatured?: boolean | null;
   isBestseller?: boolean | null;
   isDealOfTheDay?: boolean | null;
@@ -81,6 +101,7 @@ export interface CartItem {
   volumeSize?: string;
   quantity: number;
   inStock: boolean;
+  selectedVariant?: ProductVariant | null;
 }
 
 export interface OrderItem {
@@ -91,6 +112,7 @@ export interface OrderItem {
   quantity: number;
   image: string;
   volumeSize?: string;
+  variantName?: string | null;
 }
 
 export interface Order {
