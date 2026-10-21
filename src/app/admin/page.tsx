@@ -139,7 +139,7 @@ export default function AdminDashboardPage() {
 
   // Price modifier helper
   const handlePriceChange = (
-    productId: number,
+    productId: number | string,
     field: "customerPrice" | "salonPunePrice" | "salonOutsidePunePrice" | "stock",
     val: number
   ) => {

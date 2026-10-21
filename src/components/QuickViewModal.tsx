@@ -17,6 +17,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getProductPrice } from "@/lib/pricing";
+import { ProductVariant } from "@/lib/types";
+
 export function QuickViewModal() {
   const {
     quickViewProduct,
@@ -28,18 +30,42 @@ export function QuickViewModal() {
     customerRegion,
   } = useStore();
   const [qty, setQty] = useState(1);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const router = useRouter();
 
+  // Sync selected variant when quickViewProduct changes
+  React.useEffect(() => {
+    if (quickViewProduct?.variants && quickViewProduct.variants.length > 0) {
+      setSelectedVariant(quickViewProduct.variants[0]);
+    } else {
+      setSelectedVariant(null);
+    }
+  }, [quickViewProduct]);
+
   if (!quickViewProduct) return null;
-  const displayPrice = getProductPrice(quickViewProduct.price, customerRegion);
+
+  const currentPrice = selectedVariant?.price ?? quickViewProduct.price;
+  const currentOriginalPrice = selectedVariant?.originalPrice ?? quickViewProduct.originalPrice;
+  const displayPrice = getProductPrice(currentPrice, customerRegion);
+  const currentImage = selectedVariant?.image || quickViewProduct.image;
   const inWish = isInWishlist(quickViewProduct.id);
 
   const handleAddToCart = () => {
-    addToCart(quickViewProduct, qty);
+    addToCart(
+      { ...quickViewProduct, price: displayPrice },
+      qty,
+      selectedVariant ? selectedVariant.name : undefined,
+      selectedVariant
+    );
   };
 
   const handleBuyNow = () => {
-    addToCart(quickViewProduct, qty);
+    addToCart(
+      { ...quickViewProduct, price: displayPrice },
+      qty,
+      selectedVariant ? selectedVariant.name : undefined,
+      selectedVariant
+    );
     closeQuickView();
     router.push("/checkout");
   };
@@ -65,7 +91,7 @@ export function QuickViewModal() {
                 </span>
               )}
             <img
-              src={quickViewProduct.image}
+              src={currentImage}
               alt={quickViewProduct.name}
               className="max-h-[260px] w-auto object-contain transition duration-300 hover:scale-105"
             />
@@ -93,39 +119,23 @@ export function QuickViewModal() {
               {quickViewProduct.name}
             </h3>
 
-            {/* Rating 
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex items-center bg-emerald-600 text-white text-xs font-bold px-2 py-0.5 rounded-md">
-                <span>{quickViewProduct.rating || "4.8"}</span>
-                <Star className="w-3 h-3 ml-1 fill-white" />
-              </div>
-              <span className="text-xs text-slate-500">
-                ({quickViewProduct.reviewCount || 24} reviews)
-              </span>
-              <span className="text-xs text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md font-semibold">
-                In Stock
-              </span>
-            </div>*/}
-
             {/* Pricing */}
-            {/* Pricing */}
-            {/* Pricing */}
-            <div className="flex items-baseline gap-3 mb-4">
+            <div className="flex items-baseline gap-3 mb-3">
               <span className="text-2xl font-extrabold text-slate-900">
                 ₹{displayPrice.toLocaleString("en-IN")}
               </span>
 
-              {quickViewProduct.originalPrice > displayPrice && (
+              {currentOriginalPrice && currentOriginalPrice > displayPrice && (
                 <span className="text-sm text-slate-400 line-through">
-                  ₹{quickViewProduct.originalPrice.toLocaleString("en-IN")}
+                  ₹{currentOriginalPrice.toLocaleString("en-IN")}
                 </span>
               )}
 
-              {quickViewProduct.originalPrice > displayPrice && (
+              {currentOriginalPrice && currentOriginalPrice > displayPrice && (
                 <span className="text-xs text-rose-600 font-bold bg-rose-50 px-2 py-0.5 rounded-md">
                   Save ₹
                   {(
-                    quickViewProduct.originalPrice - displayPrice
+                    currentOriginalPrice - displayPrice
                   ).toLocaleString("en-IN")}
                 </span>
               )}
@@ -134,7 +144,7 @@ export function QuickViewModal() {
             {/* Highlights */}
             {quickViewProduct.highlights &&
               quickViewProduct.highlights.length > 0 && (
-                <ul className="text-xs text-slate-600 space-y-1 mb-4">
+                <ul className="text-xs text-slate-600 space-y-1 mb-3">
                   {quickViewProduct.highlights.slice(0, 3).map((h, i) => (
                     <li key={i} className="flex items-start gap-1.5">
                       <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
@@ -143,6 +153,40 @@ export function QuickViewModal() {
                   ))}
                 </ul>
               )}
+
+            {/* Variant Chips */}
+            {quickViewProduct.variants && quickViewProduct.variants.length > 0 && (
+              <div className="mb-4 space-y-1.5">
+                <span className="text-xs font-bold text-slate-800 uppercase tracking-wide block">
+                  {selectedVariant?.attribute
+                    ? `${selectedVariant.attribute.replace(/^choose_/, "").replace(/_/g, " ")}: `
+                    : "Option: "}
+                  <span className="text-[#7950F2] font-semibold">{selectedVariant?.name}</span>
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {quickViewProduct.variants.map((v) => (
+                    <button
+                      key={v.id}
+                      type="button"
+                      onClick={() => setSelectedVariant(v)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${
+                        selectedVariant?.id === v.id
+                          ? "border-[#7950F2] bg-purple-50 text-[#7950F2] font-bold ring-1 ring-[#7950F2]"
+                          : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                      }`}
+                    >
+                      {v.colorCode && (
+                        <span
+                          className="inline-block w-2.5 h-2.5 rounded-full mr-1.5 border border-slate-300 align-middle"
+                          style={{ backgroundColor: v.colorCode }}
+                        />
+                      )}
+                      {v.name} - ₹{v.price}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Quantity Selector & Actions */}
             <div className="space-y-3 pt-2 border-t border-slate-100">

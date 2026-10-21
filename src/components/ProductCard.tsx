@@ -35,6 +35,8 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
   const pricing = resolveProductPricing(product, profile, customerRegion);
   const displayPrice = pricing.price;
 
+  const hasVariants = Boolean(product.variants && product.variants.length > 1);
+
   const inWish = isInWishlist(product.id);
   const cartItem = cart.find((item) => item.productId === product.id);
   const inCartQty = cartItem ? cartItem.quantity : 0;
@@ -57,6 +59,13 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
             Bestseller
           </span>
         ) : null}
+
+        {/* Options Available Badge */}
+        {hasVariants && (
+          <span className="absolute bottom-2 left-2 sm:bottom-2.5 sm:left-2.5 z-10 bg-purple-900/85 backdrop-blur-xs text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
+            {product.variants!.length} Options
+          </span>
+        )}
 
         {/* Wishlist Button */}
         <button
@@ -148,8 +157,15 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
             )}
           </div>
 
-          {/* Cart Stepper or Add Button */}
-          {inCartQty > 0 ? (
+          {/* Cart Stepper, Select Options, or Add Button */}
+          {hasVariants ? (
+            <Link
+              href={`/product/${product.slug}`}
+              className="px-2.5 sm:px-3 py-1.5 bg-[#795BCB] hover:bg-[#6847b8] text-white text-[11px] sm:text-xs font-bold rounded-xl transition duration-200 flex items-center gap-1 sm:gap-1.5 shadow-xs shrink-0"
+            >
+              <span>Options</span>
+            </Link>
+          ) : inCartQty > 0 ? (
             <div className="flex items-center border border-[#795BCB] bg-[#795BCB] rounded-xl overflow-hidden shadow-xs shrink-0">
               <button
                 type="button"

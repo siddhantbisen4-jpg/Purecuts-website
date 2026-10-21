@@ -27,7 +27,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 
 type LoginMode = "signin" | "forgot";
 
-export default function LoginPage() {
+export function LoginPage({ onNavigate }: { onNavigate?: (href: string) => void } = {}) {
   const router = useRouter();
 
   const {
@@ -943,3 +943,5 @@ export default function LoginPage() {
     </main>
   );
 }
+
+export default LoginPage;

@@ -1,7 +1,7 @@
 // src/lib/firebaseProducts.ts
 import { collection, getDocs, doc, setDoc, query, where, getDoc } from "firebase/firestore";
 import { db, isFirebaseConfigured } from "./firebase";
-import { Product, Category, FilterOptions } from "./types";
+import { Product, ProductVariant, Category, FilterOptions } from "./types";
 import { PRODUCTS_DATA, CATEGORIES_DATA } from "@/db/seed-data";
 
 const PRODUCTS_COLLECTION = "products";
@@ -88,7 +88,7 @@ export function parseFirestoreProduct(data: any, docId: string, index: number): 
   const highlights: string[] = Array.isArray(data.highlights)
     ? data.highlights.map(String)
     : (typeof data.highlights === "string"
-        ? data.highlights.split("\n").map((s) => s.trim()).filter(Boolean)
+        ? data.highlights.split("\n").map((s: string) => s.trim()).filter(Boolean)
         : []);
 
   const tags: string[] = Array.isArray(data.tags)
@@ -104,6 +104,65 @@ export function parseFirestoreProduct(data: any, docId: string, index: number): 
   const rating = data.rating && Number(data.rating) > 0 ? String(data.rating) : "4.8";
   const stock = typeof data.stock === "number" ? data.stock : 50;
   const inStock = data.manageStock ? (stock > 0) : (data.status !== "inactive" && data.visibility !== "draft");
+
+  // Parse product variants if available
+  let variants: ProductVariant[] | null = null;
+  if (Array.isArray(data.variants) && data.variants.length > 0) {
+    variants = data.variants.map((v: any, vIdx: number) => {
+      const vPrice = typeof v.price === "number" && v.price > 0
+        ? v.price
+        : (typeof v.salePrice === "number" && v.salePrice > 0 ? v.salePrice : customerPrice);
+
+      const vOrigPrice = typeof v.originalPrice === "number" && v.originalPrice > 0
+        ? v.originalPrice
+        : (typeof v.regularPrice === "number" && v.regularPrice > 0
+            ? v.regularPrice
+            : (vPrice > 0 ? Math.round(vPrice * 1.15) : originalPrice));
+
+      const vSellingPrice = typeof v.sellingPrice === "number" && v.sellingPrice > 0
+        ? v.sellingPrice
+        : vPrice;
+
+      const vCostPrice = typeof v.costPrice === "number" && v.costPrice > 0
+        ? v.costPrice
+        : (typeof v.cost === "number" ? v.cost : undefined);
+
+      const vSalonPunePrice = typeof v.salonPunePrice === "number" && v.salonPunePrice > 0
+        ? v.salonPunePrice
+        : (vCostPrice ? Math.max(vCostPrice, Math.round(vPrice * 0.75)) : Math.round(vPrice * 0.75));
+
+      const vSalonOutsidePunePrice = typeof v.salonOutsidePunePrice === "number" && v.salonOutsidePunePrice > 0
+        ? v.salonOutsidePunePrice
+        : Math.round(vPrice * 0.82);
+
+      const vStock = typeof v.stock === "number" ? v.stock : stock;
+      const vInStock = typeof v.inStock === "boolean"
+        ? v.inStock
+        : (data.manageStock ? vStock > 0 : true);
+
+      const vName = String(v.name || v.shadeName || v.value || `Option ${vIdx + 1}`).trim();
+      const vId = String(v.id || `${slugify(vName)}-${vIdx}`);
+
+      return {
+        id: vId,
+        name: vName,
+        value: v.value ? String(v.value) : vName,
+        attribute: v.attribute ? String(v.attribute) : undefined,
+        sku: v.sku ? String(v.sku) : undefined,
+        price: vPrice,
+        originalPrice: vOrigPrice,
+        sellingPrice: vSellingPrice,
+        costPrice: vCostPrice,
+        salonPunePrice: vSalonPunePrice,
+        salonOutsidePunePrice: vSalonOutsidePunePrice,
+        stock: vStock,
+        inStock: vInStock,
+        image: v.image && typeof v.image === "string" && v.image.trim().length > 0 ? v.image.trim() : undefined,
+        colorCode: v.colorCode && typeof v.colorCode === "string" ? v.colorCode.trim() : undefined,
+        shadeName: v.shadeName ? String(v.shadeName) : undefined,
+      };
+    });
+  }
 
   // Stable slug without non-alphanumeric chars
   const baseSlug = slugify(name);
@@ -138,6 +197,7 @@ export function parseFirestoreProduct(data: any, docId: string, index: number): 
     usageInstructions: usage ? String(usage) : null,
     specifications: data.specifications && typeof data.specifications === "object" ? data.specifications : {},
     volumeSize: data.size || data.unit || data.volumeSize || null,
+    variants: variants && variants.length > 0 ? variants : null,
     isFeatured: Boolean(data.isPopular || data.showInPopularProducts || data.isFeatured),
     isBestseller: Boolean(data.showInMostBought || data.isBestseller),
     isDealOfTheDay: Boolean(data.showInHotDeals || data.onSale || data.isDealOfTheDay),

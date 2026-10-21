@@ -141,79 +141,114 @@ export function CartDrawer() {
                 </button>
               </div>
             ) : (
-              cart.map((item) => (
-                <div
-                  key={item.productId}
-                  className="flex gap-2.5 sm:gap-3.5 p-2.5 sm:p-3 rounded-2xl border border-slate-100 bg-white hover:border-slate-200 transition shadow-xs"
-                >
-                  <div className="w-18 h-18 bg-slate-50 rounded-xl p-2 shrink-0 flex items-center justify-center border border-slate-100">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="max-h-full max-w-full object-contain"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-white bg-[#795BCB] px-1.5 py-0.5 rounded">
-                      {item.brand}
-                    </span>
-                    <h4 className="text-xs font-semibold text-slate-800 line-clamp-2 mt-0.5 leading-snug">
-                      {item.name}
-                    </h4>
-                    {item.volumeSize && (
-                      <span className="text-[11px] text-slate-500 block mt-0.5">
-                        Size: {item.volumeSize}
-                      </span>
-                    )}
-                    <div className="flex flex-wrap items-center justify-between gap-2 mt-2">
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="text-sm font-extrabold text-slate-900">
-                          ₹
-                          {(item.price * item.quantity).toLocaleString("en-IN")}
-                        </span>
-                        {item.originalPrice > item.price && (
-                          <span className="text-[11px] text-slate-400 line-through">
-                            ₹
-                            {(
-                              item.originalPrice * item.quantity
-                            ).toLocaleString("en-IN")}
-                          </span>
-                        )}
-                      </div>
+              cart.map((item) => {
+                const itemKey = item.selectedVariant?.id
+                  ? `${item.productId}-${item.selectedVariant.id}`
+                  : item.productId;
 
-                      {/* Quantity Stepper */}
-                      <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-slate-50">
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.productId, item.quantity - 1)
-                          }
-                          className="px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-200 transition"
-                        >
-                          -
-                        </button>
-                        <span className="px-2 text-xs font-bold text-slate-800 min-w-[20px] text-center">
-                          {item.quantity}
+                return (
+                  <div
+                    key={itemKey}
+                    className="flex gap-2.5 sm:gap-3.5 p-2.5 sm:p-3 rounded-2xl border border-slate-100 bg-white hover:border-slate-200 transition shadow-xs"
+                  >
+                    <div className="w-18 h-18 bg-slate-50 rounded-xl p-2 shrink-0 flex items-center justify-center border border-slate-100">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="max-h-full max-w-full object-contain"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-white bg-[#795BCB] px-1.5 py-0.5 rounded">
+                        {item.brand}
+                      </span>
+                      <h4 className="text-xs font-semibold text-slate-800 line-clamp-2 mt-0.5 leading-snug">
+                        {item.name}
+                      </h4>
+
+                      {/* Variant Details */}
+                      {item.selectedVariant && (
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          {item.selectedVariant.colorCode && (
+                            <span
+                              className="w-2.5 h-2.5 rounded-full border border-slate-300 shrink-0"
+                              style={{ backgroundColor: item.selectedVariant.colorCode }}
+                            />
+                          )}
+                          <span className="text-[11px] font-bold text-[#795BCB]">
+                            {item.selectedVariant.attribute
+                              ? `${item.selectedVariant.attribute.replace(/^choose_/, "").replace(/_/g, " ")}: `
+                              : "Option: "}
+                            <span className="text-slate-800">{item.selectedVariant.name}</span>
+                          </span>
+                        </div>
+                      )}
+
+                      {item.volumeSize && !item.selectedVariant && (
+                        <span className="text-[11px] text-slate-500 block mt-0.5">
+                          Size: {item.volumeSize}
                         </span>
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.productId, item.quantity + 1)
-                          }
-                          className="px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-200 transition"
-                        >
-                          +
-                        </button>
+                      )}
+                      <div className="flex flex-wrap items-center justify-between gap-2 mt-2">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-sm font-extrabold text-slate-900">
+                            ₹
+                            {(item.price * item.quantity).toLocaleString("en-IN")}
+                          </span>
+                          {item.originalPrice && item.originalPrice > item.price && (
+                            <span className="text-[11px] text-slate-400 line-through">
+                              ₹
+                              {(
+                                item.originalPrice * item.quantity
+                              ).toLocaleString("en-IN")}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Quantity Stepper */}
+                        <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-slate-50">
+                          <button
+                            onClick={() =>
+                              updateQuantity(
+                                item.productId,
+                                item.quantity - 1,
+                                item.selectedVariant?.id
+                              )
+                            }
+                            className="px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-200 transition"
+                          >
+                            -
+                          </button>
+                          <span className="px-2 text-xs font-bold text-slate-800 min-w-[20px] text-center">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() =>
+                              updateQuantity(
+                                item.productId,
+                                item.quantity + 1,
+                                item.selectedVariant?.id
+                              )
+                            }
+                            className="px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-200 transition"
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
                     </div>
+                    <button
+                      onClick={() =>
+                        removeFromCart(item.productId, item.selectedVariant?.id)
+                      }
+                      className="text-slate-400 hover:text-rose-500 transition self-start p-1"
+                      aria-label="Remove item"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => removeFromCart(item.productId)}
-                    className="text-slate-400 hover:text-rose-500 transition self-start p-1"
-                    aria-label="Remove item"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
 

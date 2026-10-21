@@ -30,8 +30,8 @@ export interface Product {
   customerPrice?: number;
   salonPunePrice?: number;
   salonOutsidePunePrice?: number;
-  punePrice: number;
-  outsidePunePrice: number;
+  punePrice?: number;
+  outsidePunePrice?: number;
   originalPrice: number;
   discountPercent?: number | null;
   rating?: string | null;
@@ -142,7 +142,7 @@ export interface Order {
 
 export interface Review {
   id: number;
-  productId: number;
+  productId: number | string;
   userName: string;
   rating: number;
   title?: string | null;

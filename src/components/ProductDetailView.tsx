@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Product, Review } from "@/lib/types";
+import { Product, ProductVariant, Review } from "@/lib/types";
 import { useStore } from "@/context/StoreContext";
 import { useAuth } from "@/context/AuthContext";
 import { resolveProductPricing } from "@/lib/pricing";
@@ -55,15 +55,48 @@ export function ProductDetailView({
   } = useStore();
   const { profile } = useAuth();
 
-  const pricing = resolveProductPricing(product, profile, customerRegion);
+  // Active Variant State
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    product.variants && product.variants.length > 0 ? product.variants[0] : null
+  );
+
+  // Dynamic pricing based on selected variant
+  const effectiveProduct: Product = selectedVariant
+    ? {
+        ...product,
+        price: selectedVariant.price,
+        customerPrice: selectedVariant.sellingPrice || selectedVariant.price,
+        originalPrice:
+          selectedVariant.originalPrice ||
+          product.originalPrice ||
+          selectedVariant.price,
+        salonPunePrice: selectedVariant.salonPunePrice,
+        salonOutsidePunePrice: selectedVariant.salonOutsidePunePrice,
+        stock:
+          typeof selectedVariant.stock === "number"
+            ? selectedVariant.stock
+            : product.stock,
+        inStock:
+          typeof selectedVariant.inStock === "boolean"
+            ? selectedVariant.inStock
+            : product.inStock,
+      }
+    : product;
+
+  const pricing = resolveProductPricing(effectiveProduct, profile, customerRegion);
   const unitPrice = pricing.price;
 
-  const [selectedImage, setSelectedImage] = useState(product.image);
+  const initialImg =
+    selectedVariant?.image ||
+    product.image ||
+    (product.galleryImages && product.galleryImages[0]) ||
+    "";
+  const [selectedImage, setSelectedImage] = useState(initialImg);
   const [qty, setQty] = useState(1);
   const [appliedQty, setAppliedQty] = useState(1);
 
   const totalPrice = unitPrice * appliedQty;
-  const totalOriginalPrice = (product.originalPrice || unitPrice) * appliedQty;
+  const totalOriginalPrice = (effectiveProduct.originalPrice || unitPrice) * appliedQty;
   const totalSavings = Math.max(0, totalOriginalPrice - totalPrice);
   const [activeTab, setActiveTab] = useState<"desc" | "usage" | "specs" | "reviews">("desc");
   const [checkPin, setCheckPin] = useState(pincode);
@@ -81,17 +114,45 @@ export function ProductDetailView({
 
   const inWish = isInWishlist(product.id);
 
-  const images = product.galleryImages && product.galleryImages.length > 0
-    ? [product.image, ...product.galleryImages.filter((img) => img !== product.image)]
-    : [product.image];
+  // Combine gallery images with variant images
+  const variantImages = (product.variants || [])
+    .map((v) => v.image)
+    .filter((img): img is string => Boolean(img && img.trim().length > 0));
+
+  const allImages = Array.from(
+    new Set([
+      product.image,
+      ...(product.galleryImages || []),
+      ...variantImages,
+    ])
+  ).filter(Boolean);
+
+  const images = allImages.length > 0 ? allImages : [product.image];
+
+  const handleSelectVariant = (variant: ProductVariant) => {
+    setSelectedVariant(variant);
+    if (variant.image) {
+      setSelectedImage(variant.image);
+    }
+  };
 
   const handleAddToCart = () => {
     setAppliedQty(qty);
-    addToCart({ ...product, price: unitPrice }, qty);
+    addToCart(
+      { ...effectiveProduct, price: unitPrice },
+      qty,
+      selectedVariant ? selectedVariant.name : undefined,
+      selectedVariant
+    );
   };
 
   const handleBuyNow = () => {
-    addToCart({ ...product, price: unitPrice }, qty);
+    addToCart(
+      { ...effectiveProduct, price: unitPrice },
+      qty,
+      selectedVariant ? selectedVariant.name : undefined,
+      selectedVariant
+    );
     router.push("/checkout");
   };
 
@@ -304,7 +365,88 @@ export function ProductDetailView({
               </p>
             </div>
 
+            {/* Product Variants Selector */}
+            {product.variants && product.variants.length > 0 && (
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-[#795BCB]" />
+                    {selectedVariant?.attribute
+                      ? `${selectedVariant.attribute.replace(/^choose_/, "").replace(/_/g, " ")}:`
+                      : "Select Option / Shade / Size:"}
+                    <span className="text-[#795BCB] font-extrabold normal-case text-sm ml-1">
+                      {selectedVariant?.name || "Choose"}
+                    </span>
+                  </span>
+                  <span className="text-[11px] text-slate-500 font-medium">
+                    {product.variants.length} options
+                  </span>
+                </div>
 
+                <div className="flex flex-wrap gap-2.5">
+                  {product.variants.map((v) => {
+                    const isSelected = selectedVariant?.id === v.id;
+                    const vPricing = resolveProductPricing(
+                      {
+                        ...product,
+                        price: v.price,
+                        customerPrice: v.sellingPrice || v.price,
+                        salonPunePrice: v.salonPunePrice,
+                        salonOutsidePunePrice: v.salonOutsidePunePrice,
+                      },
+                      profile,
+                      customerRegion
+                    );
+
+                    return (
+                      <button
+                        key={v.id}
+                        type="button"
+                        onClick={() => handleSelectVariant(v)}
+                        className={`group relative flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 border cursor-pointer ${
+                          isSelected
+                            ? "bg-purple-50 border-[#795BCB] text-[#795BCB] shadow-sm ring-2 ring-[#795BCB]/30 font-bold"
+                            : "bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                        }`}
+                      >
+                        {/* Variant Color Swatch if colorCode exists */}
+                        {v.colorCode && (
+                          <span
+                            className="w-3.5 h-3.5 rounded-full border border-slate-300 shadow-xs shrink-0"
+                            style={{ backgroundColor: v.colorCode }}
+                          />
+                        )}
+
+                        {/* Variant Thumbnail if image exists */}
+                        {v.image && !v.colorCode && (
+                          <img
+                            src={v.image}
+                            alt={v.name}
+                            className="w-5 h-5 object-contain rounded shrink-0 bg-slate-50"
+                          />
+                        )}
+
+                        <span className="font-bold">{v.name}</span>
+
+                        <span
+                          className={`text-[11px] font-extrabold ${
+                            isSelected ? "text-[#795BCB]" : "text-slate-500"
+                          }`}
+                        >
+                          ₹{vPricing.price}
+                        </span>
+
+                        {v.stock === 0 && (
+                          <span className="text-[9px] font-bold text-rose-500 uppercase ml-1">
+                            (Out of stock)
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Bulk Salon Volume Discount Table */}
             <div className="bg-[#795BCB]-50/70 border border-[#795BCB] rounded-2xl p-3.5">
@@ -312,25 +454,19 @@ export function ProductDetailView({
                 <span className="text-xs font-bold text-amber-950 flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-[#795BCB]" /> Salon Bulk Volume Pricing
                 </span>
-                {/*<button
-                  onClick={openB2BModal}
-                  className="text-xs text-[#795BCB] font-semibold hover:underline"
-                >
-                  Need Wholesale Carton?
-                </button>*/}
               </div>
               <div className="grid grid-cols-3 gap-2 text-center text-xs">
                 <div className="bg-white p-2 rounded-xl border border-[#795BCB]">
                   <span className="text-[11px] text-slate-500 block">Buy 1-2 Units</span>
-                  <strong className="text-slate-900">₹{product.price} each</strong>
+                  <strong className="text-slate-900">₹{unitPrice} each</strong>
                 </div>
                 <div className="bg-white p-2 rounded-xl border border-[#795BCB]">
                   <span className="text-[11px] text-amber-700 font-bold block">Buy 3+ Units</span>
-                  <strong className="text-amber-900 font-extrabold">₹{Math.round(product.price * 0.95)} each (5% OFF)</strong>
+                  <strong className="text-amber-900 font-extrabold">₹{Math.round(unitPrice * 0.95)} each (5% OFF)</strong>
                 </div>
                 <div className="bg-white p-2 rounded-xl border border-[#795BCB]">
                   <span className="text-[11px] text-emerald-700 font-bold block">Buy 10+ Units</span>
-                  <strong className="text-emerald-900 font-extrabold">₹{Math.round(product.price * 0.88)} each (12% OFF)</strong>
+                  <strong className="text-emerald-900 font-extrabold">₹{Math.round(unitPrice * 0.88)} each (12% OFF)</strong>
                 </div>
               </div>
             </div>

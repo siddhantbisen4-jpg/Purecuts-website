@@ -155,7 +155,7 @@ export async function getProducts(options: FilterOptions = {}): Promise<{
 
       let query = db.select().from(products);
       if (whereClause) {
-        // @ts-expect-error type override
+        // @ts-ignore
         query = query.where(whereClause);
       }
 
@@ -334,13 +334,13 @@ export async function getProductBySlug(slug: string): Promise<{
           .where(eq(products.categorySlug, product.categorySlug))
           .limit(6);
 
-        const filteredRelated = related.filter((p) => p.slug !== product.slug) as Product[];
+        const filteredRelated = related.filter((p: any) => p.slug !== product.slug) as Product[];
 
         // Get reviews
         const prodReviews = await db
           .select()
           .from(reviews)
-          .where(eq(reviews.productId, product.id))
+          .where(eq(reviews.productId, Number(product.id)))
           .orderBy(desc(reviews.createdAt));
 
         return {

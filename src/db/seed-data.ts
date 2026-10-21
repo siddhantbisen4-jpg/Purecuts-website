@@ -18,6 +18,8 @@ export interface SeedProduct {
   subcategory?: string;
   subcategorySlug?: string;
   price: number;
+  punePrice?: number;
+  outsidePunePrice?: number;
 
   originalPrice: number;
   discountPercent: number;
