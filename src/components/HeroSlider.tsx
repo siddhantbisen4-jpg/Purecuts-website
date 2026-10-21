@@ -16,6 +16,7 @@ import Image from "next/image";
 import banner from "../image/main banner.png";
 import banner2 from "../image/banner8.png";
 import sliderBanner from "../image/sliderbanner1.png";
+import banner3 from "../image/banner3.png";
 const HERO_SLIDES = [
   {
     id: 1,
@@ -42,11 +43,11 @@ const HERO_SLIDES = [
     bgGradient: "from-slate-950 via-purple-950 to-slate-900",
     link: "/category/haircare",
     cta: "Shop Haircare Heroes",
-    image:
-      "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=900&q=80",
+    image: banner3.src
+    ,
     offer: "Starting at ₹165",
   },
-  {
+  {/*{
     id: 3,
     tag: "Skincare Glow Festival",
     title: "Dr. Rashel, VLCC & Lotus Facial Cleanups",
@@ -60,7 +61,7 @@ const HERO_SLIDES = [
     image:
       "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=900&q=80",
     offer: "Dr. Rashel Tubs @ ₹109",
-  },
+  },*/}
 ];
 
 export function HeroSlider() {
@@ -261,10 +262,9 @@ export function HeroSlider() {
                   sm:h-2
                   rounded-full
                   transition-all
-                  ${
-                    i === currentSlide
-                      ? "w-6 sm:w-7 bg-[#795BCB]"
-                      : "w-1.5 sm:w-2 bg-white/40 hover:bg-white/70"
+                  ${i === currentSlide
+                    ? "w-6 sm:w-7 bg-[#795BCB]"
+                    : "w-1.5 sm:w-2 bg-white/40 hover:bg-white/70"
                   }
                 `}
                 aria-label={`Go to slide ${i + 1}`}
@@ -296,6 +296,39 @@ export function HeroSlider() {
               alt="Salon wholesale banner"
               className="object-contain object-center"
             />
+
+            <Link
+              href="/category/machineries"
+              className="
+    absolute
+    right-3
+    bottom-3
+    sm:right-4
+    sm:bottom-4
+    z-20
+    inline-flex
+    items-center
+    justify-center
+    gap-2
+    rounded-lg
+    bg-[#9A37D8]
+    px-4
+    py-2
+    text-xs
+    sm:text-sm
+    font-bold
+    text-white
+    shadow-lg
+    transition-colors
+    duration-200
+    hover:bg-[#AA2CCD]
+    whitespace-nowrap
+  "
+            >
+              <span>Order Now</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+
 
             {/*<div>
               <div className="flex items-center justify-between mb-2">
@@ -377,6 +410,37 @@ export function HeroSlider() {
               alt="Salon product promotional banner"
               className=" object-center"
             />
+            <Link
+              href="/category/machineries"
+              className="
+    absolute
+    right-3
+    bottom-3
+    sm:right-4
+    sm:bottom-4
+    z-20
+    inline-flex
+    items-center
+    justify-center
+    gap-2
+    rounded-lg
+    bg-[#9A37D8]
+    px-4
+    py-2
+    text-xs
+    sm:text-sm
+    font-bold
+    text-white
+    shadow-lg
+    transition-colors
+    duration-200
+    hover:bg-[#AA2CCD]
+    whitespace-nowrap
+  "
+            >
+              <span>Order Now</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
 
             {/*<div className="flex items-center gap-3 mb-3">
               <div

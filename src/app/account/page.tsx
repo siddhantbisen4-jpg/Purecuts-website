@@ -51,12 +51,12 @@ export default function AccountPage() {
           {/* Left Menu Sidebar (4 cols) */}
           <div className="md:col-span-4 bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
             <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-              <div className="w-14 h-14 rounded-2xl bg-amber-500 text-slate-950 font-black text-xl flex items-center justify-center">
+              <div className="w-14 h-14 rounded-2xl bg-[#9A37D8] text-white font-black text-xl flex items-center justify-center">
                 {profile.name[0]}
               </div>
               <div>
                 <h2 className="text-sm font-black text-slate-900">{profile.name}</h2>
-                <span className="text-[11px] text-amber-800 bg-amber-50 font-bold px-2 py-0.5 rounded-full inline-block mt-0.5">
+                <span className="text-[11px] text-white bg-[#9A37D8] font-bold px-2 py-0.5 rounded-full inline-block mt-0.5">
                   Verified Salon Member
                 </span>
               </div>
@@ -65,9 +65,9 @@ export default function AccountPage() {
             <nav className="space-y-1 text-xs">
               <Link
                 href="/account"
-                className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-amber-50 text-amber-900 font-bold border border-amber-200"
+                className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-[#9A37D8] text-white font-bold border border-white"
               >
-                <User className="w-4 h-4 text-amber-700" /> My Profile & Salon Details
+                <User className="w-4 h-4 text-white" /> My Profile & Salon Details
               </Link>
               <Link
                 href="/account/orders"
@@ -81,12 +81,12 @@ export default function AccountPage() {
               >
                 <Heart className="w-4 h-4 text-slate-400" /> Saved Wishlist
               </Link>
-              <button
+             {/* <button
                 onClick={openB2BModal}
                 className="w-full text-left flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-amber-800 hover:bg-amber-50 font-semibold"
               >
                 <Building2 className="w-4 h-4 text-amber-600" /> Salon Bulk Wholesale Account
-              </button>
+              </button>*/}
             </nav>
           </div>
 

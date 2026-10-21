@@ -1,94 +1,423 @@
-import React from "react";
+
 import Link from "next/link";
-import { Scissors, ShieldCheck, Truck, Building2, Award, HeartHandshake, CheckCircle2 } from "lucide-react";
+import {
+    ArrowRight,
+    BadgeCheck,
+    Building2,
+    CheckCircle2,
+    PackageCheck,
+    ShieldCheck,
+    Sparkles,
+    Truck,
+
+
+    Banknote,
+    Boxes,
+} from "lucide-react";
+
+import {
+    AboutReveal,
+    AboutCountUp,
+} from "@/components/AboutReveal";
+import Image from "next/image";
+import logo from "../../image/purecuts_logo_no_bg-cropped.png";
+import skin from "@/image/skincare.png";
+import tool from "@/image/tools.png";
+import Acc from "@/image/Acceessories.png";
+import fur from "@/image/Furniture.png";
+import disp from "@/image/disposable.png";
+const categories = [
+    {
+        name: "Haircare",
+        slug: "haircare",
+        image: skin.src,
+        description: "Professional haircare essentials",
+    },
+    {
+        name: "Skincare & Bodycare",
+        slug: "skincare",
+        image:
+            "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&q=80",
+        description: "Skincare and beauty treatments",
+    },
+    {
+        name: "Machineries & Tools",
+        slug: "machineries",
+        image: tool.src,
+        description: "Tools for salon professionals",
+    },
+    {
+        name: "Salon Accessories",
+        slug: "accessories",
+        image:
+            Acc.src,
+        description: "Everyday professional essentials",
+    },
+
+    {
+        name: "Salon Furniture",
+        slug: "furniture",
+        image: fur.src,
+        description: "Equip your salon with professional styling chairs, hair wash chairs, trolleys, and spa furniture.",
+    },
+
+    {
+        name: "Salon Disposables",
+        slug: "disposables",
+        image: disp.src,
+        description: "Keep your salon prepared with essential disposables, including neck rolls, tissues, and cotton for everyday salon use.",
+    },
+
+
+];
+
+const benefits = [
+    {
+        icon: ShieldCheck,
+        title: "Original Products",
+        description:
+            "A focus on authentic, salon-grade beauty products.",
+    },
+    {
+        icon: PackageCheck,
+        title: "Wholesale Supplies",
+        description:
+            "Product options for salon owners and bulk buyers.",
+    },
+    {
+        icon: Banknote,
+        title: "COD Available",
+        description:
+            "Cash on Delivery available on eligible orders.",
+    },
+    {
+        icon: Boxes,
+        title: "Wide Variety of Products",
+        description:
+            "Explore haircare, skincare, salon tools and beauty essentials.",
+    },
+
+
+];
 
 export default function AboutUsPage() {
-  return (
-    <main className="min-h-screen bg-slate-100/60 py-12 px-4 sm:px-6">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-slate-500">
-          <Link href="/" className="hover:text-amber-600 font-medium">Home</Link>
-          <span>/</span>
-          <span className="text-slate-800 font-bold">About PureCuts</span>
-        </nav>
+    return (
+        <main className="overflow-hidden bg-white text-slate-900">
 
-        {/* Hero Card */}
-        <div className="bg-slate-900 rounded-3xl p-8 sm:p-12 text-white border border-slate-800 shadow-xl relative overflow-hidden">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20 flex items-center gap-1.5">
-              <Scissors className="w-4 h-4 text-amber-400" /> About PureCuts
-            </span>
-          </div>
+            <section className="bg-[#f7f4ff]">
+                <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10">
+                    <nav className="mb-8 flex gap-2 text-sm text-slate-500">
+                        <Link href="/" className="hover:text-[#795BCB]">
+                            Home
+                        </Link>
+                        <span>/</span>
+                        <span className="font-semibold text-slate-900">
+                            About PureCuts
+                        </span>
+                    </nav>
 
-          <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight mb-4">
-            India's Leading Marketplace for Professional Salon & Beauty Supplies
-          </h1>
+                    <div className="grid items-center gap-10 md:grid-cols-2 md:gap-14">
+                        <AboutReveal className="py-4 md:py-10">
 
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
-            Headquartered in Wagholi, Pune, PureCuts was founded with a singular purpose: to empower salon owners, hairstylists, beauty therapists, and discerning consumers with 100% authentic, salon-grade products at genuine wholesale pricing.
-          </p>
-        </div>
 
-        {/* Content sections */}
-        <div className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200 shadow-xs space-y-8 text-slate-700 leading-relaxed text-sm">
-          <div>
-            <h2 className="text-xl font-black text-slate-900 mb-3 flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-amber-600" />
-              Our Mission & Heritage
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
-              At PureCuts, we understand that professional hairstyling and beauty services demand genuine chemical formulations, durable electrical machinery, and hygienic consumables. Counterfeit products in the salon market damage hair, harm skin, and destroy salon reputations.
-            </p>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              We partner directly with leading domestic and international manufacturers—including <strong>L'Oréal Professionnel, Matrix Biolage, Schwarzkopf Professional, Ikonic, Wahl USA, Streax Professional, Dr. Rashel, and VLCC</strong>—ensuring every tub, tube, and clipper is fresh, batch-coded, and 100% original.
-            </p>
-          </div>
+                            <p className="mt-6 text-sm font-semibold text-[#795BCB]">
+                                Your Professional Beauty Supply Partner
+                            </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
-            <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200">
-              <h3 className="text-sm font-bold text-amber-950 mb-1 flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-amber-600" /> 100% Original Guarantees
-              </h3>
-              <p className="text-xs text-amber-900/80">
-                Direct authorized distribution with verifiable lot numbers and official brand warranties.
-              </p>
-            </div>
-            <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200">
-              <h3 className="text-sm font-bold text-emerald-950 mb-1 flex items-center gap-1.5">
-                <Truck className="w-4 h-4 text-emerald-600" /> Pune Wagholi Hub
-              </h3>
-              <p className="text-xs text-emerald-900/80">
-                Centralized distribution center on Domkhel Road, Wagholi, ensuring express pan-India dispatch.
-              </p>
-            </div>
-          </div>
 
-          <div className="pt-4 border-t border-slate-100">
-            <h2 className="text-lg font-black text-slate-900 mb-3">Our Core Business Verticals</h2>
-            <ul className="space-y-2 text-xs text-slate-600">
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span><strong>Salon B2B Wholesale:</strong> Bulk chemical cartons, developer drums, and disposable bulk boxes for salons and academies.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span><strong>Salon Furniture & Heavy Equipment:</strong> Hydraulic styling chairs, ceramic shampoo wash units, and facial beds shipped safely with freight support.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span><strong>Retail Beauty Enthusiasts:</strong> Professional-grade hair masques, scalp treatments, and facial kits delivered directly to doorsteps across India.</span>
-              </li>
-            </ul>
-          </div>
+                            <h1 className="mt-3 text-3xl font-black leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+                                Who we are
 
-          <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-1">
-            <strong className="text-slate-900 block font-bold text-sm">PureCuts Operating Address:</strong>
-            <p>EUREKA, A Building, GHRCEM Domkhel Road, Wagholi - 412207, Pune, Maharashtra, India</p>
-            <p>Contact: +91 9579177826 | Email: contact@purecuts.in</p>
-          </div>
-        </div>
-      </div>
-    </main>
-  );
+                            </h1>
+
+
+                            <p className="mt-6 max-w-xl text-base leading-8 text-slate-600">
+                                PureCuts is a B2B e-commerce platform built for the beauty and wellness industry. We help salons, spas, parlours, and professionals source everything they need from cosmetics and tools to premium furniture all in one place. With 100% original products, fast delivery, and transparent pricing, we’re here to simplify sourcing and support your growth with trust and technology.
+                            </p>
+
+                            <div className="mt-8 flex flex-wrap gap-3">
+                                <Link
+                                    href="/category/all"
+                                    className="inline-flex items-center gap-2 rounded-xl bg-[#795BCB] px-6 py-3 font-bold text-white transition hover:bg-[#6846b9]"
+                                >
+                                    Explore Products
+                                    <ArrowRight size={18} />
+                                </Link>
+
+                                <Link
+                                    href="/contact-us"
+                                    className="rounded-xl border border-[#795BCB]/30 bg-white px-6 py-3 font-bold text-[#795BCB] transition hover:bg-[#795BCB]/5"
+                                >
+                                    Contact Us
+                                </Link>
+                            </div>
+                        </AboutReveal>
+
+                        <AboutReveal
+                            delay={120}
+                            className="relative pb-5"
+                        >
+                            <div className="pc-about-image rounded-[2rem]">
+                                <img
+                                    src="https://purecuts.in/wp-content/uploads/2025/07/pcimgg.jpg"
+                                    alt="Professional beauty and salon setting"
+                                    className="h-[100px] w-full rounded-[2rem] object-cover sm:h-[300px]"
+                                />
+                            </div>
+
+                            {/*<div className="absolute -bottom-1 left-4 right-4 rounded-2xl border border-white/70 bg-white/95 p-4 shadow-xl sm:left-8 sm:right-8 sm:p-5">
+                                <p className="text-sm font-extrabold text-slate-900">
+                                    One destination for salon essentials
+                                </p>
+                                <p className="mt-1 text-sm leading-6 text-slate-600">
+                                    Product discovery for retail shoppers and salon
+                                    professionals.
+                                </p>
+                            </div>*/}
+                        </AboutReveal>
+                    </div>
+                </div>
+            </section>
+
+
+            <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16">
+                <AboutReveal className="mb-8 text-center">
+                    <p className="text-sm font-bold uppercase tracking-widest text-[#795BCB]">
+                        The PureCuts Difference
+                    </p>
+                    <h2 className="mt-3 text-2xl font-black sm:text-4xl">
+                        Everything Your Salon Needs, All in One Place
+                    </h2>
+                    <p className="mx-auto mt-4 max-w-2xl leading-7 text-slate-600">
+                        From 100% original beauty products and professional haircare to salon equipment, skincare, furniture, and accessories, PureCuts makes salon shopping easier with convenient ordering, competitive wholesale prices, and doorstep delivery.
+                    </p>
+                </AboutReveal>
+
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 ">
+                    {benefits.map((benefit, index) => {
+                        const Icon = benefit.icon;
+
+                        return (
+                            <AboutReveal
+                                key={benefit.title}
+                                delay={index * 90}
+                                className="group rounded-2xl border border-slate-200 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-[#795BCB]/40 hover:shadow-xl"
+                            >
+                                <div className="mb-5 flex size-12 items-center justify-center rounded-xl bg-[#795BCB]/10 text-[#795BCB] transition group-hover:bg-[#795BCB] group-hover:text-white">
+                                    <Icon size={24} />
+                                </div>
+
+                                <h3 className="font-extrabold">
+                                    {benefit.title}
+                                </h3>
+
+                                <p className="mt-2 text-sm leading-6 text-slate-600">
+                                    {benefit.description}
+                                </p>
+                            </AboutReveal>
+                        );
+                    })}
+                </div>
+            </section>
+
+
+            <section className="bg-[#f8f7fc] py-12 sm:py-16">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6">
+                    <AboutReveal className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                        <div>
+                            <p className="text-sm font-bold uppercase tracking-widest text-[#795BCB]">
+                                Explore Our Range
+                            </p>
+                            <h2 className="mt-2 text-2xl font-black sm:text-4xl">
+                                Everything for your salon
+                            </h2>
+                        </div>
+
+                        <Link
+                            href="/category/all"
+                            className="inline-flex items-center gap-2 font-bold text-[#795BCB]"
+                        >
+                            View all categories
+                            <ArrowRight size={17} />
+                        </Link>
+                    </AboutReveal>
+
+                    <div className="flex gap-5 overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory pb-4 no-scrollbar">
+                        {categories.map((category, index) => (
+                            <AboutReveal
+                                key={category.slug}
+                                delay={index * 90}
+                                className="w-[82%] shrink-0 snap-start sm:w-[46%] lg:w-[calc(25%_-_15px)]"
+                            >
+                                <Link
+                                    href={`/category/${category.slug}`}
+                                    className="group block overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-1 hover:shadow-xl"
+                                >
+                                    <div className="pc-about-image">
+                                        <img
+                                            src={category.image}
+                                            alt={category.name}
+                                            loading="lazy"
+                                            className="h-56 w-full object-cover"
+                                        />
+                                    </div>
+
+                                    <div className="p-5">
+                                        <h3 className="text-lg font-extrabold transition group-hover:text-[#795BCB]">
+                                            {category.name}
+                                        </h3>
+
+                                        <p className="mt-2 text-sm leading-6 text-slate-600">
+                                            {category.description}
+                                        </p>
+
+                                        <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#795BCB]">
+                                            Explore category
+                                            <ArrowRight size={16} />
+                                        </span>
+                                    </div>
+                                </Link>
+                            </AboutReveal>
+                        ))}
+
+                    </div>
+                </div>
+            </section>
+
+
+            <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-20">
+                <div className="grid items-center gap-10 md:grid-cols-2">
+                    <AboutReveal>
+                        <div className="pc-about-image rounded-3xl">
+                            <img
+                                src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=85"
+                                alt="Professional salon workstation"
+                                loading="lazy"
+                                className="h-[320px] w-full rounded-3xl object-cover sm:h-[450px]"
+                            />
+                        </div>
+                    </AboutReveal>
+
+                    <AboutReveal delay={120}>
+                        <p className="text-sm font-extrabold uppercase tracking-widest text-[#795BCB]">
+                            Our Story
+                        </p>
+
+                        <h2 className="mt-4 text-3xl font-black leading-tight sm:text-4xl">
+                            Supporting the people behind every great salon.
+                        </h2>
+
+                        <p className="mt-5 leading-8 text-slate-600">
+                            From everyday haircare products to professional
+                            electrical tools and salon consumables, PureCuts
+                            aims to simplify how customers find the supplies
+                            they need.
+                        </p>
+
+                        <div className="mt-7 space-y-4">
+                            {[
+                                "Professional salon and beauty product categories",
+                                "Options for retail and bulk purchasing",
+                                "A Pune-based operating hub",
+                            ].map((item) => (
+                                <p key={item} className="flex items-start gap-3 text-sm font-semibold">
+                                    <CheckCircle2
+                                        size={20}
+                                        className="mt-0.5 shrink-0 text-[#795BCB]"
+                                    />
+                                    {item}
+                                </p>
+                            ))}
+                        </div>
+
+                        <Link
+                            href="/contact-us"
+                            className="mt-8 inline-flex items-center gap-2 font-bold text-[#795BCB]"
+                        >
+                            Get in touch
+                            <ArrowRight size={18} />
+                        </Link>
+                    </AboutReveal>
+                </div>
+            </section>
+
+            {/*<section className="bg-[#24163d] py-12 text-white sm:py-16">
+                <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 text-center sm:grid-cols-2 sm:px-6">
+                    <AboutReveal>
+                        <p className="text-4xl font-black sm:text-5xl">
+                            <AboutCountUp end={8} suffix="+" />
+                        </p>
+                        <p className="mt-2 text-sm text-white/75">
+                            Core product categories
+                        </p>
+                    </AboutReveal>
+
+                    <AboutReveal delay={120}>
+                        <p className="text-4xl font-black sm:text-5xl">
+                            <AboutCountUp end={2} />
+                        </p>
+                        <p className="mt-2 text-sm text-white/75">
+                            Customer purchasing channels — retail and wholesale
+                        </p>
+                    </AboutReveal>
+                </div>
+            </section>
+
+
+            {/*<section className="mx-auto max-w-7xl px-4 py-12 text-center sm:px-6 md:py-16">
+                <AboutReveal>
+                    <p className="text-sm font-bold uppercase tracking-widest text-[#795BCB]">
+                        Professional beauty brands
+                    </p>
+
+                    <h2 className="mt-3 text-2xl font-black sm:text-3xl">
+                        Find products for your professional needs
+                    </h2>
+
+                    <div className="mt-8 flex flex-wrap justify-center gap-3">
+                        {[
+                            "L'Oréal Professionnel",
+                            "Matrix",
+                            "Schwarzkopf Professional",
+                            "Ikonic",
+                            "Wahl",
+                            "VLCC",
+                        ].map((brand) => (
+                            <span
+                                key={brand}
+                                className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition hover:border-[#795BCB]/50 hover:text-[#795BCB]"
+                            >
+                                {brand}
+                            </span>
+                        ))}
+                    </div>
+                </AboutReveal>
+            </section>*/}
+
+            <section className="px-4 pb-14 sm:px-6 md:pb-20">
+                <AboutReveal className="mx-auto max-w-7xl rounded-3xl bg-[#795BCB] px-6 py-12 text-center text-white sm:px-12 sm:py-16">
+                    <Building2 className="mx-auto mb-4" size={34} />
+
+                    <h2 className="text-2xl font-black sm:text-4xl">
+                        Let&apos;s make your next salon order easier.
+                    </h2>
+
+                    <p className="mx-auto mt-4 max-w-2xl leading-7 text-white/85">
+                        Explore professional haircare, skincare, machinery
+                        and essential salon supplies through PureCuts.
+                    </p>
+
+                    <Link
+                        href="/category/all"
+                        className="mt-7 inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 font-bold text-[#795BCB] transition hover:bg-violet-50"
+                    >
+                        Start shopping
+                        <ArrowRight size={18} />
+                    </Link>
+                </AboutReveal>
+            </section>
+
+
+        </main >
+    );
 }
