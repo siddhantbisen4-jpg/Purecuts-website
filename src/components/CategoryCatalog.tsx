@@ -14,6 +14,7 @@ import {
   ChevronRight,
   ChevronLeft,
   Check,
+  RefreshCw,
 } from "lucide-react";
 
 import Link from "next/link";
@@ -358,7 +359,48 @@ const SUBCATEGORIES: Record<string, SubcategoryItem[]> = {
       slug: "disposable-sheets",
     },
   ],
+
+  /* =======================================================
+     HAIR COLOR & DEVELOPERS
+  ======================================================= */
+  "hair-color": [
+    {
+      label: "Developers & Peroxides",
+      slug: "developers-peroxides",
+    },
+    {
+      label: "Hair Colour Cream",
+      slug: "hair-colour-cream",
+    },
+    {
+      label: "Bleach & Lighteners",
+      slug: "bleach-lighteners",
+    },
+  ],
+
+  /* =======================================================
+     SALON COMBOS & BULK PACKS
+  ======================================================= */
+  "salon-combos": [
+    {
+      label: "Treatment Kits",
+      slug: "treatment-kits",
+    },
+    {
+      label: "Barber Station Sets",
+      slug: "barber-station-sets",
+    },
+    {
+      label: "Facial Combos",
+      slug: "facial-combos",
+    },
+    {
+      label: "Bulk Cartons",
+      slug: "bulk-cartons",
+    },
+  ],
 };
+
 
 /* =========================================================
    CHILD SUBCATEGORY DATA
@@ -472,6 +514,46 @@ export function CategoryCatalog({
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
 
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState<boolean>(false);
+
+  /* =======================================================
+     DYNAMIC BACKEND PRODUCTS FETCHING
+  ======================================================= */
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [isFetchingBackend, setIsFetchingBackend] = useState<boolean>(false);
+
+  useEffect(() => {
+    setProducts(initialProducts);
+  }, [initialProducts]);
+
+  useEffect(() => {
+    let isCancelled = false;
+    const fetchCategoryProducts = async () => {
+      setIsFetchingBackend(true);
+      try {
+        const catParam = currentCategorySlug === "all" ? "" : `category=${encodeURIComponent(currentCategorySlug)}`;
+        const subParam = selectedSubcategory && selectedSubcategory !== "all" ? `subcategory=${encodeURIComponent(selectedSubcategory)}` : "";
+        const queryStr = [catParam, subParam].filter(Boolean).join("&");
+        const url = `/api/products${queryStr ? `?${queryStr}&limit=100` : "?limit=100"}`;
+
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          if (!isCancelled && Array.isArray(data.products)) {
+            setProducts(data.products);
+          }
+        }
+      } catch (err) {
+        console.warn("Backend fetch failed, retaining active products:", err);
+      } finally {
+        if (!isCancelled) setIsFetchingBackend(false);
+      }
+    };
+
+    fetchCategoryProducts();
+    return () => {
+      isCancelled = true;
+    };
+  }, [currentCategorySlug, selectedSubcategory]);
 
   /* =======================================================
      POPUP
@@ -701,7 +783,7 @@ export function CategoryCatalog({
   ======================================================= */
 
   const filteredProducts = useMemo(() => {
-    return initialProducts
+    return products
       .filter((product) => {
         /* Category */
 
@@ -709,8 +791,16 @@ export function CategoryCatalog({
           currentCategorySlug !== "all" &&
           product.categorySlug !== currentCategorySlug
         ) {
-          return false;
+          if (
+            currentCategorySlug === "hair-color" &&
+            product.subcategorySlug === "hair-color"
+          ) {
+            // match hair color products
+          } else {
+            return false;
+          }
         }
+
 
         /* ---------------------------------------------
            Parent subcategory
@@ -829,7 +919,7 @@ export function CategoryCatalog({
         return 0;
       });
   }, [
-    initialProducts,
+    products,
     currentCategorySlug,
     selectedSubcategory,
     selectedSubSubcategory,
@@ -962,6 +1052,13 @@ export function CategoryCatalog({
                 <span className="text-[10px] sm:text-xs text-slate-500 font-semibold whitespace-nowrap">
                   {filteredProducts.length} items available
                 </span>
+
+                {isFetchingBackend && (
+                  <span className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-bold text-[#795BCB] bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-full animate-pulse whitespace-nowrap">
+                    <RefreshCw className="w-2.5 h-2.5 animate-spin" />
+                    Syncing Backend
+                  </span>
+                )}
               </div>
 
               <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
@@ -973,7 +1070,38 @@ export function CategoryCatalog({
                   {currentCategory.description}
                 </p>
               )}
+
+              {/* Department Switcher */}
+              <div className="flex items-center gap-1.5 flex-wrap pt-3 mt-3 border-t border-slate-100">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1">
+                  Department:
+                </span>
+                <Link
+                  href="/category/all"
+                  className={`text-xs font-bold px-3 py-1 rounded-full transition ${
+                    currentCategorySlug === "all"
+                      ? "bg-[#795BCB] text-white shadow-xs"
+                      : "bg-slate-100 text-slate-700 hover:bg-[#795BCB]/10 hover:text-[#795BCB]"
+                  }`}
+                >
+                  All Products
+                </Link>
+                {categories.map((c) => (
+                  <Link
+                    key={c.slug}
+                    href={`/category/${c.slug}`}
+                    className={`text-xs font-semibold px-2.5 py-1 rounded-full transition ${
+                      currentCategorySlug === c.slug
+                        ? "bg-[#795BCB] text-white shadow-xs"
+                        : "bg-slate-100 text-slate-700 hover:bg-[#795BCB]/10 hover:text-[#795BCB]"
+                    }`}
+                  >
+                    {c.name}
+                  </Link>
+                ))}
+              </div>
             </div>
+
 
             {/* SEARCH 
 

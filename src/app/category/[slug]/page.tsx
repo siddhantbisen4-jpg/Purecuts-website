@@ -11,6 +11,8 @@ interface CategoryPageProps {
     brand?: string;
     sort?: string;
     deal?: string;
+    subcategory?: string;
+    subsubcategory?: string;
   }>;
 }
 
@@ -21,6 +23,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const [productsData, categoriesList] = await Promise.all([
     getProducts({
       category: slug === "all" ? undefined : slug,
+      subcategory: sParams.subcategory && sParams.subcategory !== "all" ? sParams.subcategory : undefined,
       search: sParams.q,
       brand: sParams.brand,
       sortBy: (sParams.sort as any) || "featured",
@@ -41,7 +44,9 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         initialBrand={sParams.brand || ""}
         initialSort={sParams.sort || "featured"}
         initialDeal={sParams.deal === "true"}
+        initialSubcategory={sParams.subcategory || "all"}
       />
     </main>
   );
 }
+

@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { Product, Review } from "@/lib/types";
 import { useStore } from "@/context/StoreContext";
+import { useAuth } from "@/context/AuthContext";
+import { resolveProductPricing } from "@/lib/pricing";
 import { ProductCard } from "./ProductCard";
 import {
   Star,
@@ -47,17 +49,22 @@ export function ProductDetailView({
     pincode,
     setPincode,
     deliveryCity,
+    customerRegion,
     openB2BModal,
     showToast,
   } = useStore();
+  const { profile } = useAuth();
+
+  const pricing = resolveProductPricing(product, profile, customerRegion);
+  const unitPrice = pricing.price;
 
   const [selectedImage, setSelectedImage] = useState(product.image);
   const [qty, setQty] = useState(1);
   const [appliedQty, setAppliedQty] = useState(1);
 
-  const totalPrice = product.price * appliedQty;
-  const totalOriginalPrice = product.originalPrice * appliedQty;
-  const totalSavings = (product.originalPrice - product.price) * appliedQty;
+  const totalPrice = unitPrice * appliedQty;
+  const totalOriginalPrice = (product.originalPrice || unitPrice) * appliedQty;
+  const totalSavings = Math.max(0, totalOriginalPrice - totalPrice);
   const [activeTab, setActiveTab] = useState<"desc" | "usage" | "specs" | "reviews">("desc");
   const [checkPin, setCheckPin] = useState(pincode);
   const [pinResult, setPinResult] = useState<string | null>(
@@ -80,11 +87,11 @@ export function ProductDetailView({
 
   const handleAddToCart = () => {
     setAppliedQty(qty);
-    addToCart(product, qty);
+    addToCart({ ...product, price: unitPrice }, qty);
   };
 
   const handleBuyNow = () => {
-    addToCart(product, qty);
+    addToCart({ ...product, price: unitPrice }, qty);
     router.push("/checkout");
   };
 
@@ -263,26 +270,29 @@ export function ProductDetailView({
             </div>*/}
 
             {/* Price Block */}
-
-            {/* Price Block */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-              <div className="flex flex-wrap items-baseline gap-3">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+              <div className="flex flex-wrap items-baseline gap-2">
                 <span className="text-3xl sm:text-4xl font-black text-slate-950">
                   ₹{totalPrice.toLocaleString("en-IN")}
                 </span>
 
-                {product.originalPrice > product.price && (
+                {pricing.badge && (
+                  <span className="text-xs font-black text-[#795BCB] bg-purple-50 px-2.5 py-1 rounded-md border border-purple-200 tracking-tight uppercase">
+                    ⭐ {pricing.badge}
+                  </span>
+                )}
+
+                {totalOriginalPrice > totalPrice && (
                   <span className="text-base sm:text-lg text-slate-400 line-through font-semibold">
                     ₹{totalOriginalPrice.toLocaleString("en-IN")}
                   </span>
                 )}
 
-                {product.discountPercent > 0 &&
-                  product.originalPrice > product.price && (
-                    <span className="text-xs font-extrabold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-md border border-rose-200">
-                      Save ₹{totalSavings.toLocaleString("en-IN")} ({product.discountPercent}% OFF)
-                    </span>
-                  )}
+                {totalSavings > 0 && (
+                  <span className="text-xs font-extrabold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-md border border-rose-200">
+                    Save ₹{totalSavings.toLocaleString("en-IN")}
+                  </span>
+                )}
               </div>
 
               <p className="text-xs font-semibold text-slate-700">
@@ -293,6 +303,7 @@ export function ProductDetailView({
                 Inclusive of all taxes. 100% genuine product. GST input credit invoice available.
               </p>
             </div>
+
 
 
             {/* Bulk Salon Volume Discount Table */}
@@ -389,56 +400,10 @@ export function ProductDetailView({
               </div>
             </div>
 
-            {/* Delivery Pincode Checker 
-            <div className="pt-4 border-t border-slate-100 space-y-2">
-              <span className="text-xs font-bold text-slate-700 block">
-                Check Delivery & COD Availability
-              </span>
-              <form onSubmit={handlePincodeCheck} className="flex gap-2 max-w-sm">
-                <div className="relative flex-1">
-                  <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                  <input
-                    type="text"
-                    maxLength={6}
-                    value={checkPin}
-                    onChange={(e) => setCheckPin(e.target.value.replace(/\D/g, ""))}
-                    placeholder="Enter 6-digit Pincode"
-                    className="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 rounded-xl font-medium focus:ring-2 focus:ring-amber-500"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-black transition"
-                >
-                  Check
-                </button>
-              </form>
-              {pinResult && (
-                <p className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl font-medium flex items-center gap-1.5">
-                  <Truck className="w-4 h-4 text-emerald-600 shrink-0" />
-                  {pinResult}
-                </p>
-              )}
-            </div>*/}
-
-            {/* Guarantees Badges 
-            <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 text-[11px] text-slate-600">
-              <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>100% Genuine</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Truck className="w-4 h-4 text-amber-600 shrink-0" />
-                <span>Pune Hub Dispatch</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <FileCheck className="w-4 h-4 text-blue-600 shrink-0" />
-                <span>GST Tax Invoice</span>
-              </div>
-            </div>*/}
           </div>
         </div>
       </div>
+
 
       {/* Detailed Content Tabs (Description, Usage, Specs, Reviews) */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useStore } from "@/context/StoreContext";
+import { useAuth } from "@/context/AuthContext";
 import {
   Search,
   ShoppingBag,
@@ -216,6 +217,7 @@ export function Header() {
     deliveryCity,
     openB2BModal,
   } = useStore();
+  const { profile, isSalonOwner, salonRegion, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCat, setSelectedCat] = useState("all");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -598,75 +600,103 @@ export function Header() {
                     aria-label="Account menu"
                   >
                     {" "}
-                    <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700">
-                      {" "}
-                      <User className="w-4 h-4" />{" "}
-                    </div>{" "}
+                    <div className="w-8 h-8 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center text-[#795BCB] font-bold text-xs">
+                      {profile?.name ? profile.name[0].toUpperCase() : <User className="w-4 h-4" />}
+                    </div>
                     <div className="text-left leading-none">
-                      {" "}
                       <span className="text-[10px] text-slate-400 font-semibold uppercase block">
-                        {" "}
-                        Account{" "}
-                      </span>{" "}
+                        {profile ? (isSalonOwner ? (salonRegion === "pune" ? "Pune Salon Pro" : "Outstation Salon") : "Customer") : "Account"}
+                      </span>
                       <span className="text-xs font-bold text-slate-800 flex items-center gap-0.5">
-                        {" "}
-                        Salon Profile{" "}
-                        <ChevronDown className="w-3 h-3 text-slate-400" />{" "}
-                      </span>{" "}
-                    </div>{" "}
-                  </button>{" "}
+                        {profile?.name || "Sign In"}
+                        <ChevronDown className="w-3 h-3 text-slate-400" />
+                      </span>
+                    </div>
+                  </button>
                   {isAccountOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 z-50 animate-in fade-in duration-150">
-                      {" "}
-                      <div className="p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl mb-1 border border-amber-100">
-                        {" "}
+                    <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 p-2.5 z-50 animate-in fade-in duration-150">
+                      <div className="p-3 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl mb-1.5 border border-purple-100">
                         <p className="text-xs font-bold text-slate-900">
-                          {" "}
-                          Welcome to PureCuts{" "}
-                        </p>{" "}
+                          {profile?.name ? `Hello, ${profile.name}` : "Welcome to PureCuts"}
+                        </p>
                         <p className="text-[11px] text-slate-500">
-                          {" "}
-                          Professional Salon Superstore{" "}
-                        </p>{" "}
-                      </div>{" "}
-                      <Link
-                        href="/login"
-                        onClick={() => setIsAccountOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#795BCB] hover:bg-[#795BCB]/10 rounded-lg transition"
-                      >
-                        {" "}
-                        <User className="w-4 h-4 text-[#795BCB]" /> Sign in to
-                        PureCuts{" "}
-                      </Link>{" "}
-                      <Link
-                        href="/account"
-                        onClick={() => setIsAccountOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition"
-                      >
-                        {" "}
-                        <User className="w-4 h-4 text-slate-400" /> My
-                        Profile{" "}
-                      </Link>{" "}
+                          {isSalonOwner
+                            ? `Verified Salon Partner (${salonRegion === "pune" ? "Pune Rate" : "Outstation Rate"})`
+                            : "Professional Salon & Beauty Marketplace"}
+                        </p>
+                      </div>
+
+                      {!profile ? (
+                        <>
+                          <Link
+                            href="/login"
+                            onClick={() => setIsAccountOpen(false)}
+                            className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#795BCB] hover:bg-[#795BCB]/10 rounded-lg transition"
+                          >
+                            <User className="w-4 h-4 text-[#795BCB]" /> Sign in to PureCuts
+                          </Link>
+                          <Link
+                            href="/register"
+                            onClick={() => setIsAccountOpen(false)}
+                            className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition"
+                          >
+                            <Building2 className="w-4 h-4 text-slate-400" /> Register as Salon Owner
+                          </Link>
+                        </>
+                      ) : (
+                        <Link
+                          href="/account"
+                          onClick={() => setIsAccountOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition"
+                        >
+                          <User className="w-4 h-4 text-slate-400" /> My Salon Profile
+                        </Link>
+                      )}
+
                       <Link
                         href="/account/orders"
                         onClick={() => setIsAccountOpen(false)}
                         className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition"
                       >
-                        {" "}
-                        <Package className="w-4 h-4 text-slate-400" /> My Orders
-                        & Tracking{" "}
-                      </Link>{" "}
+                        <Package className="w-4 h-4 text-slate-400" /> My Orders & Tracking
+                      </Link>
+
                       <Link
                         href="/wishlist"
                         onClick={() => setIsAccountOpen(false)}
                         className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition"
                       >
-                        {" "}
-                        <Heart className="w-4 h-4 text-slate-400" /> Saved
-                        Wishlist ({wishlistCount}){" "}
-                      </Link>{" "}
+                        <Heart className="w-4 h-4 text-slate-400" /> Saved Wishlist ({wishlistCount})
+                      </Link>
+
+                      {/* Unified Admin Portal Link */}
+                      <div className="pt-1.5 mt-1.5 border-t border-slate-100">
+                        <Link
+                          href="/admin"
+                          onClick={() => setIsAccountOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-slate-900 bg-slate-50 hover:bg-purple-50 hover:text-[#795BCB] rounded-lg transition border border-slate-200/60"
+                        >
+                          <Building2 className="w-4 h-4 text-[#795BCB]" />
+                          <span>Management Portal (Web & App)</span>
+                        </Link>
+                      </div>
+
+                      {profile && (
+                        <div className="pt-1 mt-1 border-t border-slate-100">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              logout();
+                              setIsAccountOpen(false);
+                            }}
+                            className="w-full text-left flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                          >
+                            Sign Out
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  )}{" "}
+                  )}
                 </div>{" "}
                 {/* Cart */}{" "}
                 <button

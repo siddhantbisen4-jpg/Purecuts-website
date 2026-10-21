@@ -44,7 +44,7 @@ export function HairCareHeroes({ products }: HairCareHeroesProps) {
           ))}
         </div>
       </div>
-      <div className="mt-4 sm:mt-6 rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs">
+      <Link href="/category/haircare" className="block mt-4 sm:mt-6 rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs hover:opacity-95 transition">
         <Image
           src={banner2}
           alt="PureCuts Professional Salon Hair Care Banner"
@@ -53,7 +53,8 @@ export function HairCareHeroes({ products }: HairCareHeroesProps) {
           className="w-full h-auto object-cover"
           priority={false}
         />
-      </div>
+      </Link>
+
     </section>
   );
 }

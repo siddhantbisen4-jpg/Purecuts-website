@@ -1,5 +1,5 @@
 export interface Product {
-  id: number;
+  id: number | string;
   slug: string;
   name: string;
   brand: string;
@@ -8,6 +8,9 @@ export interface Product {
   subcategory?: string | null;
   subcategorySlug?: string | null;
   price: number;
+  customerPrice?: number;
+  salonPunePrice?: number;
+  salonOutsidePunePrice?: number;
   punePrice: number;
   outsidePunePrice: number;
   originalPrice: number;
@@ -34,6 +37,27 @@ export interface Product {
   createdAt?: Date | null;
 }
 
+export interface UserProfile {
+  uid: string;
+  phone?: string;
+  email?: string;
+  name?: string;
+  accountType: "salon_owner" | "local_customer" | "admin";
+  salonDetails?: {
+    salonName?: string;
+    gstin?: string;
+    udyamNumber?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    pincode?: string;
+    region?: "pune" | "outside-pune";
+    isVerified?: boolean;
+  };
+  createdAt?: any;
+  updatedAt?: any;
+}
+
 export interface Category {
   id: number;
   name: string;
@@ -47,7 +71,7 @@ export interface Category {
 }
 
 export interface CartItem {
-  productId: number;
+  productId: number | string;
   slug: string;
   name: string;
   brand: string;
@@ -60,7 +84,7 @@ export interface CartItem {
 }
 
 export interface OrderItem {
-  productId: number;
+  productId: number | string;
   name: string;
   brand: string;
   price: number;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -17,6 +17,13 @@ import {
 
 import logo from "../../image/purecuts_logo_no_bg-cropped.png";
 import { useStore } from "@/context/StoreContext";
+import { auth, db, isFirebaseConfigured } from "@/lib/firebase";
+import {
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  ConfirmationResult,
+} from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 type LoginMode = "signin" | "forgot";
 
@@ -43,6 +50,8 @@ export default function LoginPage() {
   );
 
   const [otpSent, setOtpSent] = useState(false);
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+  const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -119,15 +128,40 @@ export default function LoginPage() {
     }
 
     if (mobile.length !== 10) {
-      setError(
-        "Please enter a valid 10-digit mobile number."
-      );
+      setError("Please enter a valid 10-digit mobile number.");
       return;
     }
 
     try {
       setLoading(true);
 
+      // Check if Firebase Client Auth is configured
+      if (auth && isFirebaseConfigured) {
+        if (!recaptchaVerifierRef.current) {
+          recaptchaVerifierRef.current = new RecaptchaVerifier(
+            auth,
+            "recaptcha-container",
+            {
+              size: "invisible",
+              callback: () => {},
+            }
+          );
+        }
+
+        const confirmation = await signInWithPhoneNumber(
+          auth,
+          `+91${mobile.trim()}`,
+          recaptchaVerifierRef.current
+        );
+
+        setConfirmationResult(confirmation);
+        setOtpSent(true);
+        setOtp("");
+        setSuccessMessage(`OTP sent via SMS to +91 ${mobile.trim()}!`);
+        return;
+      }
+
+      // API fallback (for development / testing before entering keys)
       const response = await fetch("/api/auth/send-otp", {
         method: "POST",
         headers: {
@@ -149,7 +183,7 @@ export default function LoginPage() {
       }
 
       setOtpSent(true);
-      setOtp("");
+      setOtp(data?.otp || "");
 
       setSuccessMessage(
         data?.message ||
@@ -183,9 +217,7 @@ export default function LoginPage() {
     }
 
     if (mobile.length !== 10) {
-      setError(
-        "Please enter a valid 10-digit mobile number."
-      );
+      setError("Please enter a valid 10-digit mobile number.");
       return;
     }
 
@@ -210,83 +242,99 @@ export default function LoginPage() {
     }
 
     if (pincodeValue.length !== 6) {
-      setError(
-        "Please enter a valid 6-digit pincode."
-      );
+      setError("Please enter a valid 6-digit pincode.");
       return;
     }
 
     try {
       setLoading(true);
 
-      const response = await fetch(
-        "/api/auth/login-otp",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            mobile: mobile.trim(),
-            otp: otp.trim(),
-            pincode: pincodeValue,
-          }),
+      let loggedInUser: any = null;
+
+      // 1. If Firebase Phone Auth Confirmation is active
+      if (confirmationResult && auth && isFirebaseConfigured) {
+        const userCredential = await confirmationResult.confirm(otp.trim());
+        const fbUser = userCredential.user;
+
+        if (db) {
+          const userDoc = await getDoc(doc(db, "users", fbUser.uid));
+          if (userDoc.exists()) {
+            loggedInUser = userDoc.data();
+          } else {
+            const cleanPin = pincodeValue.replace(/\D/g, "").slice(0, 6);
+            const isPune = cleanPin.startsWith("411");
+            loggedInUser = {
+              uid: fbUser.uid,
+              phone: fbUser.phoneNumber || `+91${mobile.trim()}`,
+              name: "PureCuts Customer",
+              accountType: "local_customer",
+              pincode: cleanPin,
+              region: isPune ? "pune" : "outside-pune",
+              createdAt: new Date().toISOString(),
+            };
+            await setDoc(doc(db, "users", fbUser.uid), loggedInUser);
+          }
         }
-      );
-
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(
-          data?.message ||
-            data?.error ||
-            "Invalid mobile number or OTP."
+      } else {
+        // 2. Fallback to API route
+        const response = await fetch(
+          "/api/auth/login-otp",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              mobile: mobile.trim(),
+              otp: otp.trim(),
+              pincode: pincodeValue,
+            }),
+          }
         );
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(
+            data?.message ||
+              data?.error ||
+              "Invalid mobile number or OTP."
+          );
+        }
+
+        loggedInUser = data.user;
       }
 
-      // --------------------------------------------------
-      // SAVE LOGGED-IN USER
-      // --------------------------------------------------
-
-      if (data?.user) {
+      // Save user session
+      if (loggedInUser) {
         localStorage.setItem(
           "purecuts_user",
-          JSON.stringify(data.user)
+          JSON.stringify(loggedInUser)
         );
       }
 
-      // --------------------------------------------------
-      // SAVE PINCODE
-      // --------------------------------------------------
-
+      // Save pincode
       if (pincodeValue) {
         setPincode(pincodeValue);
-
-        localStorage.setItem(
-          "purecuts_pincode",
-          pincodeValue
-        );
+        localStorage.setItem("purecuts_pincode", pincodeValue);
       }
 
-      // --------------------------------------------------
-      // NOTIFY OTHER COMPONENTS
-      // --------------------------------------------------
-
-      window.dispatchEvent(
-        new Event("purecuts-auth-change")
-      );
+      // Notify context & navbar
+      window.dispatchEvent(new Event("purecuts-auth-change"));
+      window.dispatchEvent(new CustomEvent("purecuts-auth-changed"));
 
       showToast?.("Login successful!");
 
-      // --------------------------------------------------
-      // GO TO ACCOUNT
-      // --------------------------------------------------
-
-      router.push("/account");
+      // If salon owner, go to storefront to see wholesale rate; otherwise account
+      if (loggedInUser?.accountType === "salon_owner") {
+        router.push("/");
+      } else {
+        router.push("/account");
+      }
     } catch (err: any) {
       setError(
         err?.message ||
-          "Something went wrong. Please try again."
+          "Invalid OTP or verification failed. Please try again."
       );
     } finally {
       setLoading(false);
@@ -690,6 +738,9 @@ export default function LoginPage() {
                       </p>
 
                     </div>
+
+                    {/* Invisible reCAPTCHA container for Firebase Phone Auth */}
+                    <div id="recaptcha-container"></div>
 
                     {/* ==================================================
                         SIGN IN BUTTON

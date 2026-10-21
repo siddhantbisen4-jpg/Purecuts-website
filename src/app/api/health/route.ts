@@ -1,13 +1,15 @@
-import { db } from "@/db";
-import { sql } from "drizzle-orm";
+import { isDbConnected } from "@/db";
+import { isFirebaseConfigured } from "@/lib/firebase";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  try {
-    await db.execute(sql`select 1`);
-    return Response.json({ ok: true });
-  } catch {
-    return Response.json({ ok: false }, { status: 500 });
-  }
+  return Response.json({
+    ok: true,
+    status: "healthy",
+    firebase: isFirebaseConfigured ? "connected" : "offline",
+    postgres: isDbConnected ? "connected" : "offline",
+    timestamp: new Date().toISOString(),
+  });
 }
+

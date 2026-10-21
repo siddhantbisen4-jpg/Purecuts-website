@@ -7,6 +7,7 @@ import "./globals.css";
 import "leaflet/dist/leaflet.css";
 
 import { StoreProvider } from "@/context/StoreContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CartDrawer } from "@/components/CartDrawer";
@@ -38,22 +39,24 @@ export default function RootLayout({
       <body
         className={`${inter.className} bg-white text-[#333333] antialiased min-h-screen flex flex-col`}
       >
-        <StoreProvider>
-          <Header />
+        <AuthProvider>
+          <StoreProvider>
+            <Header />
 
-          <div
-            className="flex-1"
-            style={{ paddingTop: "var(--header-height, 0px)" }}
-          >
-            {children}
-          </div>
+            <div
+              className="flex-1"
+              style={{ paddingTop: "var(--header-height, 0px)" }}
+            >
+              {children}
+            </div>
 
-          <Footer />
-          <CartDrawer />
-          <QuickViewModal />
-          <B2BModal />
-          <Toast />
-        </StoreProvider>
+            <Footer />
+            <CartDrawer />
+            <QuickViewModal />
+            <B2BModal />
+            <Toast />
+          </StoreProvider>
+        </AuthProvider>
       </body>
     </html>
   );
