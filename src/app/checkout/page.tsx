@@ -534,6 +534,12 @@ export default function CheckoutPage() {
         throw new Error(data.error || "Failed to place order.");
       }
 
+      // Remember the phone number used for this successful order.
+      localStorage.setItem(
+        "purecuts_customer_phone",
+        formData.phone.trim()
+      );
+
       try {
         confetti({
           particleCount: 100,

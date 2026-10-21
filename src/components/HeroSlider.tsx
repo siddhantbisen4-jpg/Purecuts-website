@@ -47,21 +47,7 @@ const HERO_SLIDES = [
     ,
     offer: "Starting at ₹165",
   },
-  {/*{
-    id: 3,
-    tag: "Skincare Glow Festival",
-    title: "Dr. Rashel, VLCC & Lotus Facial Cleanups",
-    subtitle:
-      "380ml bulk facial creams, scrubs, ubtan gels & 6-step bridal facial kits at direct wholesale rates.",
-    badge: "56% OFF Mega Deal",
-    badgeColor: "bg-emerald-600 text-white",
-    bgGradient: "from-slate-950 via-emerald-950 to-slate-900",
-    link: "/category/skincare",
-    cta: "Shop Facial Kits & Scrubs",
-    image:
-      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=900&q=80",
-    offer: "Dr. Rashel Tubs @ ₹109",
-  },*/}
+
 ];
 
 export function HeroSlider() {
@@ -69,9 +55,11 @@ export function HeroSlider() {
   const { openB2BModal } = useStore();
 
   useEffect(() => {
+    setCurrentSlide(0);
+
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 6000);
+    }, 2000);
 
     return () => clearInterval(timer);
   }, []);
@@ -86,7 +74,7 @@ export function HeroSlider() {
     setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
   };
 
-  const slide = HERO_SLIDES[currentSlide];
+  const slide = HERO_SLIDES[currentSlide] ?? HERO_SLIDES[0];
 
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 pt-3 sm:pt-4 pb-5 sm:pb-6">

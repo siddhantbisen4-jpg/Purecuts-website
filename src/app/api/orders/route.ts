@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { orders } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { ensureDbInitialized } from "@/lib/products";
 
 export async function POST(request: NextRequest) {
@@ -34,82 +34,82 @@ export async function POST(request: NextRequest) {
       paymentMethod = "COD",
       items = [],
     } = body;
-    
+
     if (
       customerType !== "SALON_OWNER" &&
       customerType !== "GUEST" &&
       customerType !== "LOCAL_CUSTOMER"
     ) {
-  return NextResponse.json(
-    {
-      success: false,
-      error: "Invalid customer type",
-    },
-    {
-      status: 400,
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid customer type",
+        },
+        {
+          status: 400,
+        }
+      );
     }
-  );
-}
 
-if (
-  !customerName ||
-  !customerPhone ||
-  !addressLine ||
-  !pincode ||
-  items.length === 0
-) {
-  return NextResponse.json(
-    {
-      success: false,
-      error:
-        "Missing required order information",
-    },
-    {
-      status: 400,
+    if (
+      !customerName ||
+      !customerPhone ||
+      !addressLine ||
+      !pincode ||
+      items.length === 0
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Missing required order information",
+        },
+        {
+          status: 400,
+        }
+      );
     }
-  );
-}
-if (
-  customerType === "SALON_OWNER" &&
-  !gstNumber?.trim() &&
-  !udyamNumber?.trim()
-) {
-  return NextResponse.json(
-    {
-      success: false,
-      error:
-        "Salon Owner must provide either GSTIN or UDYAM number",
-    },
-    {
-      status: 400,
+    if (
+      customerType === "SALON_OWNER" &&
+      !gstNumber?.trim() &&
+      !udyamNumber?.trim()
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Salon Owner must provide either GSTIN or UDYAM number",
+        },
+        {
+          status: 400,
+        }
+      );
     }
-  );
-}
     const newOrder = await db.insert(orders).values({
-  orderNumber,
+      orderNumber,
 
-  customerType:
-    customerType === "SALON_OWNER"
-      ? "SALON_OWNER"
-      : "GUEST",
+      customerType:
+        customerType === "SALON_OWNER"
+          ? "SALON_OWNER"
+          : "GUEST",
 
-  customerName,
+      customerName,
       customerEmail: customerEmail || `${customerPhone}@customer.purecuts.in`,
       customerPhone,
       salonName:
-  customerType === "SALON_OWNER"
-    ? salonName || null
-    : null,
+        customerType === "SALON_OWNER"
+          ? salonName || null
+          : null,
 
-gstNumber:
-  customerType === "SALON_OWNER"
-    ? gstNumber || null
-    : null,
+      gstNumber:
+        customerType === "SALON_OWNER"
+          ? gstNumber || null
+          : null,
 
-udyamNumber:
-  customerType === "SALON_OWNER"
-    ? udyamNumber || null
-    : null,
+      udyamNumber:
+        customerType === "SALON_OWNER"
+          ? udyamNumber || null
+          : null,
       addressLine,
       city: city || "Pune",
       state: state || "Maharashtra",
@@ -138,18 +138,14 @@ udyamNumber:
     });
   } catch (error) {
     console.error("API /api/orders POST error:", error);
-    // Fallback response for resilience
-    const fallbackOrderNumber = `PC-${Date.now().toString().slice(-6)}`;
-    return NextResponse.json({
-      success: true,
-      order: {
-        orderNumber: fallbackOrderNumber,
-        trackingId: `EX-IN-98472911`,
-        customerName: "Valued PureCuts Customer",
-        totalAmount: 1200,
-        createdAt: new Date(),
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to save order. Please try again.",
       },
-    });
+      { status: 500 }
+    );
   }
 }
 
@@ -157,21 +153,52 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const orderNumber = searchParams.get("orderNumber");
-
-    if (!orderNumber) {
-      return NextResponse.json({ error: "Order number required" }, { status: 400 });
-    }
+    const customerPhone = searchParams.get("customerPhone");
 
     await ensureDbInitialized();
-    const rows = await db.select().from(orders).where(eq(orders.orderNumber, orderNumber)).limit(1);
 
-    if (rows.length === 0) {
-      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    // Fetch one order when an order number is supplied.
+    if (orderNumber) {
+      const rows = await db
+        .select()
+        .from(orders)
+        .where(eq(orders.orderNumber, orderNumber))
+        .limit(1);
+
+      if (rows.length === 0) {
+        return NextResponse.json(
+          { error: "Order not found" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json(rows[0]);
     }
 
-    return NextResponse.json(rows[0]);
+    // Fetch all orders belonging to this customer.
+    if (customerPhone) {
+      const rows = await db
+        .select()
+        .from(orders)
+        .where(eq(orders.customerPhone, customerPhone))
+        .orderBy(desc(orders.createdAt));
+
+      return NextResponse.json({
+        success: true,
+        orders: rows,
+      });
+    }
+
+    return NextResponse.json(
+      { error: "Order number or customer phone is required" },
+      { status: 400 }
+    );
   } catch (error) {
     console.error("API /api/orders GET error:", error);
-    return NextResponse.json({ error: "Failed to fetch order" }, { status: 500 });
+
+    return NextResponse.json(
+      { error: "Failed to fetch orders" },
+      { status: 500 }
+    );
   }
 }
