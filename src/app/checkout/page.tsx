@@ -22,6 +22,7 @@ import {
   AlertCircle,
   FileText,
 } from "lucide-react";
+import { State, City } from "country-state-city";
 
 type CustomerType = "SALON_OWNER" | "LOCAL_CUSTOMER";
 
@@ -534,6 +535,12 @@ export default function CheckoutPage() {
         throw new Error(data.error || "Failed to place order.");
       }
 
+      // Remember the phone number used for this successful order.
+      localStorage.setItem(
+        "purecuts_customer_phone",
+        formData.phone.trim()
+      );
+
       try {
         confetti({
           particleCount: 100,
@@ -635,15 +642,12 @@ export default function CheckoutPage() {
                 className="group text-left bg-white rounded-3xl p-6 border-2 border-slate-200 hover:border-[#795BCB] hover:shadow-xl transition-all duration-200 cursor-pointer"
               >
                 <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center shadow-sm">
+                  <div className="w-12 h-12 rounded-2xl bg-[#795BCB] text-white flex items-center justify-center shadow-sm">
                     <UserRound className="w-6 h-6" />
                   </div>
-                  <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-amber-600 group-hover:translate-x-1 transition" />
+                  <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-[#795BCB] group-hover:translate-x-1 transition" />
                 </div>
 
-                <div className="mt-4 inline-block px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-extrabold uppercase tracking-wide">
-                  Individual / Personal Care
-                </div>
 
                 <h2 className="text-lg font-black text-slate-900 mt-2">
                   Local Customer
@@ -705,7 +709,7 @@ export default function CheckoutPage() {
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${customerType === "SALON_OWNER"
               ? "bg-[#795BCB] text-white"
-              : "bg-amber-500 text-slate-950"
+              : "bg-[#795BCB] text-white"
               }`}>
               {customerType === "SALON_OWNER" ? (
                 <Building2 className="w-5 h-5" />

@@ -96,7 +96,9 @@ export const products = pgTable("products", {
     .$type<string[]>()
     .default([]),
 
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: timestamp("created_at", {
+    withTimezone: true,
+  }).notNull().defaultNow(),
 });
 
 export const orders = pgTable("orders", {

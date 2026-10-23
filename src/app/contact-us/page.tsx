@@ -43,13 +43,13 @@ export default function ContactUsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Contact Details Card (5 cols) */}
-          <div className="lg:col-span-5 bg-slate-900 rounded-3xl p-8 text-white border border-slate-800 shadow-xl space-y-6">
+          <div className="lg:col-span-5 bg-[#795BCB] rounded-3xl p-8 text-white border border-slate-800 shadow-xl space-y-6">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20">
+              <span className="text-xs font-bold uppercase tracking-wider text-white bg-[#795BCB]/10 px-3 py-1 rounded-full border border-black/20">
                 Customer & Salon Support
               </span>
               <h1 className="text-2xl sm:text-3xl font-black mt-3 mb-2">Get in Touch</h1>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-white leading-relaxed">
                 Have questions regarding salon wholesale orders, product authenticity, or delivery timelines? Our team in Wagholi, Pune is ready to help.
               </p>
             </div>
@@ -144,7 +144,7 @@ export default function ContactUsPage() {
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                       placeholder="e.g. Anand More"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 font-medium"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#795BCB] focus:ring-2 focus:ring-amber-500 font-medium"
                     />
                   </div>
                   <div>
@@ -155,7 +155,7 @@ export default function ContactUsPage() {
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
                       placeholder="e.g. 9876543210"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 font-medium"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#795BCB] focus:ring-2 focus:ring-amber-500 font-medium"
                     />
                   </div>
                 </div>
@@ -168,7 +168,7 @@ export default function ContactUsPage() {
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
                       placeholder="e.g. anand@gmail.com"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 font-medium"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#795BCB] focus:ring-2 focus:ring-amber-500 font-medium"
                     />
                   </div>
                   <div>
@@ -195,14 +195,14 @@ export default function ContactUsPage() {
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                     placeholder="How can we assist you today? Provide order numbers or product names if applicable..."
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#795BCB] focus:ring-2 focus:ring-[#795BCB] font-medium"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-md shadow-amber-500/20 disabled:opacity-50"
+                  className="w-full py-3.5 bg-[#795BCB] hover:bg-[#795BCB] text-white font-black rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-md shadow-[#795BCB]/20 disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />
                   {submitting ? "Sending Message..." : "Submit Inquiry"}
