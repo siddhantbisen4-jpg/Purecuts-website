@@ -237,11 +237,15 @@ export async function POST(request: NextRequest) {
       couponCode: couponCode || null,
       deliveryFee: Number(deliveryFee),
       totalAmount: Number(totalAmount),
+
       paymentMethod,
       paymentStatus: paymentMethod === "COD" ? "PENDING" : "PAID",
       orderStatus: "CONFIRMED",
       items,
       trackingId,
+
+      // Save the actual order placement date and time
+      createdAt: new Date(),
     }).returning();
 
     return NextResponse.json({

@@ -15,9 +15,16 @@ import {
   CheckCircle2,
   Save,
 } from "lucide-react";
+const isValidGSTIN = (gstin: string) => {
+  if (!gstin.trim()) return true; // Optional field
 
+  return /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(
+    gstin.trim().toUpperCase(),
+  );
+};
 export default function AccountPage() {
-  const { pincode, deliveryCity, setPincode, openB2BModal, showToast } = useStore();
+  const { pincode, deliveryCity, setPincode, openB2BModal, showToast } =
+    useStore();
 
   const [profile, setProfile] = useState({
     name: "Pooja Sharma",
@@ -31,9 +38,58 @@ export default function AccountPage() {
     pincode: pincode,
   });
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setPincode(profile.pincode);
+
+    const phone = profile.phone.trim();
+    const email = profile.email.trim();
+    const pincodeValue = profile.pincode.trim();
+    const gstin = profile.gstin.trim().toUpperCase();
+
+    if (!profile.name.trim()) {
+      showToast("Please enter your full name.");
+      return;
+    }
+
+    if (!/^[0-9]{10}$/.test(phone)) {
+      showToast("Phone number must contain exactly 10 digits.");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showToast("Please enter a valid email address.");
+      return;
+    }
+
+    if (!profile.salonName.trim()) {
+      showToast("Please enter your salon or business name.");
+      return;
+    }
+
+    if (!isValidGSTIN(gstin)) {
+      showToast("Please enter a valid 15-character GSTIN.");
+      return;
+    }
+
+    if (!/^[0-9]{6}$/.test(pincodeValue)) {
+      showToast("Delivery pincode must contain exactly 6 digits.");
+      return;
+    }
+
+    if (!profile.address.trim()) {
+      showToast("Please enter your street address.");
+      return;
+    }
+
+    setProfile({
+      ...profile,
+      phone,
+      email,
+      pincode: pincodeValue,
+      gstin,
+    });
+
+    setPincode(pincodeValue);
     showToast("Profile & Salon details saved!");
   };
 
@@ -42,9 +98,13 @@ export default function AccountPage() {
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-slate-500">
-          <Link href="/" className="hover:text-amber-600 font-medium">Home</Link>
+          <Link href="/" className="hover:text-amber-600 font-medium">
+            Home
+          </Link>
           <span>/</span>
-          <span className="text-slate-800 font-bold">Salon Account Profile</span>
+          <span className="text-slate-800 font-bold">
+            Salon Account Profile
+          </span>
         </nav>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
@@ -55,7 +115,9 @@ export default function AccountPage() {
                 {profile.name[0]}
               </div>
               <div>
-                <h2 className="text-sm font-black text-slate-900">{profile.name}</h2>
+                <h2 className="text-sm font-black text-slate-900">
+                  {profile.name}
+                </h2>
                 <span className="text-[11px] text-white bg-[#9A37D8] font-bold px-2 py-0.5 rounded-full inline-block mt-0.5">
                   Verified Salon Member
                 </span>
@@ -67,13 +129,15 @@ export default function AccountPage() {
                 href="/account"
                 className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-[#9A37D8] text-white font-bold border border-white"
               >
-                <User className="w-4 h-4 text-white" /> My Profile & Salon Details
+                <User className="w-4 h-4 text-white" /> My Profile & Salon
+                Details
               </Link>
               <Link
                 href="/account/orders"
                 className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-semibold"
               >
-                <Package className="w-4 h-4 text-slate-400" /> Orders & Shipments
+                <Package className="w-4 h-4 text-slate-400" /> Orders &
+                Shipments
               </Link>
               <Link
                 href="/wishlist"
@@ -81,7 +145,7 @@ export default function AccountPage() {
               >
                 <Heart className="w-4 h-4 text-slate-400" /> Saved Wishlist
               </Link>
-             {/* <button
+              {/* <button
                 onClick={openB2BModal}
                 className="w-full text-left flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-amber-800 hover:bg-amber-50 font-semibold"
               >
@@ -93,29 +157,49 @@ export default function AccountPage() {
           {/* Right Form (8 cols) */}
           <div className="md:col-span-8 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
             <div>
-              <h1 className="text-xl font-black text-slate-900">Salon Profile & Billing Address</h1>
+              <h1 className="text-xl font-black text-slate-900">
+                Salon Profile & Billing Address
+              </h1>
               <p className="text-xs text-slate-500 mt-0.5">
-                Saved details will be prefilled automatically during your next checkout.
+                Saved details will be prefilled automatically during your next
+                checkout.
               </p>
             </div>
 
             <form onSubmit={handleSave} className="space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Full Name</label>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Full Name
+                  </label>
                   <input
                     type="text"
                     value={profile.name}
-                    onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                    onChange={(e) =>
+                      setProfile({ ...profile, name: e.target.value })
+                    }
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Phone Number</label>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Phone Number
+                  </label>
                   <input
                     type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
+                    pattern="[0-9]{10}"
+                    required
                     value={profile.phone}
-                    onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                    onChange={(e) =>
+                      setProfile({
+                        ...profile,
+                        phone: e.target.value.replace(/\D/g, "").slice(0, 10),
+                      })
+                    }
+                    title="Enter exactly 10 digits."
+                    placeholder="Enter 10-digit mobile number"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-medium"
                   />
                 </div>
@@ -123,26 +207,37 @@ export default function AccountPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Email Address</label>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Email Address
+                  </label>
                   <input
                     type="email"
+                    required
                     value={profile.email}
-                    onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                    onChange={(e) =>
+                      setProfile({ ...profile, email: e.target.value })
+                    }
+                    title="Enter a valid email address."
+                    placeholder="example@gmail.com"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Salon / Business Name</label>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Salon / Business Name
+                  </label>
                   <input
                     type="text"
                     value={profile.salonName}
-                    onChange={(e) => setProfile({ ...profile, salonName: e.target.value })}
+                    onChange={(e) =>
+                      setProfile({ ...profile, salonName: e.target.value })
+                    }
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-medium"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/*<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">GSTIN (For 18% Tax Credit)</label>
                   <input
@@ -163,13 +258,34 @@ export default function AccountPage() {
                   />
                 </div>
               </div>
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
+                pattern="[0-9]{6}"
+                required
+                value={profile.pincode}
+                onChange={(e) =>
+                  setProfile({
+                    ...profile,
+                    pincode: e.target.value.replace(/\D/g, "").slice(0, 6),
+                  })
+                }
+                title="Enter exactly 6 digits."
+                placeholder="Enter 6-digit pincode"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-bold text-amber-900"
+              />*/}
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Street Address</label>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Street Address
+                </label>
                 <input
                   type="text"
                   value={profile.address}
-                  onChange={(e) => setProfile({ ...profile, address: e.target.value })}
+                  onChange={(e) =>
+                    setProfile({ ...profile, address: e.target.value })
+                  }
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-medium"
                 />
               </div>

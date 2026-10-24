@@ -29,7 +29,7 @@ import {
   HelpCircle,
   RefreshCw,
 } from "lucide-react";
-
+import myorders from "@/image/myo.png";
 export type OrderItem = {
   productId: number;
   name: string;
@@ -113,20 +113,15 @@ function formatTimeAgo(dateStr: string | null | undefined): string {
 }
 
 // Helper to format expected delivery estimate
-function formatEstimatedDelivery(dateStr: string | null | undefined, status: string): string {
-  if (status.toUpperCase() === "DELIVERED") return "Delivered to Doorstep";
-  if (!dateStr) return "Expected within 24-48 Hours";
-  try {
-    const orderDate = new Date(dateStr);
-    const estDate = new Date(orderDate.getTime() + 24 * 60 * 60 * 1000);
-    return `Expected by ${new Intl.DateTimeFormat("en-IN", {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-    }).format(estDate)} (Wagholi Express Hub)`;
-  } catch {
-    return "Expected within 24-48 Hours";
+function formatEstimatedDelivery(
+  dateStr: string | null | undefined,
+  status: string
+): string {
+  if (status.toUpperCase() === "DELIVERED") {
+    return "Delivered to Doorstep";
   }
+
+  return "";
 }
 
 export default function OrdersHistoryPage() {
@@ -333,15 +328,11 @@ export default function OrdersHistoryPage() {
 
         {/* Hero Header Banner */}
         <div className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-[#1f1738] to-[#120e24] text-white rounded-3xl p-6 sm:p-8 border border-purple-900/30 shadow-xl">
-          {/* Subtle Decorative Glow */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#795BCB]/20 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
 
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold tracking-wide">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>Wagholi Domkhel Central Fulfillment Live</span>
-              </div>
+
 
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center gap-3">
                 <Package className="w-7 h-7 text-[#9A37D8]" />
@@ -376,28 +367,11 @@ export default function OrdersHistoryPage() {
           </div>
 
           {/* Quick Metrics Strip */}
-          <div className="mt-6 pt-5 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs text-slate-300">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span><strong>100% Genuine</strong> Sealed Inventory</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Truck className="w-4 h-4 text-amber-400 shrink-0" />
-              <span><strong>Pune Express Hub</strong> 24h Handover</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-purple-400 shrink-0" />
-              <span><strong>GST B2B Invoices</strong> Auto-Generated</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-sky-400 shrink-0" />
-              <span><strong>Direct Support</strong> +91 9579177826</span>
-            </div>
-          </div>
+
         </div>
 
         {/* Controls Toolbar: Search & Filter Tabs */}
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs space-y-4">
+        <div className="bg-white rounded-2xl textp-4 sm:p-5 border border-slate-200 shadow-xs space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             {/* Search Input */}
             <div className="relative flex-1">
@@ -425,22 +399,20 @@ export default function OrdersHistoryPage() {
               <button
                 type="button"
                 onClick={() => setStatusFilter("ALL")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
-                  statusFilter === "ALL"
-                    ? "bg-white text-slate-900 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${statusFilter === "ALL"
+                  ? "bg-white text-slate-900 shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+                  }`}
               >
                 All Orders ({orders.length})
               </button>
               <button
                 type="button"
                 onClick={() => setStatusFilter("ACTIVE")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  statusFilter === "ACTIVE"
-                    ? "bg-[#795BCB] text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${statusFilter === "ACTIVE"
+                  ? "bg-[#795BCB] text-white shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+                  }`}
               >
                 <Truck className="w-3.5 h-3.5" />
                 In Transit &amp; Packing ({activeCount})
@@ -448,11 +420,10 @@ export default function OrdersHistoryPage() {
               <button
                 type="button"
                 onClick={() => setStatusFilter("DELIVERED")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
-                  statusFilter === "DELIVERED"
-                    ? "bg-emerald-600 text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${statusFilter === "DELIVERED"
+                  ? "bg-emerald-600 text-white shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+                  }`}
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 Delivered ({deliveredCount})
@@ -517,14 +488,7 @@ export default function OrdersHistoryPage() {
               )}
             </div>
 
-            <div className="flex items-center gap-3 text-slate-400 text-[11px]">
-              <span>Showing {filteredOrders.length} order{filteredOrders.length === 1 ? "" : "s"}</span>
-              <span>•</span>
-              <span className="flex items-center gap-1 text-emerald-700 font-semibold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                Live Hub Sync
-              </span>
-            </div>
+
           </div>
         </div>
 
@@ -572,8 +536,8 @@ export default function OrdersHistoryPage() {
                   {searchQuery
                     ? `No orders matched your search "${searchQuery}". Please check the order number or search by phone.`
                     : phoneFilter
-                    ? `No orders linked to +91 ${phoneFilter}. If you ordered with another number, enter it above.`
-                    : "You haven't placed any salon supply orders yet. Orders placed during checkout will appear here in real time."}
+                      ? `No orders linked to +91 ${phoneFilter}. If you ordered with another number, enter it above.`
+                      : "You haven't placed any salon supply orders yet. Orders placed during checkout will appear here in real time."}
                 </p>
               </div>
 
@@ -698,16 +662,14 @@ export default function OrdersHistoryPage() {
                         </div>
 
                         <span
-                          className={`text-xs font-black px-3.5 py-1.5 rounded-full border shadow-2xs flex items-center gap-1.5 ${
-                            isDelivered
-                              ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                              : "bg-purple-50 text-purple-900 border-purple-200"
-                          }`}
+                          className={`text-xs font-black px-3.5 py-1.5 rounded-full border shadow-2xs flex items-center gap-1.5 ${isDelivered
+                            ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                            : "bg-purple-50 text-purple-900 border-purple-200"
+                            }`}
                         >
                           <span
-                            className={`w-2 h-2 rounded-full ${
-                              isDelivered ? "bg-emerald-500" : "bg-purple-600 animate-pulse"
-                            }`}
+                            className={`w-2 h-2 rounded-full ${isDelivered ? "bg-emerald-500" : "bg-purple-600 animate-pulse"
+                              }`}
                           />
                           {order.orderStatus ? order.orderStatus.replace(/_/g, " ") : "PROCESSING"}
                         </span>
@@ -716,13 +678,10 @@ export default function OrdersHistoryPage() {
 
                     {/* Interactive 4-Stage Fulfillment Tracker Stepper */}
                     <div className="mt-5 pt-4 border-t border-slate-200/60">
-                      <div className="flex items-center justify-between text-xs font-bold text-slate-500 mb-3">
+                      <div className="flex items-center text-xs font-bold text-slate-500 mb-3">
                         <span className="flex items-center gap-1.5 text-purple-900">
                           <Truck className="w-4 h-4 text-purple-600" />
                           <span>Dispatch Pipeline &amp; Delivery Progress</span>
-                        </span>
-                        <span className="text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100 font-semibold text-[11px]">
-                          {estimatedArrival}
                         </span>
                       </div>
 
@@ -741,30 +700,26 @@ export default function OrdersHistoryPage() {
                         {/* Pipeline Stage 2: Hub Packed */}
                         <div className="flex flex-col items-center text-center">
                           <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold mb-1.5 shadow-xs text-xs ${
-                              isConfirmed
-                                ? "bg-[#795BCB] text-white ring-4 ring-purple-100"
-                                : "bg-emerald-600 text-white"
-                            }`}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold mb-1.5 shadow-xs text-xs ${isConfirmed
+                              ? "bg-[#795BCB] text-white ring-4 ring-purple-100"
+                              : "bg-emerald-600 text-white"
+                              }`}
                           >
                             {isConfirmed ? "2" : "✓"}
                           </div>
                           <span className="font-bold text-slate-800 text-[11px]">Packed</span>
-                          <span className="text-[10px] text-slate-400 hidden sm:block">
-                            Wagholi Hub QC
-                          </span>
+
                         </div>
 
-                        {/* Pipeline Stage 3: In Transit */}
+                        {/* Pipeline Stage 3: In Transit 
                         <div className="flex flex-col items-center text-center">
                           <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold mb-1.5 shadow-xs text-xs ${
-                              order.orderStatus?.toUpperCase() === "IN_TRANSIT"
-                                ? "bg-[#795BCB] text-white ring-4 ring-purple-100"
-                                : isDelivered
+                            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold mb-1.5 shadow-xs text-xs ${order.orderStatus?.toUpperCase() === "IN_TRANSIT"
+                              ? "bg-[#795BCB] text-white ring-4 ring-purple-100"
+                              : isDelivered
                                 ? "bg-emerald-600 text-white"
                                 : "bg-slate-200 text-slate-600"
-                            }`}
+                              }`}
                           >
                             {isDelivered ? "✓" : "3"}
                           </div>
@@ -772,16 +727,15 @@ export default function OrdersHistoryPage() {
                           <span className="text-[10px] text-slate-400 hidden sm:block">
                             Express Logistics
                           </span>
-                        </div>
+                        </div>*/}
 
                         {/* Pipeline Stage 4: Delivered */}
                         <div className="flex flex-col items-center text-center">
                           <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold mb-1.5 shadow-xs text-xs ${
-                              isDelivered
-                                ? "bg-emerald-600 text-white ring-4 ring-emerald-100"
-                                : "bg-slate-200 text-slate-600"
-                            }`}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold mb-1.5 shadow-xs text-xs ${isDelivered
+                              ? "bg-emerald-600 text-white ring-4 ring-emerald-100"
+                              : "bg-slate-200 text-slate-600"
+                              }`}
                           >
                             {isDelivered ? "✓" : "4"}
                           </div>
@@ -912,23 +866,9 @@ export default function OrdersHistoryPage() {
 
                     {/* Action Buttons */}
                     <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => setActiveTrackingOrder(order)}
-                        className="px-3.5 py-2 bg-purple-50 hover:bg-purple-100 text-[#795BCB] font-bold rounded-xl transition flex items-center gap-1.5 border border-purple-200 shadow-2xs"
-                      >
-                        <Truck className="w-3.5 h-3.5" />
-                        <span>Track Live Package</span>
-                      </button>
 
-                      <button
-                        type="button"
-                        onClick={() => setActiveInvoiceOrder(order)}
-                        className="px-3.5 py-2 bg-white hover:bg-slate-100 text-slate-700 font-bold rounded-xl transition flex items-center gap-1.5 border border-slate-200 shadow-2xs"
-                      >
-                        <FileText className="w-3.5 h-3.5 text-slate-500" />
-                        <span>GST Tax Invoice</span>
-                      </button>
+
+
 
                       <button
                         type="button"
@@ -1023,11 +963,10 @@ export default function OrdersHistoryPage() {
                 {/* Milestone 3 */}
                 <div className="relative">
                   <span
-                    className={`absolute -left-[23px] top-0 w-4 h-4 rounded-full ring-4 ${
-                      activeTrackingOrder.orderStatus?.toUpperCase() === "DELIVERED"
-                        ? "bg-emerald-500 ring-emerald-100"
-                        : "bg-[#795BCB] ring-purple-100"
-                    }`}
+                    className={`absolute -left-[23px] top-0 w-4 h-4 rounded-full ring-4 ${activeTrackingOrder.orderStatus?.toUpperCase() === "DELIVERED"
+                      ? "bg-emerald-500 ring-emerald-100"
+                      : "bg-[#795BCB] ring-purple-100"
+                      }`}
                   />
                   <div className="text-xs space-y-1">
                     <strong className="text-slate-900 font-bold block">
@@ -1043,11 +982,10 @@ export default function OrdersHistoryPage() {
                 {/* Milestone 4 */}
                 <div className="relative">
                   <span
-                    className={`absolute -left-[23px] top-0 w-4 h-4 rounded-full ring-4 ${
-                      activeTrackingOrder.orderStatus?.toUpperCase() === "DELIVERED"
-                        ? "bg-emerald-500 ring-emerald-100"
-                        : "bg-slate-300 ring-slate-100"
-                    }`}
+                    className={`absolute -left-[23px] top-0 w-4 h-4 rounded-full ring-4 ${activeTrackingOrder.orderStatus?.toUpperCase() === "DELIVERED"
+                      ? "bg-emerald-500 ring-emerald-100"
+                      : "bg-slate-300 ring-slate-100"
+                      }`}
                   />
                   <div className="text-xs space-y-1">
                     <strong className="text-slate-900 font-bold block">
