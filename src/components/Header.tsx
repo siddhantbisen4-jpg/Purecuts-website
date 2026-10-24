@@ -50,7 +50,7 @@ const POPULAR_SEARCH_TAGS = [
 }
 
 type HeaderProduct = {
-  id: number;
+  id: number | string;
   slug: string;
   name: string;
   brand: string;
