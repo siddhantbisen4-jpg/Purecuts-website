@@ -30,7 +30,9 @@ export function QuickViewModal() {
     customerRegion,
   } = useStore();
   const [qty, setQty] = useState(1);
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    null,
+  );
   const router = useRouter();
 
   // Sync selected variant when quickViewProduct changes
@@ -45,7 +47,8 @@ export function QuickViewModal() {
   if (!quickViewProduct) return null;
 
   const currentPrice = selectedVariant?.price ?? quickViewProduct.price;
-  const currentOriginalPrice = selectedVariant?.originalPrice ?? quickViewProduct.originalPrice;
+  const currentOriginalPrice =
+    selectedVariant?.originalPrice ?? quickViewProduct.originalPrice;
   const displayPrice = getProductPrice(currentPrice, customerRegion);
   const currentImage = selectedVariant?.image || quickViewProduct.image;
   const inWish = isInWishlist(quickViewProduct.id);
@@ -55,7 +58,7 @@ export function QuickViewModal() {
       { ...quickViewProduct, price: displayPrice },
       qty,
       selectedVariant ? selectedVariant.name : undefined,
-      selectedVariant
+      selectedVariant,
     );
   };
 
@@ -64,19 +67,18 @@ export function QuickViewModal() {
       { ...quickViewProduct, price: displayPrice },
       qty,
       selectedVariant ? selectedVariant.name : undefined,
-      selectedVariant
+      selectedVariant,
     );
     closeQuickView();
     router.push("/checkout");
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto bg-black/60 p-4 pt-6 sm:items-center sm:py-6 animate-in fade-in duration-200">
       <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl p-6 sm:p-8 border border-slate-100 max-h-[90vh] overflow-y-auto">
         <button
           onClick={closeQuickView}
-          className="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
-          aria-label="Close"
+          className="sticky top-0 float-right -mr-2 -mt-2 z-20 p-2 rounded-full text-slate-500 bg-white hover:text-slate-900 hover:bg-slate-100 transition"
         >
           <X className="w-5 h-5" />
         </button>
@@ -134,9 +136,9 @@ export function QuickViewModal() {
               {currentOriginalPrice && currentOriginalPrice > displayPrice && (
                 <span className="text-xs text-rose-600 font-bold bg-rose-50 px-2 py-0.5 rounded-md">
                   Save ₹
-                  {(
-                    currentOriginalPrice - displayPrice
-                  ).toLocaleString("en-IN")}
+                  {(currentOriginalPrice - displayPrice).toLocaleString(
+                    "en-IN",
+                  )}
                 </span>
               )}
             </div>
@@ -155,38 +157,41 @@ export function QuickViewModal() {
               )}
 
             {/* Variant Chips */}
-            {quickViewProduct.variants && quickViewProduct.variants.length > 0 && (
-              <div className="mb-4 space-y-1.5">
-                <span className="text-xs font-bold text-slate-800 uppercase tracking-wide block">
-                  {selectedVariant?.attribute
-                    ? `${selectedVariant.attribute.replace(/^choose_/, "").replace(/_/g, " ")}: `
-                    : "Option: "}
-                  <span className="text-[#7950F2] font-semibold">{selectedVariant?.name}</span>
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {quickViewProduct.variants.map((v) => (
-                    <button
-                      key={v.id}
-                      type="button"
-                      onClick={() => setSelectedVariant(v)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${
-                        selectedVariant?.id === v.id
-                          ? "border-[#7950F2] bg-purple-50 text-[#7950F2] font-bold ring-1 ring-[#7950F2]"
-                          : "border-slate-200 text-slate-700 hover:bg-slate-50"
-                      }`}
-                    >
-                      {v.colorCode && (
-                        <span
-                          className="inline-block w-2.5 h-2.5 rounded-full mr-1.5 border border-slate-300 align-middle"
-                          style={{ backgroundColor: v.colorCode }}
-                        />
-                      )}
-                      {v.name} - ₹{v.price}
-                    </button>
-                  ))}
+            {quickViewProduct.variants &&
+              quickViewProduct.variants.length > 0 && (
+                <div className="mb-4 space-y-1.5">
+                  <span className="text-xs font-bold text-slate-800 uppercase tracking-wide block">
+                    {selectedVariant?.attribute
+                      ? `${selectedVariant.attribute.replace(/^choose_/, "").replace(/_/g, " ")}: `
+                      : "Option: "}
+                    <span className="text-[#7950F2] font-semibold">
+                      {selectedVariant?.name}
+                    </span>
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {quickViewProduct.variants.map((v) => (
+                      <button
+                        key={v.id}
+                        type="button"
+                        onClick={() => setSelectedVariant(v)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${
+                          selectedVariant?.id === v.id
+                            ? "border-[#7950F2] bg-purple-50 text-[#7950F2] font-bold ring-1 ring-[#7950F2]"
+                            : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                        }`}
+                      >
+                        {v.colorCode && (
+                          <span
+                            className="inline-block w-2.5 h-2.5 rounded-full mr-1.5 border border-slate-300 align-middle"
+                            style={{ backgroundColor: v.colorCode }}
+                          />
+                        )}
+                        {v.name} - ₹{v.price}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Quantity Selector & Actions */}
             <div className="space-y-3 pt-2 border-t border-slate-100">
@@ -243,10 +248,9 @@ export function QuickViewModal() {
                   onClick={closeQuickView}
                   className="text-[#7950F2] hover:text-[#7950F2] font-semibold flex items-center gap-1 group"
                 >
-                  View Full Product Details & Specs
+                  View Full Product Details
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
                 </Link>
-                
               </div>
             </div>
           </div>

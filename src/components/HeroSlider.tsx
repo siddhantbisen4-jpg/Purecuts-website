@@ -43,11 +43,9 @@ const HERO_SLIDES = [
     bgGradient: "from-slate-950 via-purple-950 to-slate-900",
     link: "/category/haircare",
     cta: "Shop Haircare Heroes",
-    image: banner3.src
-    ,
+    image: banner3.src,
     offer: "Starting at ₹165",
   },
-
 ];
 
 export function HeroSlider() {
@@ -94,8 +92,8 @@ export function HeroSlider() {
             flex
             items-center
             shadow-xl
-            border
-            border-slate-800
+border-0
+           
           "
         >
           {/* Background image */}
@@ -250,9 +248,10 @@ export function HeroSlider() {
                   sm:h-2
                   rounded-full
                   transition-all
-                  ${i === currentSlide
-                    ? "w-6 sm:w-7 bg-[#795BCB]"
-                    : "w-1.5 sm:w-2 bg-white/40 hover:bg-white/70"
+                  ${
+                    i === currentSlide
+                      ? "w-6 sm:w-7 bg-[#795BCB]"
+                      : "w-1.5 sm:w-2 bg-white/40 hover:bg-white/70"
                   }
                 `}
                 aria-label={`Go to slide ${i + 1}`}
@@ -274,9 +273,8 @@ export function HeroSlider() {
     relative
     rounded-3xl
     overflow-hidden
-    border
-    border-slate-800
-    bg-white"
+    shadow-xl
+border-0"
           >
             <div />
             <Image
@@ -316,7 +314,6 @@ export function HeroSlider() {
               <span>Order Now</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
-
 
             {/*<div>
               <div className="flex items-center justify-between mb-2">
@@ -388,9 +385,8 @@ export function HeroSlider() {
     relative
     rounded-3xl
     overflow-hidden
-    border
-    border-slate-800
-    bg-white
+    shadow-xl
+border-0
   "
           >
             <Image

@@ -20,54 +20,39 @@ const CATEGORY_ITEMS = [
     slug: "haircare",
     image:
       "https://static.vecteezy.com/system/resources/previews/046/631/483/non_2x/hair-care-shampoo-treatment-outline-color-icon-vector.jpg",
-    badge: "Haircare",
+
     badgeColor: "bg-[#795BCB] text-white",
   },
   {
-    name: "Skincare",
+    name: "Skincare & Bodycare",
     slug: "skincare",
     image:
       "https://i.pinimg.com/736x/24/7f/9a/247f9a5613d83a9442729b45024cbe0b.jpg",
-    badge: "Skincare",
-    badgeColor: "bg-[#795BCB] text-white",
+
+    badgeColor: "bg-white text-slate-800 border border-slate-200",
   },
   {
     name: "Machineries",
     slug: "machineries",
     image:
       "https://static.vecteezy.com/system/resources/thumbnails/075/365/015/small/hair-salon-equipment-silhouette-hair-dryer-comb-and-scissors-vector.jpg",
-    badge: "Machineries",
+
     badgeColor: "bg-[#795BCB] text-white",
   },
-  {
-    name: "Hair Color",
-    slug: "hair-color",
-    image:
-      "https://images.unsplash.com/photo-1560869713-7d0a29430803?w=800&q=80",
-    badge: "Pro Color",
-    badgeColor: "bg-[#795BCB] text-white",
-  },
-  {
-    name: "Salon Combos",
-    slug: "salon-combos",
-    image:
-      "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=800&q=80",
-    badge: "Combos",
-    badgeColor: "bg-[#795BCB] text-white",
-  },
+
   {
     name: "Accessories",
     slug: "accessories",
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDcvZ_4vEq-BrJuPt3DEwi3C8C3Ncp-5427EPKfjG1O65Iz87D3pjAj-8&s=10",
-    badge: "Accessories",
+
     badgeColor: "bg-[#795BCB] text-white",
   },
   {
     name: "Furniture",
     slug: "furniture",
     image: "https://cdn-icons-png.flaticon.com/512/3460/3460194.png",
-    badge: "Furniture",
+
     badgeColor: "bg-[#795BCB] text-white",
   },
   {
@@ -75,7 +60,7 @@ const CATEGORY_ITEMS = [
     slug: "disposable",
     image:
       "https://www.shutterstock.com/image-vector/barber-hair-salon-icon-single-260nw-1282664899.jpg",
-    badge: "Disposable",
+
     badgeColor: "bg-[#795BCB] text-white",
   },
 ];
@@ -103,12 +88,12 @@ export function CategoryRail() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-x-3 gap-y-7 sm:gap-4">
+        <div className="mx-auto grid w-full max-w-5xl grid-cols-2 justify-items-center gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-6 lg:gap-x-4">
           {CATEGORY_ITEMS.map((item) => (
             <Link
               key={item.slug}
               href={`/category/${item.slug}`}
-              className="group flex flex-col items-center text-center justify-items-center justify-center py-1"
+              className="group flex w-full max-w-[150px] flex-col items-center justify-center rounded-xl px-2 py-3 text-center transition duration-200 hover:-translate-y-1 hover:bg-slate-50"
             >
               <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl p-1 bg-gradient-to-tr from-amber-200 via-amber-400 to-amber-500 shadow-sm group-hover:shadow-lg group-hover:scale-105 transition-all duration-200">
                 <div className="w-full h-full rounded-xl sm:rounded-2xl overflow-hidden bg-white flex items-center justify-center relative">
@@ -128,7 +113,7 @@ export function CategoryRail() {
                   </span>
                 )}
               </div>
-              <span className="text-xs font-bold text-slate-800 group-hover:text-amber-600 transition mt-2.5 line-clamp-1">
+              <span className="text-xs font-bold text-slate-800 group-hover:text-[#795BCB] transition mt-2.5 line-clamp-1">
                 {item.name}
               </span>
             </Link>
