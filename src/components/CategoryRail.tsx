@@ -16,7 +16,7 @@ import {
 import Image from "next/image";
 const CATEGORY_ITEMS = [
   {
-    name: "",
+    name: "Haircare",
     slug: "haircare",
     image:
       "https://static.vecteezy.com/system/resources/previews/046/631/483/non_2x/hair-care-shampoo-treatment-outline-color-icon-vector.jpg",
@@ -24,42 +24,58 @@ const CATEGORY_ITEMS = [
     badgeColor: "bg-[#795BCB] text-white",
   },
   {
-    name: "",
+    name: "Skincare",
     slug: "skincare",
     image:
       "https://i.pinimg.com/736x/24/7f/9a/247f9a5613d83a9442729b45024cbe0b.jpg",
-    badge: "skincare & Bodycare",
+    badge: "Skincare",
     badgeColor: "bg-[#795BCB] text-white",
   },
   {
-    name: "",
+    name: "Machineries",
     slug: "machineries",
     image:
       "https://static.vecteezy.com/system/resources/thumbnails/075/365/015/small/hair-salon-equipment-silhouette-hair-dryer-comb-and-scissors-vector.jpg",
-    badge: "machineries & Tools",
+    badge: "Machineries",
     badgeColor: "bg-[#795BCB] text-white",
   },
   {
-    name: "",
+    name: "Hair Color",
+    slug: "hair-color",
+    image:
+      "https://images.unsplash.com/photo-1560869713-7d0a29430803?w=800&q=80",
+    badge: "Pro Color",
+    badgeColor: "bg-[#795BCB] text-white",
+  },
+  {
+    name: "Salon Combos",
+    slug: "salon-combos",
+    image:
+      "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=800&q=80",
+    badge: "Combos",
+    badgeColor: "bg-[#795BCB] text-white",
+  },
+  {
+    name: "Accessories",
     slug: "accessories",
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDcvZ_4vEq-BrJuPt3DEwi3C8C3Ncp-5427EPKfjG1O65Iz87D3pjAj-8&s=10",
-    badge: "accessories",
+    badge: "Accessories",
     badgeColor: "bg-[#795BCB] text-white",
   },
   {
-    name: "",
+    name: "Furniture",
     slug: "furniture",
     image: "https://cdn-icons-png.flaticon.com/512/3460/3460194.png",
-    badge: "furniture",
+    badge: "Furniture",
     badgeColor: "bg-[#795BCB] text-white",
   },
   {
-    name: "",
+    name: "Disposables",
     slug: "disposable",
     image:
       "https://www.shutterstock.com/image-vector/barber-hair-salon-icon-single-260nw-1282664899.jpg",
-    badge: "disposable",
+    badge: "Disposable",
     badgeColor: "bg-[#795BCB] text-white",
   },
 ];
@@ -87,7 +103,7 @@ export function CategoryRail() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-3 gap-y-7 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-x-3 gap-y-7 sm:gap-4">
           {CATEGORY_ITEMS.map((item) => (
             <Link
               key={item.slug}

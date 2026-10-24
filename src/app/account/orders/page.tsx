@@ -214,6 +214,7 @@ export default function OrdersHistoryPage() {
     addToCart(
       {
         id: item.productId,
+        slug: String(item.productId),
         name: item.name,
         brand: item.brand || "PureCuts",
         category: "Haircare",
@@ -221,11 +222,12 @@ export default function OrdersHistoryPage() {
         price: item.price,
         originalPrice: Math.round(item.price * 1.25),
         discountPercent: 20,
-        rating: 4.8,
+        rating: "4.8",
         reviewCount: 30,
         stock: 50,
         inStock: true,
         image: item.image || FALLBACK_PRODUCT_IMAGE,
+        description: item.name,
         volumeSize: item.volumeSize,
       },
       item.quantity,
@@ -242,6 +244,7 @@ export default function OrdersHistoryPage() {
       addToCart(
         {
           id: item.productId,
+          slug: String(item.productId),
           name: item.name,
           brand: item.brand || "PureCuts",
           category: "Haircare",
@@ -249,11 +252,12 @@ export default function OrdersHistoryPage() {
           price: item.price,
           originalPrice: Math.round(item.price * 1.25),
           discountPercent: 20,
-          rating: 4.8,
+          rating: "4.8",
           reviewCount: 30,
           stock: 50,
           inStock: true,
           image: item.image || FALLBACK_PRODUCT_IMAGE,
+          description: item.name,
           volumeSize: item.volumeSize,
         },
         item.quantity,

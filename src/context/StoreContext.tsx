@@ -7,7 +7,7 @@ import React, {
   useEffect,
 } from "react";
 
-import { Product, CartItem, Coupon } from "@/lib/types";
+import { Product, ProductVariant, CartItem, Coupon } from "@/lib/types";
 import pincodes from "@/data/pincodes.json";
 
 interface StoreContextType {
@@ -16,10 +16,18 @@ interface StoreContextType {
   addToCart: (
     product: Product,
     quantity?: number,
-    volumeSize?: string
+    volumeSize?: string,
+    selectedVariant?: ProductVariant | null
   ) => void;
-  updateQuantity: (productId: number, quantity: number) => void;
-  removeFromCart: (productId: number) => void;
+  updateQuantity: (
+    productId: number | string,
+    quantity: number,
+    variantId?: string
+  ) => void;
+  removeFromCart: (
+    productId: number | string,
+    variantId?: string
+  ) => void;
   clearCart: () => void;
 
   subtotal: number;
@@ -43,9 +51,9 @@ interface StoreContextType {
   freeShippingThreshold: number;
 
   // Wishlist
-  wishlist: number[];
-  toggleWishlist: (productId: number) => void;
-  isInWishlist: (productId: number) => boolean;
+  wishlist: (number | string)[];
+  toggleWishlist: (productId: number | string) => void;
+  isInWishlist: (productId: number | string) => boolean;
   wishlistCount: number;
 
   // Pincode & Delivery
@@ -90,7 +98,7 @@ export function StoreProvider({
   // WISHLIST
   // --------------------------------------------------
 
-  const [wishlist, setWishlist] = useState<number[]>([]);
+  const [wishlist, setWishlist] = useState<(number | string)[]>([]);
 
   // --------------------------------------------------
   // CART UI
@@ -327,22 +335,29 @@ export function StoreProvider({
   const addToCart = (
     product: Product,
     quantity = 1,
-    volumeSize?: string
+    volumeSize?: string,
+    selectedVariant?: ProductVariant | null
   ) => {
     setCart((prev) => {
-      const existingIndex = prev.findIndex(
-        (item) =>
-          item.productId === product.id
-      );
+      const existingIndex = prev.findIndex((item) => {
+        if (selectedVariant?.id) {
+          return item.productId === product.id && item.selectedVariant?.id === selectedVariant.id;
+        }
+        return item.productId === product.id && !item.selectedVariant?.id;
+      });
 
       if (existingIndex > -1) {
         const updated = [...prev];
-
-        updated[existingIndex].quantity +=
-          quantity;
-
+        updated[existingIndex].quantity += quantity;
         return updated;
       }
+
+      const effectivePrice = selectedVariant?.price ?? product.price;
+      const effectiveOriginalPrice = selectedVariant?.originalPrice ?? product.originalPrice;
+      const effectiveImage = selectedVariant?.image || product.image;
+      const effectiveVolumeSize =
+        volumeSize ||
+        (selectedVariant ? selectedVariant.name : (product.volumeSize || undefined));
 
       return [
         ...prev,
@@ -351,25 +366,20 @@ export function StoreProvider({
           slug: product.slug,
           name: product.name,
           brand: product.brand,
-          price: product.price,
-          originalPrice: product.originalPrice,
-          image: product.image,
-          volumeSize:
-            volumeSize ||
-            product.volumeSize ||
-            undefined,
+          price: effectivePrice,
+          originalPrice: effectiveOriginalPrice,
+          image: effectiveImage,
+          volumeSize: effectiveVolumeSize,
           quantity,
-          inStock:
-            product.inStock ?? true,
+          inStock: selectedVariant?.inStock ?? (product.inStock ?? true),
+          selectedVariant: selectedVariant || null,
         },
       ];
     });
 
+    const variantLabel = selectedVariant?.name ? ` (${selectedVariant.name})` : "";
     showToast(
-      `Added "${product.name.slice(
-        0,
-        32
-      )}..." to cart`
+      `Added "${product.name.slice(0, 28)}${variantLabel}" to cart`
     );
   };
 
@@ -378,23 +388,27 @@ export function StoreProvider({
   // --------------------------------------------------
 
   const updateQuantity = (
-    productId: number,
-    quantity: number
+    productId: number | string,
+    quantity: number,
+    variantId?: string
   ) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(productId, variantId);
       return;
     }
 
     setCart((prev) =>
-      prev.map((item) =>
-        item.productId === productId
+      prev.map((item) => {
+        const matches = variantId
+          ? item.productId === productId && item.selectedVariant?.id === variantId
+          : item.productId === productId;
+        return matches
           ? {
               ...item,
               quantity,
             }
-          : item
-      )
+          : item;
+      })
     );
   };
 
@@ -403,13 +417,16 @@ export function StoreProvider({
   // --------------------------------------------------
 
   const removeFromCart = (
-    productId: number
+    productId: number | string,
+    variantId?: string
   ) => {
     setCart((prev) =>
-      prev.filter(
-        (item) =>
-          item.productId !== productId
-      )
+      prev.filter((item) => {
+        if (variantId) {
+          return !(item.productId === productId && item.selectedVariant?.id === variantId);
+        }
+        return item.productId !== productId;
+      })
     );
 
     showToast("Item removed from cart");
@@ -430,7 +447,7 @@ export function StoreProvider({
   // --------------------------------------------------
 
   const toggleWishlist = (
-    productId: number
+    productId: number | string
   ) => {
     setWishlist((prev) => {
       const exists =
@@ -460,7 +477,7 @@ export function StoreProvider({
   // --------------------------------------------------
 
   const isInWishlist = (
-    productId: number
+    productId: number | string
   ) => {
     return wishlist.includes(productId);
   };

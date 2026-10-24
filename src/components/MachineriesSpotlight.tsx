@@ -38,10 +38,11 @@ export function MachineriesSpotlight({ products }: MachineriesSpotlightProps) {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6">
-          {products.slice(0, 4).map((product) => (
+          {products.slice(0, 8).map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+
       </div>
     </section>
   );

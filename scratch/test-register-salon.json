@@ -1,0 +1,13 @@
+{
+  "name": "Amit Sharma",
+  "email": "amit.salon@example.com",
+  "phone": "9822998877",
+  "accountType": "salon_owner",
+  "salonName": "Style & Scissors Lounge",
+  "gstNumber": "27ABCDE1234F1Z5",
+  "udyamNumber": "UDYAM-MH-12-0012345",
+  "address": "Shop 4, Phoenix Marketcity Road, Viman Nagar",
+  "city": "Pune",
+  "state": "Maharashtra",
+  "pincode": "411014"
+}

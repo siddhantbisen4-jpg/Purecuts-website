@@ -1,5 +1,24 @@
+export interface ProductVariant {
+  id: string;
+  name: string;
+  value?: string;
+  attribute?: string;
+  sku?: string;
+  price: number;
+  originalPrice?: number;
+  sellingPrice?: number;
+  costPrice?: number;
+  salonPunePrice?: number;
+  salonOutsidePunePrice?: number;
+  stock?: number;
+  inStock?: boolean;
+  image?: string;
+  colorCode?: string;
+  shadeName?: string;
+}
+
 export interface Product {
-  id: number;
+  id: number | string;
   slug: string;
   name: string;
   brand: string;
@@ -8,8 +27,11 @@ export interface Product {
   subcategory?: string | null;
   subcategorySlug?: string | null;
   price: number;
-  punePrice: number;
-  outsidePunePrice: number;
+  customerPrice?: number;
+  salonPunePrice?: number;
+  salonOutsidePunePrice?: number;
+  punePrice?: number;
+  outsidePunePrice?: number;
   originalPrice: number;
   discountPercent?: number | null;
   rating?: string | null;
@@ -24,6 +46,7 @@ export interface Product {
   usageInstructions?: string | null;
   specifications?: Record<string, string> | null;
   volumeSize?: string | null;
+  variants?: ProductVariant[] | null;
   isFeatured?: boolean | null;
   isBestseller?: boolean | null;
   isDealOfTheDay?: boolean | null;
@@ -32,6 +55,27 @@ export interface Product {
   isSalonPro?: boolean | null;
   tags?: string[] | null;
   createdAt?: Date | null;
+}
+
+export interface UserProfile {
+  uid: string;
+  phone?: string;
+  email?: string;
+  name?: string;
+  accountType: "salon_owner" | "local_customer" | "admin";
+  salonDetails?: {
+    salonName?: string;
+    gstin?: string;
+    udyamNumber?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    pincode?: string;
+    region?: "pune" | "outside-pune";
+    isVerified?: boolean;
+  };
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 export interface Category {
@@ -47,7 +91,7 @@ export interface Category {
 }
 
 export interface CartItem {
-  productId: number;
+  productId: number | string;
   slug: string;
   name: string;
   brand: string;
@@ -57,16 +101,18 @@ export interface CartItem {
   volumeSize?: string;
   quantity: number;
   inStock: boolean;
+  selectedVariant?: ProductVariant | null;
 }
 
 export interface OrderItem {
-  productId: number;
+  productId: number | string;
   name: string;
   brand: string;
   price: number;
   quantity: number;
   image: string;
   volumeSize?: string;
+  variantName?: string | null;
 }
 
 export interface Order {
@@ -96,7 +142,7 @@ export interface Order {
 
 export interface Review {
   id: number;
-  productId: number;
+  productId: number | string;
   userName: string;
   rating: number;
   title?: string | null;

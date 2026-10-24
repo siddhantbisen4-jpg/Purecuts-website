@@ -1,8 +1,9 @@
 "use client";
-import { getProductPrice } from "@/lib/pricing";
+import { getProductPrice, resolveProductPricing } from "@/lib/pricing";
 import React from "react";
 import { Product } from "@/lib/types";
 import { useStore } from "@/context/StoreContext";
+import { useAuth } from "@/context/AuthContext";
 import {
   Star,
   Heart,
@@ -29,7 +30,12 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
     openQuickView,
     customerRegion,
   } = useStore();
-  const displayPrice = getProductPrice(product.price, customerRegion);
+  const { profile } = useAuth();
+
+  const pricing = resolveProductPricing(product, profile, customerRegion);
+  const displayPrice = pricing.price;
+
+  const hasVariants = Boolean(product.variants && product.variants.length > 1);
 
   const inWish = isInWishlist(product.id);
   const cartItem = cart.find((item) => item.productId === product.id);
@@ -53,6 +59,13 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
             Bestseller
           </span>
         ) : null}
+
+        {/* Options Available Badge */}
+        {hasVariants && (
+          <span className="absolute bottom-2 left-2 sm:bottom-2.5 sm:left-2.5 z-10 bg-purple-900/85 backdrop-blur-xs text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
+            {product.variants!.length} Options
+          </span>
+        )}
 
         {/* Wishlist Button */}
         <button
@@ -137,10 +150,22 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
                 </span>
               )}
             </div>
+            {pricing.badge && (
+              <span className="inline-block bg-purple-50 text-[#795BCB] border border-purple-200/60 font-black text-[9px] px-1.5 py-0.5 rounded-md mt-0.5 tracking-tight uppercase">
+                {pricing.badge}
+              </span>
+            )}
           </div>
 
-          {/* Cart Stepper or Add Button */}
-          {inCartQty > 0 ? (
+          {/* Cart Stepper, Select Options, or Add Button */}
+          {hasVariants ? (
+            <Link
+              href={`/product/${product.slug}`}
+              className="px-2.5 sm:px-3 py-1.5 bg-[#795BCB] hover:bg-[#6847b8] text-white text-[11px] sm:text-xs font-bold rounded-xl transition duration-200 flex items-center gap-1 sm:gap-1.5 shadow-xs shrink-0"
+            >
+              <span>Options</span>
+            </Link>
+          ) : inCartQty > 0 ? (
             <div className="flex items-center border border-[#795BCB] bg-[#795BCB] rounded-xl overflow-hidden shadow-xs shrink-0">
               <button
                 type="button"
@@ -165,7 +190,7 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
           ) : (
             <button
               type="button"
-              onClick={() => addToCart(product, 1)}
+              onClick={() => addToCart({ ...product, price: displayPrice }, 1)}
               className="px-2 sm:px-3 py-1.5 bg-slate-900 hover:bg-[#795BCB] hover:text-white text-white text-[11px] sm:text-xs font-bold rounded-xl transition duration-200 flex items-center gap-1 sm:gap-1.5 shadow-xs shrink-0"
             >
               <ShoppingBag className="w-3.5 h-3.5" />

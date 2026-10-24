@@ -19,7 +19,7 @@ export function BulkSuppliesBanner() {
 
   return (
     <section className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
-      <div className="rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs">
+      <Link href="/category/disposable" className="block rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs hover:opacity-95 transition">
         <Image
           src={banner}
           alt="PureCuts Salon Bulk Supplies and Disposables Banner"
@@ -28,7 +28,8 @@ export function BulkSuppliesBanner() {
           className="w-full h-auto object-cover"
           priority={false}
         />
-      </div>
+      </Link>
+
       {/*<div className="bg-gradient-to-r from-slate-900 via-amber-950/80 to-slate-900 rounded-3xl p-6 sm:p-10 text-white shadow-xl border border-amber-500/20 flex flex-col lg:flex-row items-center justify-between gap-8 relative overflow-hidden">
         {/* Background glow 
         <div className="absolute left-1/2 top-0 -translate-x-1/2 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />

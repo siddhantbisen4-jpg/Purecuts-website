@@ -517,6 +517,7 @@ export default function CheckoutPage() {
           quantity: item.quantity,
           image: item.image,
           volumeSize: item.volumeSize,
+          variantName: item.selectedVariant?.name || null,
         })),
       };
 
@@ -1260,26 +1261,37 @@ export default function CheckoutPage() {
 
               {/* Items List */}
               <div className="max-h-56 overflow-y-auto space-y-3 pr-1">
-                {cart.map((item) => (
-                  <div key={item.productId} className="flex gap-3 items-center">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-12 h-12 object-contain bg-slate-50 rounded-xl p-1 border border-slate-100 shrink-0"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-slate-800 truncate">
-                        {item.name}
-                      </p>
-                      <p className="text-[11px] text-slate-400">
-                        Qty: {item.quantity} {item.volumeSize ? `• ${item.volumeSize}` : ""}
-                      </p>
+                {cart.map((item) => {
+                  const itemKey = item.selectedVariant?.id
+                    ? `${item.productId}-${item.selectedVariant.id}`
+                    : item.productId;
+
+                  return (
+                    <div key={itemKey} className="flex gap-3 items-center">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-12 h-12 object-contain bg-slate-50 rounded-xl p-1 border border-slate-100 shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-slate-800 truncate">
+                          {item.name}
+                        </p>
+                        <p className="text-[11px] text-slate-400">
+                          Qty: {item.quantity}{" "}
+                          {item.selectedVariant
+                            ? `• ${item.selectedVariant.name}`
+                            : item.volumeSize
+                            ? `• ${item.volumeSize}`
+                            : ""}
+                        </p>
+                      </div>
+                      <span className="text-xs font-bold text-slate-900 shrink-0">
+                        ₹{(item.price * item.quantity).toLocaleString("en-IN")}
+                      </span>
                     </div>
-                    <span className="text-xs font-bold text-slate-900 shrink-0">
-                      ₹{(item.price * item.quantity).toLocaleString("en-IN")}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Cost Breakdown */}
