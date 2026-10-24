@@ -303,16 +303,7 @@ export function CartDrawer() {
                     <span>-₹{couponDiscount.toLocaleString("en-IN")}</span>
                   </div>
                 )}
-                <div className="flex justify-between">
-                  <span>Estimated Delivery</span>
-                  <span>
-                    {deliveryFee === 0 ? (
-                      <span className="text-emerald-600 font-bold">FREE</span>
-                    ) : (
-                      `₹${deliveryFee}`
-                    )}
-                  </span>
-                </div>
+
                 <div className="flex justify-between text-sm font-extrabold text-slate-900 pt-2 border-t border-slate-200">
                   <span>Total Payable</span>
                   <span className="text-base text-[#795BCB]">
