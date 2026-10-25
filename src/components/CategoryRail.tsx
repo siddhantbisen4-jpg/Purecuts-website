@@ -14,6 +14,7 @@ import {
   Flame,
 } from "lucide-react";
 import Image from "next/image";
+import category from "../image/categories.png";
 const CATEGORY_ITEMS = [
   {
     name: "Haircare",
@@ -72,7 +73,11 @@ export function CategoryRail() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-sm sm:text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-[#795BCB]" />
+              <Image
+                src={category}
+                alt=""
+                className="w-5 h-5 sm:w-7 sm:h-7 object-contain"
+              />
               Explore PureCuts Salon Categories
             </h2>
             <p className="text-[11px] sm:text-xs text-slate-500">

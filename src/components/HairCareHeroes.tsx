@@ -7,6 +7,8 @@ import { ProductCard } from "./ProductCard";
 import { Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
 import banner2 from "../../src/image/banner2.png";
 import Image from "next/image";
+import hair from "../image/hair.png";
+
 interface HairCareHeroesProps {
   products: Product[];
 }
@@ -24,8 +26,7 @@ export function HairCareHeroes({ products }: HairCareHeroesProps) {
               <span className="text-xs text-slate-500 font-medium">Matrix • L'Oréal • Schwarzkopf</span>*/}
             </div>
             <h2 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-[#795BCB]" />
-              Hair Care Products
+              <Image src={hair} alt =""  className="w-7 h-7 sm:w-12 sm:h-12 object-contain"/> Hair Care Products
             </h2>
           </div>
 

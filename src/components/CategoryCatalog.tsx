@@ -1039,7 +1039,7 @@ export function CategoryCatalog({
 
         {/* =================================================
           CATEGORY HEADER
-      ================================================= */}
+      ================================================= 
 
         <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-slate-200 mb-4 sm:mb-6 shadow-xs">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
@@ -1071,7 +1071,7 @@ export function CategoryCatalog({
                 </p>
               )}
 
-              {/* Department Switcher */}
+              {/* Department Switcher 
               <div className="flex items-center gap-1.5 flex-wrap pt-3 mt-3 border-t border-slate-100">
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1">
                   Department:
@@ -1103,7 +1103,7 @@ export function CategoryCatalog({
             </div>
 
 
-            {/* SEARCH 
+             SEARCH 
 
             <div className="relative max-w-xs md:max-w-xs w-full shrink-0">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
@@ -1125,9 +1125,9 @@ export function CategoryCatalog({
                   <X className="w-3.5 h-3.5" />
                 </button>
               )}
-            </div>*/}
+            </div>
           </div>
-        </div>
+        </div>*/}
       </div>
 
       {/* =================================================
