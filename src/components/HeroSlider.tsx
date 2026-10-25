@@ -86,9 +86,12 @@ export function HeroSlider() {
             relative
             rounded-3xl
             overflow-hidden
-            min-h-[300px]
-            sm:min-h-[360px]
-            lg:min-h-[420px]
+           min-h-0
+h-[190px]
+max-sm:aspect-auto
+sm:h-auto
+sm:min-h-[360px]
+lg:min-h-[420px]
             flex
             items-center
             shadow-xl
@@ -98,7 +101,7 @@ border-0
         >
           {/* Background image */}
           <div
-            className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+            className="absolute inset-0 bg-cover bg-center max-sm:bg-contain max-sm:bg-no-repeat transition-all duration-700"
             style={{ backgroundImage: `url(${slide.image})` }}
           >
             <div />

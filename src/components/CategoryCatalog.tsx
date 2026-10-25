@@ -401,7 +401,6 @@ const SUBCATEGORIES: Record<string, SubcategoryItem[]> = {
   ],
 };
 
-
 /* =========================================================
    CHILD SUBCATEGORY DATA
 ========================================================= */
@@ -530,8 +529,14 @@ export function CategoryCatalog({
     const fetchCategoryProducts = async () => {
       setIsFetchingBackend(true);
       try {
-        const catParam = currentCategorySlug === "all" ? "" : `category=${encodeURIComponent(currentCategorySlug)}`;
-        const subParam = selectedSubcategory && selectedSubcategory !== "all" ? `subcategory=${encodeURIComponent(selectedSubcategory)}` : "";
+        const catParam =
+          currentCategorySlug === "all"
+            ? ""
+            : `category=${encodeURIComponent(currentCategorySlug)}`;
+        const subParam =
+          selectedSubcategory && selectedSubcategory !== "all"
+            ? `subcategory=${encodeURIComponent(selectedSubcategory)}`
+            : "";
         const queryStr = [catParam, subParam].filter(Boolean).join("&");
         const url = `/api/products${queryStr ? `?${queryStr}&limit=100` : "?limit=100"}`;
 
@@ -801,7 +806,6 @@ export function CategoryCatalog({
           }
         }
 
-
         /* ---------------------------------------------
            Parent subcategory
         --------------------------------------------- */
@@ -982,7 +986,7 @@ export function CategoryCatalog({
 
     router.push(
       `/category/${currentCategorySlug}` +
-      (queryString ? `?${queryString}` : ""),
+        (queryString ? `?${queryString}` : ""),
       {
         scroll: false,
       },
@@ -1163,10 +1167,11 @@ export function CategoryCatalog({
               <button
                 type="button"
                 onClick={handleAllSubcategorySelect}
-                className={`shrink-0 whitespace-nowrap px-3.5 sm:px-5 py-2 sm:py-2 rounded-full border text-[11px] sm:text-xs font-bold transition-all ${selectedSubcategory === "all"
-                  ? "bg-[#795BCB] text-white border-[#795BCB] shadow-xs"
-                  : "bg-white text-slate-700 border-slate-200 hover:border-[#795BCB] hover:text-[#795BCB] hover:bg-purple-50"
-                  }`}
+                className={`shrink-0 whitespace-nowrap px-3.5 sm:px-5 py-2 sm:py-2 rounded-full border text-[11px] sm:text-xs font-bold transition-all ${
+                  selectedSubcategory === "all"
+                    ? "bg-[#795BCB] text-white border-[#795BCB] shadow-xs"
+                    : "bg-white text-slate-700 border-slate-200 hover:border-[#795BCB] hover:text-[#795BCB] hover:bg-purple-50"
+                }`}
               >
                 <span
                   className={
@@ -1192,10 +1197,11 @@ export function CategoryCatalog({
                     key={subcategory.slug}
                     type="button"
                     onClick={() => handleSubcategoryClick(subcategory)}
-                    className={`shrink-0 whitespace-nowrap px-3 sm:px-4 py-2 rounded-full border text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1.5 ${isSelected
-                      ? "bg-[#795BCB] text-white border-[#795BCB] shadow-xs"
-                      : "bg-white text-slate-700 border-slate-200 hover:border-[#795BCB] hover:text-[#795BCB] hover:bg-purple-50"
-                      }`}
+                    className={`shrink-0 whitespace-nowrap px-3 sm:px-4 py-2 rounded-full border text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                      isSelected
+                        ? "bg-[#795BCB] text-white border-[#795BCB] shadow-xs"
+                        : "bg-white text-slate-700 border-slate-200 hover:border-[#795BCB] hover:text-[#795BCB] hover:bg-purple-50"
+                    }`}
                   >
                     <span
                       className={isSelected ? "text-white" : "text-slate-700"}
@@ -1205,8 +1211,9 @@ export function CategoryCatalog({
 
                     {hasChildren && (
                       <ChevronRight
-                        className={`w-3.5 h-3.5 ${isSelected ? "text-white" : "text-slate-400"
-                          }`}
+                        className={`w-3.5 h-3.5 ${
+                          isSelected ? "text-white" : "text-slate-400"
+                        }`}
                       />
                     )}
                   </button>
@@ -1289,10 +1296,11 @@ export function CategoryCatalog({
                   {/* ALL PARENT */}
 
                   <label
-                    className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition ${selectedSubSubcategory === "all"
-                      ? "bg-[rgba(121,91,203,0.10)] text-[#795BCB]"
-                      : "hover:bg-slate-50 text-slate-700"
-                      }`}
+                    className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition ${
+                      selectedSubSubcategory === "all"
+                        ? "bg-[rgba(121,91,203,0.10)] text-[#795BCB]"
+                        : "hover:bg-slate-50 text-slate-700"
+                    }`}
                   >
                     <input
                       type="checkbox"
@@ -1318,10 +1326,11 @@ export function CategoryCatalog({
                     return (
                       <label
                         key={child.slug}
-                        className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition ${checked
-                          ? "bg-[rgba(121,91,203,0.10)] text-[#795BCB]"
-                          : "hover:bg-slate-50 text-slate-700"
-                          }`}
+                        className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition ${
+                          checked
+                            ? "bg-[rgba(121,91,203,0.10)] text-[#795BCB]"
+                            : "hover:bg-slate-50 text-slate-700"
+                        }`}
                       >
                         <input
                           type="checkbox"
@@ -1372,10 +1381,11 @@ export function CategoryCatalog({
                     <li>
                       <Link
                         href="/category/all"
-                        className={`flex items-center justify-between p-2 rounded-xl transition ${currentCategorySlug === "all"
-                          ? "bg-[rgba(121,91,203,0.10)] text-[#795BCB] font-bold border border-[rgba(121,91,203,0.35)]"
-                          : "text-slate-700 hover:bg-[rgba(121,91,203,0.06)]"
-                          }`}
+                        className={`flex items-center justify-between p-2 rounded-xl transition ${
+                          currentCategorySlug === "all"
+                            ? "bg-[rgba(121,91,203,0.10)] text-[#795BCB] font-bold border border-[rgba(121,91,203,0.35)]"
+                            : "text-slate-700 hover:bg-[rgba(121,91,203,0.06)]"
+                        }`}
                       >
                         <span>All Categories</span>
 
@@ -1414,10 +1424,11 @@ export function CategoryCatalog({
                         <li key={cat.slug}>
                           <Link
                             href={`/category/${cat.slug}`}
-                            className={`flex items-center justify-between p-2 rounded-xl transition ${currentCategorySlug === cat.slug
-                              ? "bg-[rgba(121,91,203,0.10)] text-[#795BCB] font-bold border border-[rgba(121,91,203,0.35)]"
-                              : "text-slate-700 hover:bg-[rgba(121,91,203,0.06)]"
-                              }`}
+                            className={`flex items-center justify-between p-2 rounded-xl transition ${
+                              currentCategorySlug === cat.slug
+                                ? "bg-[rgba(121,91,203,0.10)] text-[#795BCB] font-bold border border-[rgba(121,91,203,0.35)]"
+                                : "text-slate-700 hover:bg-[rgba(121,91,203,0.06)]"
+                            }`}
                           >
                             <span>{cat.name}</span>
 
@@ -1441,10 +1452,11 @@ export function CategoryCatalog({
                     <button
                       type="button"
                       onClick={() => setSelectedBrand("")}
-                      className={`w-full text-left p-1.5 rounded-lg transition flex items-center justify-between ${!selectedBrand
-                        ? "bg-amber-50 text-amber-900 font-bold"
-                        : "text-slate-600 hover:bg-slate-50"
-                        }`}
+                      className={`w-full text-left p-1.5 rounded-lg transition flex items-center justify-between ${
+                        !selectedBrand
+                          ? "bg-amber-50 text-amber-900 font-bold"
+                          : "text-slate-600 hover:bg-slate-50"
+                      }`}
                     >
                       <span>All Brands</span>
                     </button>
@@ -1458,11 +1470,12 @@ export function CategoryCatalog({
                             selectedBrand === brand.name ? "" : brand.name,
                           )
                         }
-                        className={`w-full text-left p-1.5 rounded-lg transition flex items-center justify-between ${selectedBrand.toLowerCase() ===
+                        className={`w-full text-left p-1.5 rounded-lg transition flex items-center justify-between ${
+                          selectedBrand.toLowerCase() ===
                           brand.name.toLowerCase()
-                          ? "bg-amber-50 text-amber-900 font-bold border border-amber-200"
-                          : "text-slate-600 hover:bg-slate-50"
-                          }`}
+                            ? "bg-amber-50 text-amber-900 font-bold border border-amber-200"
+                            : "text-slate-600 hover:bg-slate-50"
+                        }`}
                       >
                         <span>{brand.name}</span>
 
@@ -1568,8 +1581,6 @@ export function CategoryCatalog({
                   <option value="price-asc">Price: Low to High</option>
 
                   <option value="price-desc">Price: High to Low</option>
-
-
                 </select>
               </div>
 
@@ -1579,10 +1590,11 @@ export function CategoryCatalog({
                 <button
                   type="button"
                   onClick={() => setGridCols(3)}
-                  className={`p-1.5 rounded-lg transition ${gridCols === 3
-                    ? "bg-white text-slate-900 shadow-xs"
-                    : "text-slate-400 hover:text-slate-700"
-                    }`}
+                  className={`p-1.5 rounded-lg transition ${
+                    gridCols === 3
+                      ? "bg-white text-slate-900 shadow-xs"
+                      : "text-slate-400 hover:text-slate-700"
+                  }`}
                   aria-label="3 Columns"
                 >
                   <Grid3X3 className="w-4 h-4" />
@@ -1591,10 +1603,11 @@ export function CategoryCatalog({
                 <button
                   type="button"
                   onClick={() => setGridCols(4)}
-                  className={`p-1.5 rounded-lg transition ${gridCols === 4
-                    ? "bg-white text-slate-900 shadow-xs"
-                    : "text-slate-400 hover:text-slate-700"
-                    }`}
+                  className={`p-1.5 rounded-lg transition ${
+                    gridCols === 4
+                      ? "bg-white text-slate-900 shadow-xs"
+                      : "text-slate-400 hover:text-slate-700"
+                  }`}
                   aria-label="4 Columns"
                 >
                   <LayoutGrid className="w-4 h-4" />
@@ -1612,104 +1625,104 @@ export function CategoryCatalog({
               inStockOnly ||
               salonProOnly ||
               searchQuery) && (
-                <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                  {/* PARENT */}
+              <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                {/* PARENT */}
 
-                  {selectedSubcategory !== "all" && (
-                    <span className="bg-purple-100 text-purple-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
-                      {selectedSubcategoryLabel}
+                {selectedSubcategory !== "all" && (
+                  <span className="bg-purple-100 text-purple-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    {selectedSubcategoryLabel}
 
-                      <button
-                        type="button"
-                        onClick={handleAllSubcategorySelect}
-                        className="hover:text-rose-600"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  )}
+                    <button
+                      type="button"
+                      onClick={handleAllSubcategorySelect}
+                      className="hover:text-rose-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                )}
 
-                  {/* CHILD */}
+                {/* CHILD */}
 
-                  {selectedSubSubcategory !== "all" && (
-                    <span className="bg-purple-100 text-purple-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
-                      {selectedSubSubcategoryLabel || selectedSubSubcategory}
+                {selectedSubSubcategory !== "all" && (
+                  <span className="bg-purple-100 text-purple-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    {selectedSubSubcategoryLabel || selectedSubSubcategory}
 
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSelectedSubSubcategory("all");
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedSubSubcategory("all");
 
-                          updateCategoryParams(selectedSubcategory, "all");
-                        }}
-                        className="hover:text-rose-600"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  )}
+                        updateCategoryParams(selectedSubcategory, "all");
+                      }}
+                      className="hover:text-rose-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                )}
 
-                  {/* BRAND */}
+                {/* BRAND */}
 
-                  {selectedBrand && (
-                    <span className="bg-amber-100 text-amber-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
-                      Brand: {selectedBrand}
-                      <button
-                        type="button"
-                        onClick={() => setSelectedBrand("")}
-                        className="hover:text-rose-600"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  )}
+                {selectedBrand && (
+                  <span className="bg-amber-100 text-amber-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    Brand: {selectedBrand}
+                    <button
+                      type="button"
+                      onClick={() => setSelectedBrand("")}
+                      className="hover:text-rose-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                )}
 
-                  {/* STOCK */}
+                {/* STOCK */}
 
-                  {inStockOnly && (
-                    <span className="bg-emerald-100 text-emerald-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
-                      In Stock Only
-                      <button
-                        type="button"
-                        onClick={() => setInStockOnly(false)}
-                        className="hover:text-rose-600"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  )}
+                {inStockOnly && (
+                  <span className="bg-emerald-100 text-emerald-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    In Stock Only
+                    <button
+                      type="button"
+                      onClick={() => setInStockOnly(false)}
+                      className="hover:text-rose-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                )}
 
-                  {/* SALON PRO */}
+                {/* SALON PRO */}
 
-                  {salonProOnly && (
-                    <span className="bg-purple-100 text-purple-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
-                      Salon Pro
-                      <button
-                        type="button"
-                        onClick={() => setSalonProOnly(false)}
-                        className="hover:text-rose-600"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  )}
+                {salonProOnly && (
+                  <span className="bg-purple-100 text-purple-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    Salon Pro
+                    <button
+                      type="button"
+                      onClick={() => setSalonProOnly(false)}
+                      className="hover:text-rose-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                )}
 
-                  {/* SEARCH */}
+                {/* SEARCH */}
 
-                  {searchQuery && (
-                    <span className="bg-blue-100 text-blue-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
-                      "{searchQuery}"
-                      <button
-                        type="button"
-                        onClick={() => setSearchQuery("")}
-                        className="hover:text-rose-600"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  )}
-                </div>
-              )}
+                {searchQuery && (
+                  <span className="bg-blue-100 text-blue-900 font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    "{searchQuery}"
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery("")}
+                      className="hover:text-rose-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* =================================================
               PRODUCTS
@@ -1740,10 +1753,11 @@ export function CategoryCatalog({
               </div>
             ) : (
               <div
-                className={`grid gap-3 sm:gap-5 ${gridCols === 3
-                  ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-3"
-                  : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                  }`}
+                className={`grid gap-3 sm:gap-5 ${
+                  gridCols === 3
+                    ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-3"
+                    : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                }`}
               >
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
@@ -1802,11 +1816,12 @@ export function CategoryCatalog({
               <button
                 type="button"
                 onClick={() => handleSubSubcategorySelect("all")}
-                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl border mb-2 transition ${selectedSubcategory === popupSubcategory.slug &&
+                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl border mb-2 transition ${
+                  selectedSubcategory === popupSubcategory.slug &&
                   selectedSubSubcategory === "all"
-                  ? "border-[#795BCB] bg-purple-50 text-[#795BCB]"
-                  : "border-slate-200 hover:border-[#795BCB] hover:bg-purple-50"
-                  }`}
+                    ? "border-[#795BCB] bg-purple-50 text-[#795BCB]"
+                    : "border-slate-200 hover:border-[#795BCB] hover:bg-purple-50"
+                }`}
               >
                 <span className="text-sm font-semibold">
                   All {popupSubcategory.label}
@@ -1830,10 +1845,11 @@ export function CategoryCatalog({
                     key={child.slug}
                     type="button"
                     onClick={() => handleSubSubcategorySelect(child.slug)}
-                    className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl border mb-2 transition text-left ${isSelected
-                      ? "border-[#795BCB] bg-purple-50 text-[#795BCB]"
-                      : "border-slate-200 hover:border-[#795BCB] hover:bg-purple-50 text-slate-700"
-                      }`}
+                    className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl border mb-2 transition text-left ${
+                      isSelected
+                        ? "border-[#795BCB] bg-purple-50 text-[#795BCB]"
+                        : "border-slate-200 hover:border-[#795BCB] hover:bg-purple-50 text-slate-700"
+                    }`}
                   >
                     <span className="text-sm font-semibold">{child.label}</span>
 
@@ -1850,134 +1866,147 @@ export function CategoryCatalog({
           MOBILE FILTER
       ===================================================== */}
 
+      {/* =====================================================
+          MOBILE FILTER DRAWER
+      ===================================================== */}
+
       {isMobileFilterOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden flex">
-          <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+        <div
+          className="fixed inset-0 z-[9999] lg:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Filter products"
+        >
+          {/* Backdrop */}
+          <button
+            type="button"
+            aria-label="Close filters"
             onClick={() => setIsMobileFilterOpen(false)}
+            className="absolute inset-0 h-full w-full bg-slate-950/60 backdrop-blur-[2px]"
           />
 
-          <div className="relative ml-auto w-full max-w-sm bg-white h-full p-4 sm:p-6 shadow-2xl flex flex-col justify-between overflow-y-auto">
-            <div>
-              {/* HEADER */}
-
-              <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100 mb-4">
-                <span className="font-bold text-slate-900 text-sm">
+          {/* Drawer */}
+          <section className="absolute inset-y-0 right-0 flex h-[100dvh] w-full max-w-[420px] flex-col overflow-hidden bg-white shadow-2xl">
+            {/* Fixed Header */}
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 py-4">
+              <div>
+                <h2 className="text-base font-bold text-slate-900">
                   Filter Products
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() => setIsMobileFilterOpen(false)}
-                  className="p-2 -mr-1 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                </h2>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  Refine your salon product results
+                </p>
               </div>
 
-              {/* MOBILE SUBCATEGORY */}
+              <button
+                type="button"
+                onClick={() => setIsMobileFilterOpen(false)}
+                aria-label="Close filter panel"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
 
-              <div className="mb-6">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
-                  Subcategory
-                </span>
-
-                <div className="space-y-1.5">
-                  <button
-                    type="button"
-                    onClick={handleAllSubcategorySelect}
-                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium ${selectedSubcategory === "all"
-                      ? "bg-purple-100 text-[#795BCB] font-bold"
-                      : "text-slate-700"
-                      }`}
-                  >
-                    All {categoryTitle}
-                  </button>
-
-                  {availableSubcategories.map((subcategory) => (
-                    <button
-                      key={subcategory.slug}
-                      type="button"
-                      onClick={() => handleSubcategoryClick(subcategory)}
-                      className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between ${selectedSubcategory === subcategory.slug
-                        ? "bg-purple-100 text-[#795BCB] font-bold"
-                        : "text-slate-700"
-                        }`}
-                    >
-                      <span>{subcategory.label}</span>
-
-                      {SUBSUBCATEGORIES[subcategory.slug]?.length ? (
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      ) : null}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* MOBILE CHILD FILTER */}
-
-              {activeSubSubcategories.length > 0 && (
+            {/* Independently Scrollable Filter Content */}
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5">
+              {/* Subcategory */}
+              {availableSubcategories.length > 0 && (
                 <div className="mb-6">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
-                    {selectedSubcategoryLabel}
-                  </span>
+                  <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
+                    Subcategory
+                  </h3>
 
-                  <div className="space-y-1.5">
-                    <label className="flex items-center gap-2 p-2 rounded-lg">
-                      <input
-                        type="checkbox"
-                        checked={selectedSubSubcategory === "all"}
-                        onChange={() => handleSidebarChildChange("all")}
-                        className="w-4 h-4 rounded text-[#795BCB]"
-                      />
+                  <div className="space-y-1">
+                    <button
+                      type="button"
+                      onClick={handleAllSubcategorySelect}
+                      className={`w-full rounded-xl px-3 py-2.5 text-left text-sm transition ${
+                        selectedSubcategory === "all"
+                          ? "bg-purple-50 font-bold text-[#795BCB]"
+                          : "text-slate-700 hover:bg-slate-50"
+                      }`}
+                    >
+                      All {categoryTitle}
+                    </button>
 
-                      <span className="text-xs font-medium">
-                        All {selectedSubcategoryLabel}
-                      </span>
-                    </label>
-
-                    {activeSubSubcategories.map((child) => (
-                      <label
-                        key={child.slug}
-                        className="flex items-center gap-2 p-2 rounded-lg"
+                    {availableSubcategories.map((subcategory) => (
+                      <button
+                        key={subcategory.slug}
+                        type="button"
+                        onClick={() => handleSubcategoryClick(subcategory)}
+                        className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition ${
+                          selectedSubcategory === subcategory.slug
+                            ? "bg-purple-50 font-bold text-[#795BCB]"
+                            : "text-slate-700 hover:bg-slate-50"
+                        }`}
                       >
-                        <input
-                          type="checkbox"
-                          checked={selectedSubSubcategory === child.slug}
-                          onChange={() =>
-                            handleSidebarChildChange(
-                              selectedSubSubcategory === child.slug
-                                ? "all"
-                                : child.slug,
-                            )
-                          }
-                          className="w-4 h-4 rounded text-[#795BCB]"
-                        />
+                        <span>{subcategory.label}</span>
 
-                        <span className="text-xs font-medium">
-                          {child.label}
-                        </span>
-                      </label>
+                        {SUBSUBCATEGORIES[subcategory.slug]?.length ? (
+                          <ChevronRight className="h-4 w-4 shrink-0" />
+                        ) : null}
+                      </button>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* BRAND */}
+              {/* Child Subcategories */}
+              {activeSubSubcategories.length > 0 && (
+                <div className="mb-6 border-t border-slate-100 pt-5">
+                  <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
+                    {selectedSubcategoryLabel}
+                  </h3>
 
-              <div className="mb-6">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
-                  Select Brand
-                </span>
+                  <label className="mb-1 flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-slate-50">
+                    <input
+                      type="checkbox"
+                      checked={selectedSubSubcategory === "all"}
+                      onChange={() => handleSidebarChildChange("all")}
+                      className="h-4 w-4 accent-[#795BCB]"
+                    />
+                    <span>All {selectedSubcategoryLabel}</span>
+                  </label>
 
-                <div className="space-y-1.5 max-h-44 overflow-y-auto">
+                  {activeSubSubcategories.map((child) => (
+                    <label
+                      key={child.slug}
+                      className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-slate-50"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedSubSubcategory === child.slug}
+                        onChange={() =>
+                          handleSidebarChildChange(
+                            selectedSubSubcategory === child.slug
+                              ? "all"
+                              : child.slug,
+                          )
+                        }
+                        className="h-4 w-4 accent-[#795BCB]"
+                      />
+                      <span>{child.label}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              {/* Brand */}
+              <div className="mb-6 border-t border-slate-100 pt-5">
+                <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Brand
+                </h3>
+
+                <div className="space-y-1">
                   <button
                     type="button"
                     onClick={() => setSelectedBrand("")}
-                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium ${!selectedBrand
-                      ? "bg-amber-100 text-amber-900 font-bold"
-                      : "text-slate-700"
-                      }`}
+                    className={`w-full rounded-xl px-3 py-2.5 text-left text-sm ${
+                      !selectedBrand
+                        ? "bg-amber-50 font-bold text-amber-900"
+                        : "text-slate-700 hover:bg-slate-50"
+                    }`}
                   >
                     All Brands
                   </button>
@@ -1991,26 +2020,28 @@ export function CategoryCatalog({
                           selectedBrand === brand.name ? "" : brand.name,
                         )
                       }
-                      className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex justify-between ${selectedBrand === brand.name
-                        ? "bg-amber-100 text-amber-900 font-bold"
-                        : "text-slate-700"
-                        }`}
+                      className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-left text-sm ${
+                        selectedBrand.toLowerCase() === brand.name.toLowerCase()
+                          ? "bg-amber-50 font-bold text-amber-900"
+                          : "text-slate-700 hover:bg-slate-50"
+                      }`}
                     >
                       <span>{brand.name}</span>
-
-                      <span className="text-slate-400">({brand.count})</span>
+                      <span className="text-xs text-slate-400">
+                        ({brand.count})
+                      </span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* PRICE */}
-
-              <div className="mb-6">
-                <div className="flex justify-between text-xs font-bold text-slate-700 mb-1">
-                  <span>Max Price</span>
-
-                  <span className="text-[#795BCB]">
+              {/* Maximum Price */}
+              <div className="mb-6 border-t border-slate-100 pt-5">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <h3 className="text-sm font-bold text-slate-700">
+                    Maximum Price
+                  </h3>
+                  <span className="text-sm font-bold text-[#795BCB]">
                     ₹{priceRange.toLocaleString("en-IN")}
                   </span>
                 </div>
@@ -2022,57 +2053,59 @@ export function CategoryCatalog({
                   step="100"
                   value={priceRange}
                   onChange={(e) => setPriceRange(Number(e.target.value))}
-                  className="w-full accent-[#795BCB]"
+                  aria-label="Maximum product price"
+                  className="w-full cursor-pointer accent-[#795BCB]"
                 />
+
+                <div className="mt-1 flex justify-between text-xs text-slate-400">
+                  <span>₹100</span>
+                  <span>₹20,000</span>
+                </div>
               </div>
 
-              {/* TOGGLES */}
-
-              <div className="space-y-2 text-xs font-medium text-slate-700">
-                <label className="flex items-center gap-2">
+              {/* Additional Filters */}
+              <div className="space-y-4 border-t border-slate-100 pt-5 pb-4">
+                <label className="flex cursor-pointer items-center gap-3 text-sm font-medium text-slate-700">
                   <input
                     type="checkbox"
                     checked={inStockOnly}
                     onChange={(e) => setInStockOnly(e.target.checked)}
-                    className="w-4 h-4 rounded text-[#795BCB]"
+                    className="h-4 w-4 accent-[#795BCB]"
                   />
-
-                  <span>In Stock Only</span>
+                  In Stock Only
                 </label>
 
-                <label className="flex items-center gap-2">
+                <label className="flex cursor-pointer items-center gap-3 text-sm font-medium text-slate-700">
                   <input
                     type="checkbox"
                     checked={salonProOnly}
                     onChange={(e) => setSalonProOnly(e.target.checked)}
-                    className="w-4 h-4 rounded text-[#795BCB]"
+                    className="h-4 w-4 accent-[#795BCB]"
                   />
-
-                  <span>Salon Pro Only</span>
+                  Salon Professional Only
                 </label>
               </div>
             </div>
 
-            {/* MOBILE ACTIONS */}
-
-            <div className="pt-3 sm:pt-4 border-t border-slate-100 space-y-2">
+            {/* Fixed Bottom Actions */}
+            <div className="shrink-0 border-t border-slate-200 bg-white px-5 pb-[max(16px,env(safe-area-inset-bottom))] pt-4">
               <button
                 type="button"
                 onClick={() => setIsMobileFilterOpen(false)}
-                className="w-full py-3 bg-[#795BCB] hover:bg-[#6246B0] text-white font-bold rounded-xl text-xs transition"
+                className="w-full rounded-xl bg-[#795BCB] py-3.5 text-sm font-bold text-white transition hover:bg-[#6246B0]"
               >
-                Apply Filters ({filteredProducts.length} Results)
+                Show {filteredProducts.length} Products
               </button>
 
               <button
                 type="button"
                 onClick={clearAllFilters}
-                className="w-full py-2 bg-slate-100 text-slate-700 font-semibold rounded-xl text-xs transition"
+                className="mt-2 w-full rounded-xl bg-slate-100 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-200"
               >
-                Reset All
+                Reset All Filters
               </button>
             </div>
-          </div>
+          </section>
         </div>
       )}
     </div>
