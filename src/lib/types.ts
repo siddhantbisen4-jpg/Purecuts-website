@@ -90,6 +90,18 @@ export interface Category {
   displayOrder?: number | null;
 }
 
+export interface Brand {
+  id: string;
+  name: string;
+  slug: string;
+  image?: string;
+  productCount: number;
+  featured?: boolean;
+  categoryFocus?: string;
+  description?: string;
+  badge?: string;
+}
+
 export interface CartItem {
   productId: number | string;
   slug: string;

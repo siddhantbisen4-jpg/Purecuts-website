@@ -1,11 +1,13 @@
 // src/lib/firebaseProducts.ts
 import { collection, getDocs, doc, setDoc, query, where, getDoc } from "firebase/firestore";
 import { db, isFirebaseConfigured } from "./firebase";
-import { Product, ProductVariant, Category, FilterOptions } from "./types";
+import { Product, ProductVariant, Category, FilterOptions, Brand } from "./types";
 import { PRODUCTS_DATA, CATEGORIES_DATA } from "@/db/seed-data";
+import { ALL_BRANDS_DATA } from "./brands-data";
 
 const PRODUCTS_COLLECTION = "products";
 const CATEGORIES_COLLECTION = "categories";
+const BRANDS_COLLECTION = "brands";
 
 // Simple slug generator
 export function slugify(text: string): string {
@@ -438,6 +440,128 @@ export async function fetchCategoriesFromFirebase(): Promise<Category[]> {
       displayOrder: 8,
     },
   ];
+}
+
+export const FALLBACK_BRANDS: Brand[] = ALL_BRANDS_DATA.map((b) => ({
+  id: b.slug,
+  name: b.name,
+  slug: b.slug,
+  image: b.heroImage,
+  productCount: b.productCount,
+  featured: b.featured,
+  categoryFocus: b.categoryFocus,
+  description: b.description,
+  badge: b.badge,
+}));
+
+// In-memory cache for live Firestore brands (refreshed every 60s)
+let cachedBrands: Brand[] | null = null;
+let lastBrandsCacheTimestamp = 0;
+
+/**
+ * Fetches all brands directly from Firestore, merged with live product counts
+ */
+export async function fetchBrandsFromFirebase(): Promise<Brand[]> {
+  if (!db || !isFirebaseConfigured) {
+    return FALLBACK_BRANDS;
+  }
+
+  const now = Date.now();
+  if (cachedBrands && now - lastBrandsCacheTimestamp < 60000) {
+    return cachedBrands;
+  }
+
+  try {
+    const [brandsSnap, allProducts] = await Promise.all([
+      getDocs(collection(db, BRANDS_COLLECTION)),
+      fetchAllProductsFromFirebase(),
+    ]);
+
+    // Compute live product counts per brand
+    const brandCounts = new Map<string, number>();
+    allProducts.forEach((p) => {
+      if (p.brand) {
+        const b = p.brand.trim();
+        const lower = b.toLowerCase();
+        brandCounts.set(lower, (brandCounts.get(lower) || 0) + 1);
+      }
+    });
+
+    const brands: Brand[] = [];
+    const seenNames = new Set<string>();
+
+    brandsSnap.forEach((docSnap) => {
+      const data = docSnap.data();
+      const rawName = String(data.name || docSnap.id || "").trim();
+      if (!rawName) return;
+
+      const lower = rawName.toLowerCase();
+      if (seenNames.has(lower)) return;
+      seenNames.add(lower);
+
+      const image = String(data.image || data.imageUrl || data.logo || "");
+
+      // Match product count exactly or partially
+      let count = brandCounts.get(lower) || 0;
+      if (count === 0) {
+        brandCounts.forEach((cnt, k) => {
+          if (k.includes(lower) || lower.includes(k)) {
+            count += cnt;
+          }
+        });
+      }
+
+      brands.push({
+        id: docSnap.id,
+        name: rawName,
+        slug: slugify(rawName),
+        image: image || undefined,
+        productCount: count,
+        featured: Boolean(data.featured || data.isFeatured || count >= 10),
+        categoryFocus: data.categoryFocus ? String(data.categoryFocus) : undefined,
+        description: data.description ? String(data.description) : undefined,
+        badge: data.badge ? String(data.badge) : (count > 0 ? `${count}+ Products` : undefined),
+      });
+    });
+
+    // Also include any brands found in products that weren't in the collection
+    allProducts.forEach((p) => {
+      if (p.brand) {
+        const b = p.brand.trim();
+        const lower = b.toLowerCase();
+        if (!seenNames.has(lower) && b !== "Unknown" && b !== "N/A") {
+          seenNames.add(lower);
+          const count = brandCounts.get(lower) || 1;
+          brands.push({
+            id: slugify(b),
+            name: b,
+            slug: slugify(b),
+            productCount: count,
+            featured: count >= 10,
+            badge: `${count}+ Products`,
+          });
+        }
+      }
+    });
+
+    // Sort: brands with logo first, then by product count descending, then alphabetical
+    brands.sort((a, b) => {
+      if (b.productCount !== a.productCount) {
+        return b.productCount - a.productCount;
+      }
+      return a.name.localeCompare(b.name);
+    });
+
+    if (brands.length > 0) {
+      cachedBrands = brands;
+      lastBrandsCacheTimestamp = now;
+      return brands;
+    }
+  } catch (error) {
+    console.error("Error fetching brands from Firestore:", error);
+  }
+
+  return FALLBACK_BRANDS;
 }
 
 /**

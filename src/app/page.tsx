@@ -5,6 +5,7 @@ import {
   getMachineries,
   getDealsOfTheDay,
   getBlogPosts,
+  getBrands,
 } from "@/lib/products";
 import { HeroSlider } from "@/components/HeroSlider";
 import { CategoryRail } from "@/components/CategoryRail";
@@ -20,12 +21,13 @@ import { BlogHighlights } from "@/components/BlogHighlights";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [deals, hairHeroes, skincareHeroes, machineries, blogPosts] = await Promise.all([
+  const [deals, hairHeroes, skincareHeroes, machineries, blogPosts, brands] = await Promise.all([
     getDealsOfTheDay(),
     getHairCareHeroes(),
     getSkincareBestsellers(),
     getMachineries(),
     getBlogPosts(),
+    getBrands(),
   ]);
 
   return (
@@ -49,7 +51,7 @@ export default async function HomePage() {
       <MachineriesSpotlight products={machineries} />
 
       {/* Shop by Brand Carousel */}
-      <BrandCarousel />
+      <BrandCarousel brands={brands} />
 
       {/* Salon Disposables & B2B Cartons Strip */}
       <BulkSuppliesBanner />

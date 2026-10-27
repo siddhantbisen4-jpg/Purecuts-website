@@ -1,7 +1,7 @@
 import { db, isDbConnected } from "@/db";
 import { products, categories, orders, reviews, blogPosts, coupons, b2bInquiries } from "@/db/schema";
 import { eq, ilike, and, gte, lte, desc, asc, or, count, inArray, sql } from "drizzle-orm";
-import { Product, Category, FilterOptions, BlogPost, Coupon, Review, Order } from "./types";
+import { Product, Category, FilterOptions, BlogPost, Coupon, Review, Order, Brand } from "./types";
 import { PRODUCTS_DATA, CATEGORIES_DATA, BLOG_POSTS_DATA, COUPONS_DATA } from "@/db/seed-data";
 import { seedDatabase } from "@/db/seed";
 import {
@@ -9,6 +9,8 @@ import {
   fetchAllProductsFromFirebase,
   fetchProductsByCategoryFromFirebase,
   fetchCategoriesFromFirebase,
+  fetchBrandsFromFirebase,
+  FALLBACK_BRANDS,
   fetchProductBySlug as fetchFirebaseProductBySlug,
 } from "./firebaseProducts";
 import { isFirebaseConfigured } from "./firebase";
@@ -60,6 +62,19 @@ export async function getCategories(): Promise<Category[]> {
     isFeatured: c.isFeatured,
     displayOrder: c.displayOrder,
   }));
+}
+
+export async function getBrands(): Promise<Brand[]> {
+  if (isFirebaseConfigured) {
+    try {
+      const fbBrands = await fetchBrandsFromFirebase();
+      if (fbBrands && fbBrands.length > 0) return fbBrands;
+    } catch (err) {
+      console.warn("getBrands Firebase error, using fallback:", err);
+    }
+  }
+
+  return FALLBACK_BRANDS;
 }
 
 export async function getProducts(options: FilterOptions = {}): Promise<{

@@ -14,13 +14,21 @@ import {
   Flame,
 } from "lucide-react";
 import Image from "next/image";
-const CATEGORY_ITEMS = [
+type CategoryRailItem = {
+  name: string;
+  slug: string;
+  image: string;
+  badge?: string;
+  badgeColor?: string;
+};
+
+const CATEGORY_ITEMS: CategoryRailItem[] = [
   {
     name: "Haircare",
     slug: "haircare",
     image:
       "https://static.vecteezy.com/system/resources/previews/046/631/483/non_2x/hair-care-shampoo-treatment-outline-color-icon-vector.jpg",
-
+    badge: "Hot",
     badgeColor: "bg-[#795BCB] text-white",
   },
   {
@@ -28,7 +36,6 @@ const CATEGORY_ITEMS = [
     slug: "skincare",
     image:
       "https://i.pinimg.com/736x/24/7f/9a/247f9a5613d83a9442729b45024cbe0b.jpg",
-
     badgeColor: "bg-white text-slate-800 border border-slate-200",
   },
   {
@@ -36,7 +43,7 @@ const CATEGORY_ITEMS = [
     slug: "machineries",
     image:
       "https://static.vecteezy.com/system/resources/thumbnails/075/365/015/small/hair-salon-equipment-silhouette-hair-dryer-comb-and-scissors-vector.jpg",
-
+    badge: "Up to 50% Off",
     badgeColor: "bg-[#795BCB] text-white",
   },
 
@@ -45,14 +52,12 @@ const CATEGORY_ITEMS = [
     slug: "accessories",
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDcvZ_4vEq-BrJuPt3DEwi3C8C3Ncp-5427EPKfjG1O65Iz87D3pjAj-8&s=10",
-
     badgeColor: "bg-[#795BCB] text-white",
   },
   {
     name: "Furniture",
     slug: "furniture",
     image: "https://cdn-icons-png.flaticon.com/512/3460/3460194.png",
-
     badgeColor: "bg-[#795BCB] text-white",
   },
   {
@@ -60,7 +65,7 @@ const CATEGORY_ITEMS = [
     slug: "disposable",
     image:
       "https://www.shutterstock.com/image-vector/barber-hair-salon-icon-single-260nw-1282664899.jpg",
-
+    badge: "Wholesale",
     badgeColor: "bg-[#795BCB] text-white",
   },
 ];
