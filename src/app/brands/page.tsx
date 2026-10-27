@@ -75,6 +75,11 @@ export default function BrandsDirectoryPage() {
   // Filtered brands
   const filteredBrands = useMemo(() => {
     return brands.filter((b) => {
+      const clean = b.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (clean === "purecuts" || clean === "purecut" || clean === "unknown" || clean === "na") {
+        return false;
+      }
+
       const name = b.name.toLowerCase();
       const q = searchQuery.toLowerCase().trim();
 

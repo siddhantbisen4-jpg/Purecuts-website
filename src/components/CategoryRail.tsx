@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Sparkles,
@@ -71,19 +71,142 @@ const CATEGORY_ITEMS: CategoryRailItem[] = [
 ];
 
 export function CategoryRail() {
+  const categoriesRef = useRef<HTMLDivElement>(null);
+  
+useEffect(() => {
+  const container = categoriesRef.current;
+  if (!container) return;
+
+  let intervalId: ReturnType<typeof setInterval> | undefined;
+  let restartTimeout: ReturnType<typeof setTimeout> | undefined;
+  let isPaused = false;
+
+  const isMobile = () => window.innerWidth < 640;
+
+  const stopAutoScroll = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = undefined;
+    }
+  };
+
+  const startAutoScroll = () => {
+    stopAutoScroll();
+
+    if (!isMobile() || isPaused) return;
+
+    intervalId = setInterval(() => {
+      if (isPaused || !isMobile()) return;
+
+      const cards = Array.from(container.children) as HTMLElement[];
+      if (cards.length < 2) return;
+
+      const maxScroll = container.scrollWidth - container.clientWidth;
+      if (maxScroll <= 2) return;
+
+      const currentScroll = container.scrollLeft;
+      const containerRect = container.getBoundingClientRect();
+
+      // Find the first card that has not yet reached the left edge.
+      const nextCard = cards.find((card) => {
+        const cardRect = card.getBoundingClientRect();
+        return cardRect.left > containerRect.left + 4;
+      });
+
+      // If the last card is reached, smoothly return to the beginning.
+      if (!nextCard || currentScroll >= maxScroll - 4) {
+        container.scrollTo({
+          left: 0,
+          behavior: "smooth",
+        });
+        return;
+      }
+
+      const targetLeft = Math.min(
+        currentScroll + nextCard.getBoundingClientRect().left - containerRect.left,
+        maxScroll
+      );
+
+      container.scrollTo({
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }, 2000);
+  };
+
+  const handleInteractionStart = () => {
+    isPaused = true;
+    stopAutoScroll();
+
+    if (restartTimeout) {
+      clearTimeout(restartTimeout);
+      restartTimeout = undefined;
+    }
+  };
+
+  const handleInteractionEnd = () => {
+    if (restartTimeout) clearTimeout(restartTimeout);
+
+    restartTimeout = setTimeout(() => {
+      isPaused = false;
+      startAutoScroll();
+    }, 1500);
+  };
+
+  const handleVisibilityChange = () => {
+    if (document.hidden) {
+      stopAutoScroll();
+    } else {
+      startAutoScroll();
+    }
+  };
+
+  container.addEventListener("touchstart", handleInteractionStart, {
+    passive: true,
+  });
+  container.addEventListener("touchend", handleInteractionEnd, {
+    passive: true,
+  });
+  container.addEventListener("touchcancel", handleInteractionEnd, {
+    passive: true,
+  });
+  container.addEventListener("pointerdown", handleInteractionStart, {
+    passive: true,
+  });
+  container.addEventListener("pointerup", handleInteractionEnd, {
+    passive: true,
+  });
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+  window.addEventListener("resize", startAutoScroll);
+
+  startAutoScroll();
+
+  return () => {
+    stopAutoScroll();
+
+    if (restartTimeout) clearTimeout(restartTimeout);
+
+    container.removeEventListener("touchstart", handleInteractionStart);
+    container.removeEventListener("touchend", handleInteractionEnd);
+    container.removeEventListener("touchcancel", handleInteractionEnd);
+    container.removeEventListener("pointerdown", handleInteractionStart);
+    container.removeEventListener("pointerup", handleInteractionEnd);
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
+    window.removeEventListener("resize", startAutoScroll);
+  };
+}, []);
+
+
+
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
       <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border border-slate-200/80 shadow-xs">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-sm sm:text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-[#795BCB]" />
               Explore PureCuts Salon Categories
             </h2>
-            <p className="text-[11px] sm:text-xs text-slate-500">
-              Fast product discovery across beauty & professional salon
-              departments
-            </p>
+            
           </div>
           <Link
             href="/category/all"
@@ -93,12 +216,15 @@ export function CategoryRail() {
           </Link>
         </div>
 
-        <div className="mx-auto grid w-full max-w-5xl grid-cols-2 justify-items-center gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-6 lg:gap-x-4">
+        <div
+  ref={categoriesRef}
+  className="mx-auto grid w-full max-w-5xl grid-cols-2 justify-items-center gap-x-4 gap-y-10 max-sm:flex max-sm:justify-start max-sm:overflow-x-auto max-sm:overflow-y-hidden max-sm:snap-x max-sm:snap-mandatory max-sm:gap-2 max-sm:pb-2 max-sm:[scrollbar-width:none] max-sm:[&::-webkit-scrollbar]:hidden sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-6 lg:gap-x-4"
+>
           {CATEGORY_ITEMS.map((item) => (
             <Link
               key={item.slug}
               href={`/category/${item.slug}`}
-              className="group flex w-full max-w-[150px] flex-col items-center justify-center rounded-xl px-2 py-3 text-center transition duration-200 hover:-translate-y-1 hover:bg-slate-50"
+              className="group flex w-full max-w-[150px] flex-col items-center justify-start rounded-xl px-1 py-3 text-center transition duration-200 hover:-translate-y-1 hover:bg-slate-50 max-sm:w-[calc((100%-1rem)/3)] max-sm:max-w-none max-sm:shrink-0 max-sm:snap-start"
             >
               <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl p-1 bg-gradient-to-tr from-amber-200 via-amber-400 to-amber-500 shadow-sm group-hover:shadow-lg group-hover:scale-105 transition-all duration-200">
                 <div className="w-full h-full rounded-xl sm:rounded-2xl overflow-hidden bg-white flex items-center justify-center relative">
@@ -118,7 +244,8 @@ export function CategoryRail() {
                   </span>
                 )}
               </div>
-              <span className="text-xs font-bold text-slate-800 group-hover:text-[#795BCB] transition mt-2.5 line-clamp-1">
+
+              <span className="w-full text-[10px] leading-tight sm:text-xs font-bold text-slate-800 group-hover:text-[#795BCB] transition mt-2.5 whitespace-normal break-words text-center">
                 {item.name}
               </span>
             </Link>

@@ -43,8 +43,13 @@ export function BrandCarousel({ brands: initialBrands }: BrandCarouselProps) {
     };
   }, [initialBrands]);
 
-  // Take top 12 brands for the homepage showcase (or all if fewer)
-  const displayBrands = brands.slice(0, 12);
+  // Take top 12 brands for the homepage showcase (excluding purecuts store brand)
+  const displayBrands = brands
+    .filter((b) => {
+      const clean = b.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+      return clean !== "purecuts" && clean !== "purecut" && clean !== "unknown" && clean !== "na";
+    })
+    .slice(0, 12);
 
   return (
     <section className="max-w-7xl mx-auto px-3 sm:px-6 py-5 sm:py-8">

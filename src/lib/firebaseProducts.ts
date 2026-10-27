@@ -490,10 +490,15 @@ export async function fetchBrandsFromFirebase(): Promise<Brand[]> {
     const brands: Brand[] = [];
     const seenNames = new Set<string>();
 
+    const isExcludedBrand = (brandName: string): boolean => {
+      const clean = brandName.toLowerCase().replace(/[^a-z0-9]/g, "");
+      return clean === "purecuts" || clean === "purecut" || clean === "unknown" || clean === "na";
+    };
+
     brandsSnap.forEach((docSnap) => {
       const data = docSnap.data();
       const rawName = String(data.name || docSnap.id || "").trim();
-      if (!rawName) return;
+      if (!rawName || isExcludedBrand(rawName)) return;
 
       const lower = rawName.toLowerCase();
       if (seenNames.has(lower)) return;
@@ -529,7 +534,7 @@ export async function fetchBrandsFromFirebase(): Promise<Brand[]> {
       if (p.brand) {
         const b = p.brand.trim();
         const lower = b.toLowerCase();
-        if (!seenNames.has(lower) && b !== "Unknown" && b !== "N/A") {
+        if (!seenNames.has(lower) && !isExcludedBrand(b)) {
           seenNames.add(lower);
           const count = brandCounts.get(lower) || 1;
           brands.push({
