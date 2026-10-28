@@ -3,7 +3,6 @@ import { collection, getDocs, doc, setDoc, query, where, getDoc } from "firebase
 import { db, isFirebaseConfigured } from "./firebase";
 import { Product, ProductVariant, Category, FilterOptions, Brand } from "./types";
 import { PRODUCTS_DATA, CATEGORIES_DATA } from "@/db/seed-data";
-import { ALL_BRANDS_DATA } from "./brands-data";
 
 const PRODUCTS_COLLECTION = "products";
 const CATEGORIES_COLLECTION = "categories";
@@ -257,9 +256,7 @@ export function formatProductForFirestore(seed: any, index: number): Product {
   };
 }
 
-export const FALLBACK_PRODUCTS: Product[] = PRODUCTS_DATA.map((p, i) =>
-  formatProductForFirestore(p, i)
-);
+export const FALLBACK_PRODUCTS: Product[] = [];
 
 // In-memory cache for live Firestore products (refreshed every 60s)
 let cachedProducts: Product[] | null = null;
@@ -334,7 +331,6 @@ export async function fetchProductBySlug(slug: string): Promise<Product | null> 
   const all = await fetchAllProductsFromFirebase();
   return (
     all.find((p) => p.slug === slug || String(p.id) === slug || p.slug.startsWith(slug)) ||
-    FALLBACK_PRODUCTS.find((p) => p.slug === slug) ||
     null
   );
 }
@@ -442,17 +438,7 @@ export async function fetchCategoriesFromFirebase(): Promise<Category[]> {
   ];
 }
 
-export const FALLBACK_BRANDS: Brand[] = ALL_BRANDS_DATA.map((b) => ({
-  id: b.slug,
-  name: b.name,
-  slug: b.slug,
-  image: b.heroImage,
-  productCount: b.productCount,
-  featured: b.featured,
-  categoryFocus: b.categoryFocus,
-  description: b.description,
-  badge: b.badge,
-}));
+export const FALLBACK_BRANDS: Brand[] = [];
 
 // In-memory cache for live Firestore brands (refreshed every 60s)
 let cachedBrands: Brand[] | null = null;

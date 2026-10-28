@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { FALLBACK_PRODUCTS } from "@/lib/firebaseProducts";
 import { Product } from "@/lib/types";
 import {
   Building2,
@@ -34,9 +33,20 @@ export default function AdminDashboardPage() {
   const [seedingMessage, setSeedingMessage] = useState<string | null>(null);
 
   // Products state
-  const [products, setProducts] = useState<Product[]>(FALLBACK_PRODUCTS);
+  const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  useEffect(() => {
+    fetch("/api/products?limit=100")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && Array.isArray(data.products)) {
+          setProducts(data.products);
+        }
+      })
+      .catch((err) => console.error("Admin products fetch error:", err));
+  }, []);
 
   // Sample salons queue
   const [salons, setSalons] = useState([
