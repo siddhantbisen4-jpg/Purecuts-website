@@ -2,10 +2,9 @@ import { db, isDbConnected } from "@/db";
 import { products, categories, orders, reviews, blogPosts, coupons, b2bInquiries } from "@/db/schema";
 import { eq, ilike, and, gte, lte, desc, asc, or, count, inArray, sql } from "drizzle-orm";
 import { Product, Category, FilterOptions, BlogPost, Coupon, Review, Order, Brand } from "./types";
-import { PRODUCTS_DATA, CATEGORIES_DATA, BLOG_POSTS_DATA, COUPONS_DATA } from "@/db/seed-data";
+import { CATEGORIES_DATA, BLOG_POSTS_DATA, COUPONS_DATA } from "@/db/seed-data";
 import { seedDatabase } from "@/db/seed";
 import {
-  formatProductForFirestore,
   fetchAllProductsFromFirebase,
   fetchProductsByCategoryFromFirebase,
   fetchCategoriesFromFirebase,
@@ -220,21 +219,8 @@ export async function getProducts(options: FilterOptions = {}): Promise<{
     }
   }
 
-  const allCatalogProducts = PRODUCTS_DATA.map((p, i) => formatProductForFirestore(p, i));
-
-  // 2. Fallback to in-memory catalog if Firebase not configured or empty
-  if (!sourceProducts || sourceProducts.length === 0) {
-    if (options.category && options.category !== "all") {
-      if (options.category === "hair-color") {
-        sourceProducts = allCatalogProducts.filter(
-          (p) => p.categorySlug === "hair-color" || p.subcategorySlug === "hair-color"
-        );
-      } else {
-        sourceProducts = allCatalogProducts.filter((p) => p.categorySlug === options.category);
-      }
-    } else {
-      sourceProducts = allCatalogProducts;
-    }
+  if (!sourceProducts) {
+    sourceProducts = [];
   }
 
   let filtered = [...sourceProducts];
@@ -298,9 +284,11 @@ export async function getProducts(options: FilterOptions = {}): Promise<{
     filtered.sort((a, b) => (b.discountPercent || 0) - (a.discountPercent || 0));
   }
 
-  const facetProducts = isFirebaseConfigured && sourceProducts.length > 0
-    ? (options.category && options.category !== "all" ? sourceProducts : await fetchAllProductsFromFirebase())
-    : allCatalogProducts;
+  const facetProducts: Product[] = isFirebaseConfigured
+    ? (options.category && options.category !== "all" && sourceProducts.length > 0
+        ? sourceProducts
+        : await fetchAllProductsFromFirebase())
+    : sourceProducts;
 
   const brandMap = new Map<string, number>();
   const catMap = new Map<string, { name: string; slug: string; count: number }>();
@@ -399,34 +387,6 @@ export async function getProductBySlug(slug: string): Promise<{
     }
   }
 
-  // Fallback
-  const foundIndex = PRODUCTS_DATA.findIndex((p) => p.slug === slug);
-  if (foundIndex !== -1) {
-    const found = PRODUCTS_DATA[foundIndex];
-    const product = formatProductForFirestore(found, foundIndex);
-    const related = PRODUCTS_DATA
-      .filter((p) => p.categorySlug === found.categorySlug && p.slug !== found.slug)
-      .slice(0, 4)
-      .map((p, i) => formatProductForFirestore(p, i + 500));
-
-    return {
-      product,
-      relatedProducts: related,
-      reviews: [
-        {
-          id: 1,
-          productId: product.id,
-          userName: "Ananya Deshmukh (Stylist, Pune)",
-          rating: 5,
-          title: "Outstanding salon quality & original product",
-          comment: "We have been buying supplies from PureCuts. 100% genuine product and very prompt delivery in Pune.",
-          verifiedPurchase: true,
-          createdAt: new Date(),
-        },
-      ],
-    };
-  }
-
   return { product: null, relatedProducts: [], reviews: [] };
 }
 
@@ -456,9 +416,7 @@ export async function getHairCareHeroes(): Promise<Product[]> {
     }
   }
 
-  return PRODUCTS_DATA.filter((p) => p.isHairCareHero).map((p, i) =>
-    formatProductForFirestore(p, i)
-  );
+  return [];
 }
 
 export async function getSkincareBestsellers(): Promise<Product[]> {
@@ -487,9 +445,7 @@ export async function getSkincareBestsellers(): Promise<Product[]> {
     }
   }
 
-  return PRODUCTS_DATA.filter((p) => p.isSkincareBestseller).map((p, i) =>
-    formatProductForFirestore(p, i)
-  );
+  return [];
 }
 
 export async function getMachineries(): Promise<Product[]> {
@@ -516,9 +472,7 @@ export async function getMachineries(): Promise<Product[]> {
     }
   }
 
-  return PRODUCTS_DATA.filter((p) => p.categorySlug === "machineries").map((p, i) =>
-    formatProductForFirestore(p, i)
-  );
+  return [];
 }
 
 export async function getDealsOfTheDay(): Promise<Product[]> {
@@ -546,9 +500,7 @@ export async function getDealsOfTheDay(): Promise<Product[]> {
     }
   }
 
-  return PRODUCTS_DATA.filter((p) => p.isDealOfTheDay).map((p, i) =>
-    formatProductForFirestore(p, i)
-  );
+  return [];
 }
 
 export async function getBlogPosts(): Promise<BlogPost[]> {

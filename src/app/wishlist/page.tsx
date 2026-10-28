@@ -1,27 +1,51 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useStore } from "@/context/StoreContext";
-import { PRODUCTS_DATA } from "@/db/seed-data";
+import { Product } from "@/lib/types";
 import { ProductCard } from "@/components/ProductCard";
-import { Heart, ArrowRight, ShoppingBag } from "lucide-react";
+import { Heart, ArrowRight } from "lucide-react";
 
 export default function WishlistPage() {
   const { wishlist, wishlistCount } = useStore();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const savedProducts = PRODUCTS_DATA.filter((_, idx) => wishlist.includes(idx + 1)).map((p, i) => ({
-    id: i + 1,
-    ...p,
-    createdAt: new Date(),
-  }));
+  useEffect(() => {
+    let isMounted = true;
+    async function loadProducts() {
+      try {
+        const res = await fetch("/api/products?limit=100");
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && Array.isArray(data.products)) {
+            setProducts(data.products);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to load products for wishlist:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+
+    loadProducts();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const savedProducts = products.filter((p) => wishlist.includes(p.id));
 
   return (
     <main className="min-h-screen bg-slate-100/60 py-8 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-slate-500">
-          <Link href="/" className="hover:text-amber-600 font-medium">Home</Link>
+          <Link href="/" className="hover:text-amber-600 font-medium">
+            Home
+          </Link>
           <span>/</span>
           <span className="text-slate-800 font-bold">Saved Wishlist ({wishlistCount})</span>
         </nav>
@@ -39,7 +63,16 @@ export default function WishlistPage() {
             </div>
           </div>
 
-          {savedProducts.length === 0 ? (
+          {loading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-72 rounded-2xl bg-slate-100 animate-pulse border border-slate-200"
+                />
+              ))}
+            </div>
+          ) : savedProducts.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Heart className="w-8 h-8" />
@@ -50,10 +83,10 @@ export default function WishlistPage() {
               </p>
               <Link
                 href="/category/all"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#795BCB] hover:bg-[#795BCB] text-white text-xs font-bold rounded-xl transition"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#795BCB] hover:bg-[#6847b8] text-white text-xs font-bold rounded-xl transition"
               >
-                <span className="text-white">Browse Salon Products</span>
-                <ArrowRight className="w-4 h-4 text-white" />
+                <span>Browse Salon Products</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           ) : (

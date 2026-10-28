@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Brand } from "@/lib/types";
-import { ALL_BRANDS_DATA } from "@/lib/brands-data";
 import {
   Award,
   Search,
@@ -18,17 +17,7 @@ import {
 } from "lucide-react";
 
 // Initial fallback brands while live Firebase brands are loading
-const INITIAL_FALLBACK_BRANDS: Brand[] = ALL_BRANDS_DATA.map((b) => ({
-  id: b.slug,
-  name: b.name,
-  slug: b.slug,
-  image: b.heroImage,
-  productCount: b.productCount,
-  featured: b.featured,
-  categoryFocus: b.categoryFocus,
-  description: b.description,
-  badge: b.badge,
-}));
+const INITIAL_FALLBACK_BRANDS: Brand[] = [];
 
 export default function BrandsDirectoryPage() {
   const [brands, setBrands] = useState<Brand[]>(INITIAL_FALLBACK_BRANDS);
