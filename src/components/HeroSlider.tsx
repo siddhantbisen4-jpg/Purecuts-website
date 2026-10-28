@@ -112,7 +112,7 @@ border-0
               href="/category/skincare"
               className="
       absolute
-      bottom-12
+      bottom-5
       sm:bottom-14
       left-4
       sm:left-6
@@ -121,12 +121,14 @@ border-0
       inline-flex
       items-center
       gap-2
-      rounded-xl
-      bg-[#795BCB]
-      hover:bg-[#6847B8]
-      px-5
-      py-3
-      text-sm
+      rounded-lg
+bg-[#9A37D8]
+hover:bg-[#AA2CCD]
+px-2
+py-2
+text-xs
+sm:text-sm
+whitespace-nowrap
       font-bold
       text-white
       shadow-lg

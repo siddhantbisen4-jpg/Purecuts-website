@@ -275,11 +275,11 @@ export default function BrandsDirectoryPage() {
                     </div>
                   </div>
 
-                  {/* Authorised Badge */}
+                  {/* Authorised Badge 
                   <span className="flex items-center gap-1 rounded-full bg-purple-100 px-2.5 py-1 text-[10px] font-black tracking-wide text-[#795BCB] uppercase">
                     <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                     Authorised
-                  </span>
+                  </span>*/}
                 </div>
 
                 {/* Brand information */}

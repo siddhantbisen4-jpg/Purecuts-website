@@ -556,31 +556,37 @@ export function ProductDetailView({
 
             {/* Quantity Selector & Action Buttons */}
             <div className="space-y-3 pt-2">
-              <div className="flex items-center gap-4">
-                <span className="text-xs font-bold text-slate-700">
+              <div className="flex items-center gap-4 max-sm:flex-wrap max-sm:gap-2.5">
+                <span className="text-xs font-bold text-slate-700 max-sm:w-full">
                   Quantity:
                 </span>
-                <div className="flex items-center border-2 border-slate-300 rounded-xl overflow-hidden bg-slate-50">
+
+                <div className="flex shrink-0 items-center border-2 border-slate-300 rounded-xl overflow-hidden bg-slate-50 max-sm:h-11">
                   <button
                     type="button"
+                    aria-label="Decrease quantity"
                     onClick={() => setQty(Math.max(1, qty - 1))}
-                    className="px-3.5 py-1.5 text-sm font-bold text-slate-700 hover:bg-slate-200 transition"
+                    className="px-3.5 py-1.5 text-sm font-bold text-slate-700 hover:bg-slate-200 transition max-sm:flex max-sm:h-10 max-sm:w-10 max-sm:items-center max-sm:justify-center max-sm:p-0 max-sm:text-lg"
                   >
-                    -
+                    −
                   </button>
-                  <span className="px-4 text-sm font-extrabold text-slate-900 min-w-[36px] text-center">
+
+                  <span className="px-4 text-sm font-extrabold text-slate-900 min-w-[36px] text-center max-sm:min-w-[44px] max-sm:px-2 max-sm:py-0">
                     {qty}
                   </span>
+
                   <button
                     type="button"
+                    aria-label="Increase quantity"
                     onClick={() => setQty(qty + 1)}
-                    className="px-3.5 py-1.5 text-sm font-bold text-slate-700 hover:bg-slate-200 transition"
+                    className="px-3.5 py-1.5 text-sm font-bold text-slate-700 hover:bg-slate-200 transition max-sm:flex max-sm:h-10 max-sm:w-10 max-sm:items-center max-sm:justify-center max-sm:p-0 max-sm:text-lg"
                   >
                     +
                   </button>
                 </div>
+
                 {product.volumeSize && (
-                  <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl">
+                  <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl max-sm:max-w-full">
                     Net Size: {product.volumeSize}
                   </span>
                 )}
@@ -897,7 +903,7 @@ export function ProductDetailView({
         <section className="bg-slate-50/80 rounded-3xl p-6 sm:p-8 border border-slate-200">
           <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-200">
             <div>
-              <h2 className="text-xl font-black text-slate-900 tracking-tight mt-1">
+              <h2 className="text-lg font-black text-slate-900 tracking-tight mt-1">
                 Related Products
               </h2>
             </div>
@@ -909,14 +915,19 @@ export function ProductDetailView({
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-sm:flex max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:overflow-y-hidden max-sm:gap-3 max-sm:pb-3 max-sm:snap-x max-sm:snap-mandatory max-sm:[scrollbar-width:none] max-sm:[&::-webkit-scrollbar]:hidden">
             {relatedProducts.slice(0, 4).map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <div
+                key={p.id}
+                className="max-sm:w-[155px] max-sm:min-w-[155px] max-sm:shrink-0 max-sm:snap-start"
+              >
+                <ProductCard product={p} />
+              </div>
             ))}
           </div>
         </section>
       )}
-      
+
       {/* Full-Screen Product Image Viewer */}
       {isImageViewerOpen && (
         <div
@@ -940,9 +951,7 @@ export function ProductDetailView({
           >
             <button
               type="button"
-              onClick={() =>
-                setImageZoom((zoom) => Math.min(zoom + 0.25, 3))
-              }
+              onClick={() => setImageZoom((zoom) => Math.min(zoom + 0.25, 3))}
               className="rounded-full bg-white/10 p-3 text-white hover:bg-white/20"
               aria-label="Zoom in"
             >
@@ -951,9 +960,7 @@ export function ProductDetailView({
 
             <button
               type="button"
-              onClick={() =>
-                setImageZoom((zoom) => Math.max(zoom - 0.25, 1))
-              }
+              onClick={() => setImageZoom((zoom) => Math.max(zoom - 0.25, 1))}
               className="rounded-full bg-white/10 p-3 text-white hover:bg-white/20"
               aria-label="Zoom out"
             >
@@ -1017,12 +1024,12 @@ export function ProductDetailView({
             <p className="text-sm font-semibold">{product.name}</p>
             <p className="mt-1 text-xs text-white/70">
               Zoom: {Math.round(imageZoom * 100)}%
-              {images.length > 1 && ` • Image ${images.indexOf(selectedImage) + 1} of ${images.length}`}
+              {images.length > 1 &&
+                ` • Image ${images.indexOf(selectedImage) + 1} of ${images.length}`}
             </p>
           </div>
         </div>
       )}
-
     </div>
   );
 }

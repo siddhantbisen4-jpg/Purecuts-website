@@ -1566,7 +1566,7 @@ export function CategoryCatalog({
 
               {/* SORT */}
 
-              <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-slate-600">
+             <div className="flex w-full min-w-0 items-center justify-between gap-2 text-[11px] sm:w-auto sm:justify-start sm:gap-2 sm:text-xs text-slate-600">
                 <span className="font-semibold whitespace-nowrap">
                   Sort by:
                 </span>
@@ -1574,7 +1574,7 @@ export function CategoryCatalog({
                 <select
                   value={selectedSort}
                   onChange={(e) => setSelectedSort(e.target.value)}
-                  className="bg-white border border-slate-300 rounded-xl px-2.5 sm:px-3 py-2 text-[11px] sm:text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#795BCB] focus:border-[#795BCB] cursor-pointer min-w-[125px] sm:min-w-[145px]"
+                  className="box-border w-full min-w-0 max-w-full sm:w-auto sm:min-w-[145px] bg-white border border-slate-300 rounded-xl px-2 sm:px-3 py-2 text-[11px] sm:text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#795BCB] focus:border-[#795BCB] cursor-pointer"
                 >
                   <option value="featured">All</option>
 

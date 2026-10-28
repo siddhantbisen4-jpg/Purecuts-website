@@ -242,6 +242,9 @@ export function Header() {
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const mobileSearchRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
+
+  const mobileAccountRef = useRef<HTMLDivElement>(null);
+
   const headerRef = useRef<HTMLElement>(null);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
 
@@ -392,7 +395,9 @@ export function Header() {
                   setIsVoiceModalOpen(false);
                   setIsListening(false);
                   setIsSearchOpen(false);
-                  router.push(`/product/${encodeURIComponent(matchedProduct.slug)}`);
+                  router.push(
+                    `/product/${encodeURIComponent(matchedProduct.slug)}`,
+                  );
                 }, 500);
                 return;
               }
@@ -547,7 +552,10 @@ export function Header() {
       if (!insideDesktop && !insideMobile) {
         setIsSearchOpen(false);
       }
-      if (accountRef.current && !accountRef.current.contains(target)) {
+      const insideDesktopAccount = accountRef.current?.contains(target);
+      const insideMobileAccount = mobileAccountRef.current?.contains(target);
+
+      if (!insideDesktopAccount && !insideMobileAccount) {
         setIsAccountOpen(false);
       }
     }
@@ -845,11 +853,21 @@ export function Header() {
                   >
                     {" "}
                     <div className="w-8 h-8 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center text-[#795BCB] font-bold text-xs">
-                      {profile?.name ? profile.name[0].toUpperCase() : <User className="w-4 h-4" />}
+                      {profile?.name ? (
+                        profile.name[0].toUpperCase()
+                      ) : (
+                        <User className="w-4 h-4" />
+                      )}
                     </div>
                     <div className="text-left leading-none">
                       <span className="text-[10px] text-slate-400 font-semibold uppercase block">
-                        {profile ? (isSalonOwner ? (salonRegion === "pune" ? "Pune Salon Pro" : "Outstation Salon") : "Customer") : "Account"}
+                        {profile
+                          ? isSalonOwner
+                            ? salonRegion === "pune"
+                              ? "Pune Salon Pro"
+                              : "Outstation Salon"
+                            : "Customer"
+                          : "Account"}
                       </span>
                       <span className="text-xs font-bold text-slate-800 flex items-center gap-0.5">
                         {profile?.name || "Sign In"}
@@ -861,7 +879,9 @@ export function Header() {
                     <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 p-2.5 z-50 animate-in fade-in duration-150">
                       <div className="p-3 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl mb-1.5 border border-purple-100">
                         <p className="text-xs font-bold text-slate-900">
-                          {profile?.name ? `Hello, ${profile.name}` : "Welcome to PureCuts"}
+                          {profile?.name
+                            ? `Hello, ${profile.name}`
+                            : "Welcome to PureCuts"}
                         </p>
                         <p className="text-[11px] text-slate-500">
                           {isSalonOwner
@@ -877,14 +897,16 @@ export function Header() {
                             onClick={() => setIsAccountOpen(false)}
                             className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#795BCB] hover:bg-[#795BCB]/10 rounded-lg transition"
                           >
-                            <User className="w-4 h-4 text-[#795BCB]" /> Sign in to PureCuts
+                            <User className="w-4 h-4 text-[#795BCB]" /> Sign in
+                            to PureCuts
                           </Link>
                           <Link
                             href="/register"
                             onClick={() => setIsAccountOpen(false)}
                             className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition"
                           >
-                            <Building2 className="w-4 h-4 text-slate-400" /> Register as Salon Owner
+                            <Building2 className="w-4 h-4 text-slate-400" />{" "}
+                            Register as Salon Owner
                           </Link>
                         </>
                       ) : (
@@ -893,7 +915,8 @@ export function Header() {
                           onClick={() => setIsAccountOpen(false)}
                           className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition"
                         >
-                          <User className="w-4 h-4 text-slate-400" /> My Salon Profile
+                          <User className="w-4 h-4 text-slate-400" /> My Salon
+                          Profile
                         </Link>
                       )}
 
@@ -902,7 +925,8 @@ export function Header() {
                         onClick={() => setIsAccountOpen(false)}
                         className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition"
                       >
-                        <Package className="w-4 h-4 text-slate-400" /> My Orders & Tracking
+                        <Package className="w-4 h-4 text-slate-400" /> My Orders
+                        & Tracking
                       </Link>
 
                       <Link
@@ -910,7 +934,8 @@ export function Header() {
                         onClick={() => setIsAccountOpen(false)}
                         className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition"
                       >
-                        <Heart className="w-4 h-4 text-slate-400" /> Saved Wishlist ({wishlistCount})
+                        <Heart className="w-4 h-4 text-slate-400" /> Saved
+                        Wishlist ({wishlistCount})
                       </Link>
 
                       {/* Unified Admin Portal Link */}
@@ -1086,15 +1111,103 @@ export function Header() {
                     </span>
                   )}{" "}
                 </button>{" "}
-                {/* Account */}{" "}
-                <Link
-                  href="/account"
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-700 active:bg-slate-100"
-                  aria-label="Account"
-                >
-                  {" "}
-                  <User className="w-[19px] h-[19px]" />{" "}
-                </Link>{" "}
+                {/* Account */} {/* Mobile Account Dropdown */}
+                <div ref={mobileAccountRef} className="relative shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setIsAccountOpen((open) => !open)}
+                    className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-700 active:bg-slate-100"
+                    aria-label="Account menu"
+                    aria-expanded={isAccountOpen}
+                  >
+                    {profile?.name ? (
+                      <span className="w-7 h-7 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center text-[#795BCB] text-xs font-bold">
+                        {profile.name[0].toUpperCase()}
+                      </span>
+                    ) : (
+                      <User className="w-[19px] h-[19px]" />
+                    )}
+                  </button>
+
+                  {isAccountOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-64 max-w-[calc(100vw-24px)] bg-white rounded-2xl shadow-2xl border border-slate-200 p-2.5 z-[120]">
+                      <div className="p-3 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl mb-1.5 border border-purple-100">
+                        <p className="text-xs font-bold text-slate-900">
+                          {profile?.name
+                            ? `Hello, ${profile.name}`
+                            : "Welcome to PureCuts"}
+                        </p>
+                        <p className="text-[11px] text-slate-500">
+                          Professional Salon &amp; Beauty Marketplace
+                        </p>
+                      </div>
+
+                      {!profile ? (
+                        <>
+                          <Link
+                            href="/login"
+                            onClick={() => setIsAccountOpen(false)}
+                            className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#795BCB] hover:bg-[#795BCB]/10 rounded-lg transition"
+                          >
+                            <User className="w-4 h-4" />
+                            Sign in to PureCuts
+                          </Link>
+
+                          <Link
+                            href="/register"
+                            onClick={() => setIsAccountOpen(false)}
+                            className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition"
+                          >
+                            <Building2 className="w-4 h-4 text-slate-400" />
+                            Register as Salon Owner
+                          </Link>
+                        </>
+                      ) : (
+                        <Link
+                          href="/account"
+                          onClick={() => setIsAccountOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition"
+                        >
+                          <User className="w-4 h-4 text-slate-400" />
+                          My Profile
+                        </Link>
+                      )}
+
+                      <Link
+                        href="/account/orders"
+                        onClick={() => setIsAccountOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition"
+                      >
+                        <Package className="w-4 h-4 text-slate-400" />
+                        My Orders &amp; Tracking
+                      </Link>
+
+                      <Link
+                        href="/wishlist"
+                        onClick={() => setIsAccountOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition"
+                      >
+                        <Heart className="w-4 h-4 text-slate-400" />
+                        Saved Wishlist ({wishlistCount})
+                      </Link>
+
+                      {profile && (
+                        <div className="pt-1 mt-1 border-t border-slate-100">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              logout();
+                              setIsAccountOpen(false);
+                            }}
+                            className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                          >
+                            Sign Out
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
                 {/* Menu */}{" "}
                 <button
                   type="button"
@@ -1395,19 +1508,6 @@ export function Header() {
                     <Heart className="w-4 h-4" /> Wishlist{" "}
                   </Link>{" "}
                 </div>{" "}
-                {/* B2B */}{" "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    closeMobileMenu();
-                    openB2BModal();
-                  }}
-                  className="w-full py-3 bg-amber-500 text-slate-950 font-bold text-xs rounded-xl flex items-center justify-center gap-2 active:bg-amber-400"
-                >
-                  {" "}
-                  <Sparkles className="w-4 h-4" /> Request Salon Wholesale B2B
-                  Quote{" "}
-                </button>{" "}
                 {/* Track Order */}{" "}
                 <Link
                   href="/account/orders"
@@ -1418,15 +1518,6 @@ export function Header() {
                   <Package className="w-4 h-4" /> Track Existing Order{" "}
                 </Link>{" "}
                 {/* Genuine Guarantee */}{" "}
-                <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-50 border border-emerald-100">
-                  {" "}
-                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />{" "}
-                  <span className="text-[10px] text-emerald-800 font-semibold">
-                    {" "}
-                    100% Genuine Salon Products · Trusted PureCuts
-                    Inventory{" "}
-                  </span>{" "}
-                </div>{" "}
               </div>{" "}
             </div>
           )}{" "}

@@ -58,18 +58,13 @@ export function BrandCarousel({ brands: initialBrands }: BrandCarouselProps) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-200">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#795BCB] bg-purple-100/70 px-2.5 py-0.5 rounded-full">
-                <Sparkles className="w-3 h-3 text-[#795BCB]" />
-                Official Distributor & Direct Supply
-              </span>
+              
             </div>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-              <Award className="w-6 h-6 text-[#795BCB]" />
+             
               Shop by Top Salon Brands
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
-              100% genuine salon professional products with manufacturer batch warranty & GST input credit.
-            </p>
+            
           </div>
           <Link
             href="/brands"
@@ -154,18 +149,8 @@ export function BrandCarousel({ brands: initialBrands }: BrandCarouselProps) {
 
         {/* Bottom Banner Strip */}
         <div className="mt-6 pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
-          <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-[#795BCB]" />
-            <span className="font-semibold text-slate-700">
-              Direct salon wholesale accounts available for all listed brands with GST input tax invoices.
-            </span>
-          </div>
-          <Link
-            href="/brands"
-            className="font-bold text-[#795BCB] hover:underline"
-          >
-            Explore all {brands.length || "100+"} salon brands →
-          </Link>
+          
+          
         </div>
       </div>
     </section>
